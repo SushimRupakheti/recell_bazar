@@ -20,8 +20,8 @@ class _SignupScreenState extends State<SignupScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 60),
-            Image.asset("lib/assets/images/logo.png", height: 100),
-            const SizedBox(height: 30),
+            Image.asset("lib/assets/images/logo.png", height: 150),
+            const SizedBox(height: 10),
             Text(
               'Register',
               style: TextStyle(
@@ -107,7 +107,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 60),
+            const SizedBox(height: 30),
 
             MyButton(text: "Register", onPressed: () {}),
 

@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 60),
+              const SizedBox(height: 120),
               Image.asset(
                 "lib/assets/images/logo.png", // replace with your PNG
                 height: 200,
