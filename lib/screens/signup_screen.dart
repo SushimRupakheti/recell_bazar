@@ -11,6 +11,12 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+ bool isFirstNameFocused=false;
+ bool isLastNameFocused=false;
+ bool isEmailFocused=false;
+ bool isPasswordFocused=false;
+ bool isContactFocused=false;
+ bool isAddressFoucused = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +26,7 @@ class _SignupScreenState extends State<SignupScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const SizedBox(height: 60),
-            Image.asset("lib/assets/images/logo.png", height: 150),
+            Image.asset("assets/images/logo.png", height: 150),
             const SizedBox(height: 10),
             Text(
               'Register',
@@ -40,22 +46,32 @@ class _SignupScreenState extends State<SignupScreen> {
                       children: [
                         Expanded(
                           child: MyTextField(
+                            isFocused: isAddressFoucused,
                             label: "First name", 
                             hint:"First name !", 
                             validator: (value) =>
                             value!.isEmpty ? "Please enter your first name" : null,
-                            onChanged:(value){}),
+                            onChanged:(value){
+                              setState(() {
+                                isFirstNameFocused=true;
+                              });
+                            }),
                         ),
 
                         const SizedBox(width: 16),
 
                         Expanded(
                           child: MyTextField(
-                            label: "Second name", 
-                            hint:"Second name !", 
+                            isFocused: isLastNameFocused,
+                            label: "Last name", 
+                            hint:"Last name !", 
                             validator: (value) =>
-                            value!.isEmpty ? "Please enter your second name" : null,
-                            onChanged:(value){}),
+                            value!.isEmpty ? "Please enter your last name" : null,
+                            onChanged:(value){
+                              setState(() {
+                                isLastNameFocused=true;
+                              });
+                            }),
                         ),
                       ],
                     ),
@@ -68,40 +84,60 @@ class _SignupScreenState extends State<SignupScreen> {
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) =>
                           value!.isEmpty ? "Please enter your email" : null,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          isEmailFocused=true;
+                        });
+                      },
+                      isFocused: isEmailFocused,
                     ),
 
                     const SizedBox(height: 15),
 
                     MyTextField(
+                      isFocused: isContactFocused,
                       label: "Contact no. ",
                       hint: "enter your contact no.",
                       prefixIcon: Icons.phone,
                       keyboardType: TextInputType.number,
                       validator: (value) =>
                           value!.isEmpty ? "Please enter your contact no. " : null,
-                          onChanged:(value){}),
+                          onChanged:(value){
+                            setState(() {
+                              isContactFocused=true;
+                            });
+                          }),
 
                     const SizedBox(height: 15),
 
                     MyTextField(
+                      isFocused:isAddressFoucused ,
                       label: "Address", 
                       hint: "enter you address", 
                       prefixIcon: Icons.map,
                       validator: (value) =>
                           value!.isEmpty ? "Please enter your contact no. " : null,
-                          onChanged:(value){}), 
+                          onChanged:(value){
+                            setState(() {
+                              isAddressFoucused=true;
+                            });
+                          }), 
 
                     const SizedBox(height: 15),
 
                     MyTextField(
+                      isFocused: isPasswordFocused,
                       label: "Password",
                       hint: "Enter your password",
                       prefixIcon: Icons.password,
                       obscureText: true,
                       validator: (value) =>
                           value!.isEmpty ? "Please enter password" : null,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          isPasswordFocused=true;
+                        });
+                      },
                     ),
                   ],
                 ),

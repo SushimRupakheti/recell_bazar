@@ -1,8 +1,8 @@
 import 'dart:async'; // Correct import for Timer
 
 import 'package:flutter/material.dart';
-import 'package:recell_bazar/screens/login_screen.dart';
-import 'package:recell_bazar/screens/main_dashboard_screen.dart';
+
+import 'package:recell_bazar/screens/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -16,11 +16,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Timer(const Duration(seconds: 4), () {
+    Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
+          builder: (context) => const OnboardingScreen(),
         ),
       );
     });
@@ -33,7 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset("lib/assets/images/logo.png", height: 250),
+            Image.asset("assets/images/logo.png", height: 250),
             const SizedBox(height: 10),
             const Text(
               'ReCell \n Bazar',

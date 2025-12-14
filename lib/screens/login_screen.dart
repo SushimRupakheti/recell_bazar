@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recell_bazar/screens/dashboard.dart';
 import 'package:recell_bazar/screens/signup_screen.dart';
 import 'package:recell_bazar/widgets/my_button.dart';
 import 'package:recell_bazar/widgets/mytextfeild.dart';
@@ -11,6 +12,8 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+   bool isEmailFocused=false;
+ bool isPasswordFocused=false;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 120),
               Image.asset(
-                "lib/assets/images/logo.png", // replace with your PNG
+                "assets/images/logo.png", // replace with your PNG
                 height: 200,
               ),
               const SizedBox(height: 30),
@@ -43,25 +46,35 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
 
                     MyTextField(
+                      isFocused: isEmailFocused,
                       label: "Email",
                       hint: "Enter your email",
                       prefixIcon: Icons.mail,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) =>
                           value!.isEmpty ? "Please enter your email" : null,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          isEmailFocused=true;
+                        });
+                      },
                     ),
           
                       const SizedBox(height: 15),
           
                     MyTextField(
+                      isFocused: isPasswordFocused,
                       label: "Password",
                       hint: "Enter your password",
                       prefixIcon: Icons.password,
                       obscureText: true,
                       validator: (value) =>
                           value!.isEmpty ? "Please enter password" : null,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        setState(() {
+                          isPasswordFocused=true;
+                        });
+                      },
                     ),
                     
                     ],
@@ -70,7 +83,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 60),
           
-              MyButton(text: "Login", onPressed:(){}),
+              MyButton(text: "Login", onPressed:(){
+                 Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Dashboard()),
+                  );
+              }),
           
               const SizedBox(height: 10),
           

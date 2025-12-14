@@ -10,6 +10,7 @@ class MyTextField extends StatelessWidget {
     this.obscureText = false,
     required this.validator,
     required this.onChanged,
+    required this.isFocused
   });
 
   final String label;
@@ -19,16 +20,18 @@ class MyTextField extends StatelessWidget {
   final bool obscureText;
   final String? Function(String?) validator;
   final void Function(String) onChanged;
+  final bool isFocused;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      
       keyboardType: keyboardType,
       obscureText: obscureText,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+        prefixIcon: isFocused?null:prefixIcon != null ? Icon(prefixIcon) : null,
         border: const OutlineInputBorder(),
       ),
       onChanged: onChanged,
