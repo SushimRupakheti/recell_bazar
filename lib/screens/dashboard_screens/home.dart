@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:recell_bazar/models/offer_model.dart';
 import 'package:recell_bazar/widgets/custom_choice_chip.dart';
 import 'package:recell_bazar/widgets/offer_card.dart';
+import 'package:recell_bazar/widgets/product_card.dart';
 import 'package:recell_bazar/widgets/topbar.dart';
 
 class Home extends StatefulWidget {
@@ -30,7 +31,6 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             _gap,
 
             Topbar(),
@@ -43,17 +43,14 @@ class _HomeState extends State<Home> {
             ),
 
             SizedBox(
-              height: 160, 
+              height: 160,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: offers.length,
                 itemBuilder: (context, index) {
                   return SizedBox(
                     width: MediaQuery.of(context).size.width * 0.85,
-                    child: OfferCard(
-                      offer: offers[index],
-                      activeIndex: index,
-                    ),
+                    child: OfferCard(offer: offers[index], activeIndex: index),
                   );
                 },
               ),
@@ -71,26 +68,7 @@ class _HomeState extends State<Home> {
               ),
             ),
 
-            Expanded(
-              child: GridView.count(
-                padding: const EdgeInsets.all(8),
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                crossAxisCount: 2,
-                childAspectRatio: 2,
-                children: [
-                  for (int i = 0; i < 100; i++)
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        foregroundColor: Colors.black,
-                      ),
-                      child: Text('$i', style: const TextStyle(fontSize: 50)),
-                    ),
-                ],
-              ),
-            ),
+           
           ],
         ),
       ),
