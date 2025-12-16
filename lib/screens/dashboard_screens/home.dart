@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recell_bazar/models/offer_model.dart';
+import 'package:recell_bazar/models/product_model.dart';
 import 'package:recell_bazar/widgets/custom_choice_chip.dart';
 import 'package:recell_bazar/widgets/offer_card.dart';
 import 'package:recell_bazar/widgets/product_card.dart';
@@ -13,6 +14,18 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final List<Product> products = [
+  Product(
+    id: '1',
+    name: 'Samsung Galaxy S23',
+    category: 'Samsung',
+    price: 120000,
+    rating: 4.5,
+    storage: 256,
+    imageUrl: 'assets/images/bg.png',
+  ),
+];
+
   final List<Offer> offers = [
     Offer(
       tag: '#brandsweek',
@@ -67,8 +80,29 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-
-           
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 0.68,
+                ),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  return ProductCard(
+                    product: products[index],
+                    onTap: () {
+                      // navigate to detail page
+                    },
+                    onFavoriteTap: () {
+                      // toggle favorite
+                    },
+                  );
+                },
+              ),
+            ), // 🔚 End of Expanded (Product Grid Section)
           ],
         ),
       ),

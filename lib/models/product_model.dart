@@ -19,30 +19,4 @@ class Product {
     this.isFavorite = false,
   });
 
-  // For backend integration
-  factory Product.fromJson(Map<String, dynamic> json) {
-    return Product(
-      id: json['id'],
-      name: json['name'],
-      category: json['category'],
-      price: json['price'].toDouble(),
-      rating: json['rating'].toDouble(),
-      storage: json['storage'],
-      imageUrl: json['image_url'],
-      isFavorite: json['is_favorite'] ?? false,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'category': category,
-      'price': price,
-      'rating': rating,
-      'storage': storage,
-      'image_url': imageUrl,
-      'is_favorite': isFavorite,
-    };
-  }
 }
