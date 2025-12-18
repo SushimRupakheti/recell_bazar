@@ -39,8 +39,8 @@ class _SplashScreenState extends State<SplashScreen> {
               'ReCell \n Bazar',
               style: TextStyle(
                 fontSize: 60,
-                fontWeight: FontWeight.w900,
-                color: const Color(0xFF0B7C7C),
+                fontFamily: "Montserrat-Bold",
+                color: Color(0xFF0B7C7C),
               ),
             ),
           ],

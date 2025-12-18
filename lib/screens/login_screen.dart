@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const SizedBox(height: 120),
               Image.asset(
-                "assets/images/logo.png", // replace with your PNG
+                "assets/images/logo.png", 
                 height: 200,
               ),
               const SizedBox(height: 30),
@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(
                   fontSize: 45,
                   color: Color(0xFF0B7C7C),
-                  fontWeight: FontWeight.bold,
+                  fontFamily: "Montserrat-Bold",
                 ),
               ),
               const SizedBox(height: 20),
@@ -100,11 +100,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 },
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFF0B7C7C), // text color
+                  foregroundColor: const Color(0xFF0B7C7C), 
                 ),
                 child: const Text(
                   "Don't have an Account?",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 16, fontFamily: "Montserrat-Regular"),
                 ),
               ),
             ],
