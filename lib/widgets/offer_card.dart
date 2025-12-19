@@ -3,7 +3,7 @@ import 'package:recell_bazar/models/offer_model.dart';
 
 class OfferCard extends StatelessWidget {
   final Offer offer;
-  final int activeIndex; // 0, 1, or 2
+  final int activeIndex; 
 
   const OfferCard({
     super.key,
@@ -50,7 +50,6 @@ class OfferCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                /// Indicators
                 Row(
                   children: List.generate(3, (index) {
                     return Padding(
