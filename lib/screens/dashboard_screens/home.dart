@@ -24,6 +24,33 @@ class _HomeState extends State<Home> {
     storage: 256,
     imageUrl: 'assets/images/bg.png',
   ),
+    Product(
+    id: '2',
+    name: 'Samsung Galaxy S23',
+    category: 'Samsung',
+    price: 120000,
+    rating: 4.5,
+    storage: 256,
+    imageUrl: 'assets/images/bg1.png',
+  ),
+    Product(
+    id: '3',
+    name: 'Samsung Galaxy S23',
+    category: 'Samsung',
+    price: 120000,
+    rating: 4.5,
+    storage: 256,
+    imageUrl: 'assets/images/bg2.png',
+  ),
+    Product(
+    id: '4',
+    name: 'Samsung Galaxy S23',
+    category: 'Samsung',
+    price: 120000,
+    rating: 4.5,
+    storage: 256,
+    imageUrl: 'assets/images/bg3.png',
+  ),
 ];
 
   final List<Offer> offers = [

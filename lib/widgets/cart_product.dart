@@ -24,7 +24,7 @@ class CartProduct extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 208, 208, 208),
+        color: const Color.fromARGB(255, 238, 238, 238),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -59,7 +59,7 @@ class CartProduct extends StatelessWidget {
                   'Iphone',
                   style: TextStyle(
                     fontSize: 12,
-                    color: Colors.grey,
+                    color: Color.fromARGB(255, 88, 88, 88),
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -79,12 +79,12 @@ class CartProduct extends StatelessWidget {
                       '4.5',
                       style: TextStyle(fontSize: 12),
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(width: 24),
                     Text(
                       '256 GB',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: Color.fromARGB(255, 0, 0, 0),
                       ),
                     ),
                   ],
