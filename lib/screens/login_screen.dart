@@ -103,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   foregroundColor: const Color(0xFF0B7C7C), 
                 ),
                 child: const Text(
-                  "Don't have an Account?",
+                  "Don't have an Account..?",
                   style: TextStyle(fontSize: 16, fontFamily: "Montserrat-Regular"),
                 ),
               ),

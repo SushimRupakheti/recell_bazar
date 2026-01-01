@@ -160,7 +160,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 foregroundColor: const Color(0xFF0B7C7C), // text color
               ),
               child: const Text(
-                "Already have an Account?",
+                "Already have an Account..?",
                 style: TextStyle(fontSize: 16, fontFamily: "Montserrat-Regular"),
               ),
             ),
