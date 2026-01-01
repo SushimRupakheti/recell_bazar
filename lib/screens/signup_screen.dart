@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recell_bazar/screens/login_screen.dart';
-import 'package:recell_bazar/widgets/my_button.dart';
-import 'package:recell_bazar/widgets/mytextfeild.dart';
+import 'package:recell_bazar/core/widgets/my_button.dart';
+import 'package:recell_bazar/core/widgets/mytextfeild.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});

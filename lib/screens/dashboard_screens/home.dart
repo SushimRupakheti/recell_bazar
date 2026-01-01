@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:recell_bazar/models/offer_model.dart';
 import 'package:recell_bazar/models/product_model.dart';
-import 'package:recell_bazar/widgets/custom_choice_chip.dart';
-import 'package:recell_bazar/widgets/offer_card.dart';
-import 'package:recell_bazar/widgets/product_card.dart';
-import 'package:recell_bazar/widgets/topbar.dart';
+import 'package:recell_bazar/core/widgets/custom_choice_chip.dart';
+import 'package:recell_bazar/core/widgets/offer_card.dart';
+import 'package:recell_bazar/core/widgets/product_card.dart';
+import 'package:recell_bazar/core/widgets/topbar.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
