@@ -10,7 +10,8 @@ class MyTextField extends StatelessWidget {
     this.obscureText = false,
     required this.validator,
     required this.onChanged,
-    required this.isFocused
+    required this.isFocused,
+    this.controller,
   });
 
   final String label;
@@ -21,6 +22,7 @@ class MyTextField extends StatelessWidget {
   final String? Function(String?) validator;
   final void Function(String) onChanged;
   final bool isFocused;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {

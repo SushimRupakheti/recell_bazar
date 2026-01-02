@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recell_bazar/screens/dashboard.dart';
-import 'package:recell_bazar/screens/signup_screen.dart';
+import 'package:recell_bazar/features/auth/presentation/pages/signup_screen.dart';
 import 'package:recell_bazar/core/widgets/my_button.dart';
 import 'package:recell_bazar/core/widgets/mytextfeild.dart';
 

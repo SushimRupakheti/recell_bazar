@@ -1,20 +1,5 @@
 import 'package:flutter/material.dart';
 
-<<<<<<< HEAD
-class ThemeData extends StatefulWidget {
-  const ThemeData({super.key});
-
-  @override
-  State<ThemeData> createState() => _ThemeDataState();
-}
-
-class _ThemeDataState extends State<ThemeData> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
-  }
-}
-=======
 ThemeData getApplicationTheme() {
 
   return ThemeData(
@@ -76,4 +61,3 @@ ThemeData getApplicationTheme() {
     // ),
   );
 }
->>>>>>> 27078be15c22dd44fa668859f635beff0d9ac9a0

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recell_bazar/screens/login_screen.dart';
+import 'package:recell_bazar/features/auth/presentation/pages/login_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
