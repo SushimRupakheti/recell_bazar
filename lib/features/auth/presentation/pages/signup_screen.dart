@@ -14,6 +14,8 @@ class SignupScreen extends ConsumerStatefulWidget {
 }
 
 class _SignupScreenState extends ConsumerState<SignupScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   bool isFirstNameFocused = false;
   bool isLastNameFocused = false;
   bool isEmailFocused = false;
@@ -26,33 +28,72 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final emailController = TextEditingController();
   final addressController = TextEditingController();
   final passwordController = TextEditingController();
-  Future<void> registerUser() async {
+  final contactNoController = TextEditingController();
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) async {
+  //     try {
+  //       if (Hive.isBoxOpen(HiveTableConstant.userTable)) {
+  //         final box = Hive.box<AuthHiveModel>(HiveTableConstant.userTable);
+  //         await box.clear();
+  //       } else {
+  //         try {
+  //           await Hive.openBox<AuthHiveModel>(HiveTableConstant.userTable);
+  //         } catch (_) {}
+
+  //         final box = Hive.box<AuthHiveModel>(HiveTableConstant.userTable);
+  //         await box.clear();
+  //       }
+  //     } catch (e) {
+  //       debugPrint("Error clearing user box: $e");
+  //     }
+  //   });
+  // }
+
+
+  Future<void> _handleSignup() async {
+    // Validate form
+    if (!_formKey.currentState!.validate()) return;
+
+    final password = passwordController.text.trim();
+
     await ref
         .read(authViewModelProvider.notifier)
         .register(
-          firstName: firstNameController.text,
-          lastName: lastNameController.text,
-          email: emailController.text,
-          address: addressController.text,
-          password: passwordController.text,
+          firstName: firstNameController.text.trim(),
+          lastName: lastNameController.text.trim(),
+          email: emailController.text.trim(),
+          address: addressController.text.trim(),
+          password: password,
+          phoneNumber: contactNoController.text.trim().isEmpty ? null : contactNoController.text.trim(),
+          batchId: "",
         );
   }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
-    ref.listen<AuthState>(authViewModelProvider, (preious, next){
-      if(next.status == AuthStatus.authenticated){
+
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+     if (next.status == AuthStatus.error && next.errorMessage != null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Registration Successful")),
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else if (next.status == AuthStatus.registered) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Registration Successful. Please login."),
+            backgroundColor: Colors.green,
+          ),
         );
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const LoginScreen()),
-        );
-    } else if (next.status == AuthStatus.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(next.errorMessage ?? "Registration Failed")),
         );
       }
     });
@@ -75,16 +116,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             ),
             const SizedBox(height: 20),
             Form(
+              key: _formKey,
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
-                  children: [
+                  children: [ 
                     Row(
                       children: [
                         Expanded(
                           child: MyTextField(
                             controller: firstNameController,
-                            isFocused: isAddressFoucused,
+                            isFocused: isFirstNameFocused,
                             label: "First name",
                             hint: "First name !",
                             validator: (value) => value!.isEmpty
@@ -127,7 +169,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       prefixIcon: Icons.mail,
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) =>
-                          value!.isEmpty ? "Please enter your email" : null,
+                          value!.trim().isEmpty ? "Please enter your email" : null,
                       onChanged: (value) {
                         setState(() {
                           isEmailFocused = true;
@@ -139,13 +181,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     const SizedBox(height: 15),
 
                     MyTextField(
-                      controller: addressController,
+                      controller: contactNoController,
                       isFocused: isContactFocused,
                       label: "Contact no. ",
                       hint: "enter your contact no.",
                       prefixIcon: Icons.phone,
-                      keyboardType: TextInputType.number,
-                      validator: (value) => value!.isEmpty
+                      keyboardType: TextInputType.phone,
+                      validator: (value) => value!.trim().isEmpty
                           ? "Please enter your contact no. "
                           : null,
                       onChanged: (value) {
@@ -158,13 +200,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                     const SizedBox(height: 15),
 
                     MyTextField(
-                      controller: passwordController,
+                      controller: addressController,
                       isFocused: isAddressFoucused,
                       label: "Address",
-                      hint: "enter you address",
+                      hint: "enter your address",
                       prefixIcon: Icons.map,
-                      validator: (value) => value!.isEmpty
-                          ? "Please enter your contact no. "
+                      validator: (value) => value!.trim().isEmpty
+                          ? "Please enter your address"
                           : null,
                       onChanged: (value) {
                         setState(() {
@@ -183,7 +225,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                       prefixIcon: Icons.password,
                       obscureText: true,
                       validator: (value) =>
-                          value!.isEmpty ? "Please enter password" : null,
+                          value!.trim().isEmpty ? "Please enter password" : null,
                       onChanged: (value) {
                         setState(() {
                           isPasswordFocused = true;
@@ -196,7 +238,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             ),
             const SizedBox(height: 30),
 
-            MyButton(text: "Register", onPressed: registerUser),
+            MyButton(
+              text: authState.status == AuthStatus.loading ? "Registering..." : "Register",
+              onPressed: authState.status == AuthStatus.loading ? () {} : _handleSignup,
+            ),
 
             const SizedBox(height: 10),
 

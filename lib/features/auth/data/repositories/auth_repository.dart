@@ -23,15 +23,35 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<Either<Failure, bool>> register(AuthEntity user) async {
     try {
+      // Normalize email (trim + lowercase) to avoid duplicates caused by case/spacing
+      final normalizedEmail = user.email.trim().toLowerCase();
+
+      if (normalizedEmail.isEmpty) {
+        return const Left(
+          LocalDatabaseFailure(message: "Email is required"),
+        );
+      }
+
       // Check if email already exists
-      final existingUser = await _authDataSource.getUserByEmail(user.email);
+      final existingUser = await _authDataSource.getUserByEmail(normalizedEmail);
       if (existingUser != null) {
         return const Left(
           LocalDatabaseFailure(message: "Email already registered"),
         );
       }
 
-      final authModel = AuthHiveModel.fromEntity(user);
+      // Create a normalized AuthEntity to store
+      final normalizedUser = AuthEntity(
+        authId: user.authId,
+        firstName: user.firstName.trim(),
+        lastName: user.lastName.trim(),
+        email: normalizedEmail,
+        phoneNumber: user.phoneNumber?.trim(),
+        address: user.address.trim(),
+        password: user.password?.trim(),
+      );
+
+      final authModel = AuthHiveModel.fromEntity(normalizedUser);
       final result = await _authDataSource.register(authModel);
 
       if (result) {
@@ -50,7 +70,16 @@ class AuthRepository implements IAuthRepository {
     String password,
   ) async {
     try {
-      final model = await _authDataSource.login(email, password);
+      final normalizedEmail = email.trim().toLowerCase();
+      final normalizedPassword = password.trim();
+
+      if (normalizedEmail.isEmpty || normalizedPassword.isEmpty) {
+        return const Left(
+          LocalDatabaseFailure(message: "Email and password are required"),
+        );
+      }
+
+      final model = await _authDataSource.login(normalizedEmail, normalizedPassword);
       if (model != null) {
         final entity = model.toEntity();
         return Right(entity);

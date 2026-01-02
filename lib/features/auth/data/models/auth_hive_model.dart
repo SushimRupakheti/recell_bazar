@@ -42,7 +42,7 @@ class AuthHiveModel extends HiveObject{
     this.phoneNumber,
     required this.address,
     this.password,
-  }) : authId = authId ?? const Uuid().v4();
+  }) : authId = authId ?? Uuid().v4();
 
   // To Entity
   AuthEntity toEntity({AuthEntity? batch}) {

@@ -1,21 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/screens/dashboard.dart';
 import 'package:recell_bazar/features/auth/presentation/pages/signup_screen.dart';
 import 'package:recell_bazar/core/widgets/my_button.dart';
 import 'package:recell_bazar/core/widgets/mytextfeild.dart';
+import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
+import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   bool isEmailFocused = false;
   bool isPasswordFocused = false;
+
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+void initState() {
+  super.initState();
+} 
+
+  Future<void> loginUser() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    await ref.read(authViewModelProvider.notifier).login(
+          email: emailController.text.trim().toLowerCase(),
+          password: passwordController.text.trim(),
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authViewModelProvider);
+
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      if (next.status == AuthStatus.error && next.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.errorMessage!),
+            backgroundColor: Colors.red,
+          ),
+        );
+      } else if (next.status == AuthStatus.authenticated) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const Dashboard(),
+          ),
+        );
+      }
+    });
+
     final isTablet = MediaQuery.of(context).size.width >= 600;
 
     return Scaffold(
@@ -24,7 +67,6 @@ class _LoginScreenState extends State<LoginScreen> {
           constraints: const BoxConstraints(maxWidth: 420),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 SizedBox(height: isTablet ? 60 : 120),
 
@@ -46,66 +88,75 @@ class _LoginScreenState extends State<LoginScreen> {
 
                 const SizedBox(height: 20),
 
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      MyTextField(
-                        isFocused: isEmailFocused,
-                        label: "Email",
-                        hint: "Enter your email",
-                        prefixIcon: Icons.mail,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter email";
-                          }
-                          return null;
-                        },
-                        keyboardType: TextInputType.emailAddress,
-                        onChanged: (_) {
-                          setState(() => isEmailFocused = true);
-                        },
-                      ),
+                Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      children: [
+                        MyTextField(
+                          controller: emailController,
+                          isFocused: isEmailFocused,
+                          label: "Email",
+                          hint: "Enter your email",
+                          prefixIcon: Icons.mail,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (v) {
+                            final tv = v!.trim();
+                            if (tv.isEmpty) return "Email is required";
+                            if (!RegExp(
+                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                .hasMatch(tv)) {
+                              return "Enter valid email";
+                            }
+                            return null;
+                          },
+                          onChanged: (_) =>
+                              setState(() => isEmailFocused = true),
+                        ),
 
-                      const SizedBox(height: 15),
+                        const SizedBox(height: 15),
 
-                      MyTextField(
-                        isFocused: isPasswordFocused,
-                        label: "Password",
-                        hint: "Enter your password",
-                        prefixIcon: Icons.password,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Please enter password";
-                          }
-                          return null;
-                        },
-                        obscureText: true,
-                        onChanged: (_) {
-                          setState(() => isPasswordFocused = true);
-                        },
-                      ),
-                    ],
+                        MyTextField(
+                          controller: passwordController,
+                          isFocused: isPasswordFocused,
+                          label: "Password",
+                          hint: "Enter your password",
+                          prefixIcon: Icons.lock,
+                          obscureText: true,
+                          validator: (v) {
+                            final tv = v!.trim();
+                            if (tv.isEmpty) return "Password is required";
+                            if (tv.length < 6) {
+                              return "Minimum 6 characters";
+                            }
+                            return null;
+                          },
+                          onChanged: (_) =>
+                              setState(() => isPasswordFocused = true),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 40),
 
                 MyButton(
-                  text: "Login",
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const Dashboard()),
-                    );
-                  },
+                  text: authState.status == AuthStatus.loading
+                      ? "Logging in..."
+                      : "Login",
+                onPressed: authState.status == AuthStatus.loading ? () {} : () => loginUser(),
+
                 ),
 
                 TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const SignupScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const SignupScreen(),
+                      ),
                     );
                   },
                   child: const Text("Don't have an Account..?"),
