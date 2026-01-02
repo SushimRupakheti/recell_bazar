@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recell_bazar/app.dart';
+import 'package:recell_bazar/app/app.dart';
 
 
 void main() {
