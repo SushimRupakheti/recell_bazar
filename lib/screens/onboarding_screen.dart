@@ -62,7 +62,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     MaterialPageRoute(builder: (_) => const LoginScreen()),
                   );
                 },
-                child: const Text("Skip"),
+                child: const Text("Skip",style: TextStyle(
+                  fontFamily: "Montserrat-SemiBold",
+                ),),
               ),
             ),
 
@@ -89,6 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         pages[index]["title"]!,
                         style: const TextStyle(
                           fontSize: 32,
+                          fontFamily: "Montserrat-Bold",
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF0B7C7C),
                         ),

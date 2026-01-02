@@ -33,7 +33,7 @@ class _SignupScreenState extends State<SignupScreen> {
               style: TextStyle(
                 fontSize: 45,
                 color: Color(0xFF0B7C7C),
-                fontWeight: FontWeight.bold,
+                fontFamily: "Montserrat-Bold",
               ),
             ),
             const SizedBox(height: 20),
@@ -160,8 +160,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 foregroundColor: const Color(0xFF0B7C7C), // text color
               ),
               child: const Text(
-                "Already have an Account?",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                "Already have an Account..?",
+                style: TextStyle(fontSize: 16, fontFamily: "Montserrat-Regular"),
               ),
             ),
           ],
