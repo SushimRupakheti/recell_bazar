@@ -58,7 +58,7 @@ class RegisterUsecase
       email: params.email,
       address: params.address,
       password: params.password,
-      phoneNumber: params.phoneNumber,
+      contactNo: params.phoneNumber,
     );
 
     return _authRepository.register(authEntity);

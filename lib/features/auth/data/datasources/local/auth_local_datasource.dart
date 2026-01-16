@@ -1,19 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/core/services/hive/hive_service.dart';
+import 'package:recell_bazar/core/services/storage/user_session_service.dart';
 import 'package:recell_bazar/features/auth/data/datasources/auth_datasource.dart';
 import 'package:recell_bazar/features/auth/data/models/auth_hive_model.dart';
 
 
 final authLocalDatasourceProvider = Provider<AuthLocalDatasource>((ref) {
   final hiveService = ref.watch(hiveServiceProvider);
-  return AuthLocalDatasource(hiveService: hiveService);
+  final userSessionService = ref.read(userSessionServiceProvider);
+  
+  return AuthLocalDatasource(hiveService: hiveService, userSessionServices: userSessionService);
 });
 
-class AuthLocalDatasource implements IAuthDataSource {
+class AuthLocalDatasource implements IAuthLocalDataSource {
   final HiveService _hiveService;
+  final UserSessionServices _userSessionServices;
 
-  AuthLocalDatasource({required HiveService hiveService})
-    : _hiveService = hiveService;
+
+  AuthLocalDatasource({required HiveService hiveService,required UserSessionServices userSessionServices})
+    : _hiveService = hiveService,
+    _userSessionServices= userSessionServices;
 
   @override
   Future<bool> register(AuthHiveModel user) async {
@@ -29,6 +35,9 @@ class AuthLocalDatasource implements IAuthDataSource {
   Future<AuthHiveModel?> login(String email, String password) async {
     try {
       final user = _hiveService.login(email, password);
+      if(user != null){
+        await _userSessionServices.saveUserSession(userId: user.authId!, email: user.email, firstName: user.firstName, lastName: user.lastName);
+      }
       return Future.value(user);
     } catch (e) {
       return Future.value(null);

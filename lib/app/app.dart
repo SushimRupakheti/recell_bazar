@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recell_bazar/screens/splash_screen.dart';
+import 'package:recell_bazar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:recell_bazar/app/theme/theme_data.dart';
 
 class App extends StatelessWidget {
