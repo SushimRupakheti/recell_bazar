@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+//font used in this app is Monserrat family
+
 ThemeData getApplicationTheme() {
 
   return ThemeData(

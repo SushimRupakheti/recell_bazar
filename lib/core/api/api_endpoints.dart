@@ -17,7 +17,13 @@ class ApiEndpoints {
 
 
   // ============ User Endpoints ============
+
+
+  //auth endpoints
   static const String auth = '/auth';
   static const String register = '/auth/register';
   static const String login = '/auth/login';
+
+
+  //other endpoints
 }

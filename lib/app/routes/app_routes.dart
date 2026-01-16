@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 /// Simple navigation utility class
+/// use this nav to enter another screen
+/// 
+
 class AppRoutes {
   AppRoutes._();
 

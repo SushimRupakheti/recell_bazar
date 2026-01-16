@@ -18,7 +18,7 @@ class NetworkInfo implements INetworkInfo{
   NetworkInfo(this._connectivity);
 
   @override
-  // TODO: implement isConnected
+  //to check the connectivity
    Future<bool> get isConnected async{
     final result = await _connectivity.checkConnectivity();
     if(result.contains(ConnectivityResult.none)){
