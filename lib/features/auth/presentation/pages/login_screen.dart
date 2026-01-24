@@ -49,16 +49,28 @@ void initState() {
             backgroundColor: Colors.red,
           ),
         );
-      } else if (next.status == AuthStatus.authenticated) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => const Dashboard(),
-          ),
-        );
-      }
-    });
+      }   else if (next.status == AuthStatus.authenticated) {
+    // ✅ Success SnackBar
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Login successful"),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
+      ),
+    );
 
+    // ⏳ Small delay so user sees the snackbar
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (!context.mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const Dashboard(),
+        ),
+      );
+    });
+  }
+});
     final isTablet = MediaQuery.of(context).size.width >= 600;
 
     return Scaffold(

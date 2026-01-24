@@ -6,7 +6,8 @@ import 'package:uuid/uuid.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 
-
+//yo code le chai automated file generate garxa 
+//for the generation- use the command(flutter pub run build_runner build --delete-conflicting-outputs)
 part 'auth_hive_model.g.dart';
 
 @HiveType(typeId: HiveTableConstant.userTypeId)
