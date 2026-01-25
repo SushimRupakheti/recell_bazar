@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lost_n_found/core/api/api_client.dart';
-import 'package:lost_n_found/core/api/api_endpoints.dart';
-import 'package:lost_n_found/core/services/storage/token_service.dart';
-import 'package:lost_n_found/features/item/data/datasources/item_datasource.dart';
-import 'package:lost_n_found/features/item/data/models/item_api_model.dart';
+import 'package:recell_bazar/core/api/api_client.dart';
+import 'package:recell_bazar/core/api/api_endpoints.dart';
+import 'package:recell_bazar/core/services/storage/token_service.dart';
+import 'package:recell_bazar/features/item/data/datasources/item_datasource.dart';
+import 'package:recell_bazar/features/item/data/models/item_api_model.dart';
+
 
 final itemRemoteDatasourceProvider = Provider<IItemRemoteDataSource>((ref) {
   return ItemRemoteDatasource(
@@ -94,25 +95,9 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
     return data.map((json) => ItemApiModel.fromJson(json)).toList();
   }
 
-  @override
-  Future<List<ItemApiModel>> getLostItems() async {
-    final response = await _apiClient.get(
-      ApiEndpoints.items,
-      queryParameters: {'type': 'lost'},
-    );
-    final data = response.data['data'] as List;
-    return data.map((json) => ItemApiModel.fromJson(json)).toList();
-  }
 
-  @override
-  Future<List<ItemApiModel>> getFoundItems() async {
-    final response = await _apiClient.get(
-      ApiEndpoints.items,
-      queryParameters: {'type': 'found'},
-    );
-    final data = response.data['data'] as List;
-    return data.map((json) => ItemApiModel.fromJson(json)).toList();
-  }
+
+
 
   @override
   Future<List<ItemApiModel>> getItemsByCategory(String categoryId) async {
@@ -143,5 +128,47 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return true;
+  }
+
+  @override
+  Future<bool> addToCart(String itemId) {
+    // TODO: implement addToCart
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> clearCart() {
+    // TODO: implement clearCart
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<ItemApiModel>> getCartItems() {
+    // TODO: implement getCartItems
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<ItemApiModel>> getRelatedItems(String itemId) {
+    // TODO: implement getRelatedItems
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> markItemAsSold(bool isSold, String itemId) {
+    // TODO: implement markItemAsSold
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool> removeFromCart(String itemId) {
+    // TODO: implement removeFromCart
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<ItemApiModel>> searchItems(String model, {String? categoryId}) {
+    // TODO: implement searchItems
+    throw UnimplementedError();
   }
 }

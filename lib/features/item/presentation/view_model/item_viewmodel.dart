@@ -336,21 +336,48 @@ Future<void> updateItem({
 
   // ---------------- MARK SOLD ----------------
 
-  Future<void> markItemAsSold(String itemId) async {
-    state = state.copyWith(status: ItemStatus.loading);
+Future<void> markItemAsSold(String itemId) async {
+  state = state.copyWith(status: ItemStatus.loading);
 
-    final result = await _markItemAsSoldUsecase(itemId);
+  final result = await _markItemAsSoldUsecase(itemId);
 
-    result.fold(
-      (failure) => state = state.copyWith(
-        status: ItemStatus.error,
-        errorMessage: failure.message,
-      ),
-      (success) => state = state.copyWith(
+  result.fold(
+    (failure) => state = state.copyWith(
+      status: ItemStatus.error,
+      errorMessage: failure.message,
+    ),
+    (success) {
+      // Update the selectedItem if it matches
+      final updatedSelectedItem = state.selectedItem?.itemId == itemId
+          ? state.selectedItem!.copyWith(
+              extraAnswers: {
+                ...?state.selectedItem!.extraAnswers,
+                'isSold': true,
+              },
+            )
+          : state.selectedItem;
+
+      // Update items list as well
+      final updatedItems = state.items.map((item) {
+        if (item.itemId == itemId) {
+          return item.copyWith(
+            extraAnswers: {
+              ...?item.extraAnswers,
+              'isSold': true,
+            },
+          );
+        }
+        return item;
+      }).toList();
+
+      state = state.copyWith(
         status: ItemStatus.updated,
-      ),
-    );
-  }
+        selectedItem: updatedSelectedItem,
+        items: updatedItems,
+      );
+    },
+  );
+}
 
   // ---------------- CART ----------------
 

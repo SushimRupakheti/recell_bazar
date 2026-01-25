@@ -4,6 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:recell_bazar/core/constants/hive_table_constant.dart';
 import 'package:recell_bazar/features/auth/data/models/auth_hive_model.dart';
+import 'package:recell_bazar/features/item/data/models/item_hive_model.dart';
 import 'package:uuid/uuid.dart';
 
 
@@ -31,6 +32,8 @@ class HiveService {
   /// Open all required boxes
   Future<void> _openBoxes() async {
     await Hive.openBox<AuthHiveModel>(HiveTableConstant.userTable);
+    await Hive.openBox<ItemHiveModel>(HiveTableConstant.itemTable);
+
   }
 
   /// Perform a one-time cleanup for empty-email users (debug builds only)
@@ -151,4 +154,55 @@ class HiveService {
     debugPrint('HiveService.doesEmailExist: email=$lookupEmail exists=$exists');
     return exists;
   }
+
+/// Open boxes in _openBoxes
+
+
+/// Internal getter for item box
+Box<ItemHiveModel> get _itemBox =>
+    Hive.box<ItemHiveModel>(HiveTableConstant.itemTable);
+
+Future<void> createItem(ItemHiveModel item) async {
+  await _itemBox.put(item.itemId, item);
+}
+
+/// Get an item by ID
+Future<ItemHiveModel?> getItemById(String itemId) async {
+  return _itemBox.get(itemId);
+}
+
+/// Update an item
+Future<void> updateItem(ItemHiveModel item) async {
+  await _itemBox.put(item.itemId, item);
+}
+
+/// Delete an item
+Future<void> deleteItem(String itemId) async {
+  await _itemBox.delete(itemId);
+}
+
+/// Get all items
+Future<List<ItemHiveModel>> getAllItems() async {
+  return _itemBox.values.toList();
+}
+
+/// Get items by user
+Future<List<ItemHiveModel>> getItemsByUser(String userId) async {
+  return _itemBox.values.where((item) => item.sellerId == userId).toList();
+}
+
+/// Get items by category
+Future<List<ItemHiveModel>> getItemsByCategory(String categoryId) async {
+  return _itemBox.values.where((item) => item.category == categoryId).toList();
+}
+
+/// Get lost items (example: based on status)
+Future<List<ItemHiveModel>> getLostItems() async {
+  return _itemBox.values.where((item) => item.extraAnswers?['status'] == 'lost').toList();
+}
+
+/// Get found items
+Future<List<ItemHiveModel>> getFoundItems() async {
+  return _itemBox.values.where((item) => item.extraAnswers?['status'] == 'found').toList();
+}
 }
