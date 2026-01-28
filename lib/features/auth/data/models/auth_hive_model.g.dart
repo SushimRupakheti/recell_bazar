@@ -24,6 +24,7 @@ class AuthHiveModelAdapter extends TypeAdapter<AuthHiveModel> {
       phoneNumber: fields[4] as String?,
       address: fields[5] as String,
       password: fields[6] as String?,
+      profileImage: fields[7] as String?,
     );
   }
 
@@ -44,7 +45,9 @@ class AuthHiveModelAdapter extends TypeAdapter<AuthHiveModel> {
       ..writeByte(5)
       ..write(obj.address)
       ..writeByte(6)
-      ..write(obj.password);
+      ..write(obj.password)
+      ..writeByte(7)
+      ..write(obj.profileImage);
   }
 
   @override

@@ -154,6 +154,27 @@ class HiveService {
     debugPrint('HiveService.doesEmailExist: email=$lookupEmail exists=$exists');
     return exists;
   }
+  /// Upload profile image path for user
+  Future<bool> uploadProfileImage(String authId, String imagePath) async {  
+    final user = _authBox.get(authId);
+    if (user != null) {
+      final updatedUser = AuthHiveModel(
+        authId: user.authId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        address: user.address,
+        password: user.password,
+        profileImage: imagePath,
+      );
+      await _authBox.put(authId, updatedUser);
+      debugPrint('HiveService.uploadProfileImage: updated profile image for authId=$authId');
+      return true;
+    }
+    debugPrint('HiveService.uploadProfileImage: user not found for authId=$authId');
+    return false;
+  }
 
 /// Open boxes in _openBoxes
 

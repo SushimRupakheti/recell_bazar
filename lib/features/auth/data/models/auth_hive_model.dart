@@ -34,6 +34,9 @@ class AuthHiveModel extends HiveObject{
   @HiveField(6)
   final String? password;
 
+  @HiveField(7)
+  final String? profileImage;
+
 
   AuthHiveModel({
     String? authId,
@@ -43,6 +46,7 @@ class AuthHiveModel extends HiveObject{
     this.phoneNumber,
     required this.address,
     this.password,
+    this.profileImage,
   }) : authId = authId ?? Uuid().v4();
 
   // To Entity

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,11 +125,30 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<Either<Failure, AuthEntity>> getCurrentUser(String authId) async {
     try {
+      // Try local first
       final model = await _authDataSource.getCurrentUser(authId);
       if (model != null) {
         final entity = model.toEntity();
         return Right(entity);
       }
+
+      // If not found locally, and we have network, try remote and sync locally
+      if (await _networkInfo.isConnected) {
+        try {
+          final apiModel = await _authRemoteDataSource.getUserById(authId);
+          if (apiModel != null) {
+            final entity = apiModel.toEntity();
+            // Save to local hive for future fast access
+            final hiveModel = AuthHiveModel.fromEntity(entity);
+            await _authDataSource.register(hiveModel);
+            return Right(entity);
+          }
+          return const Left(LocalDatabaseFailure(message: "No user logged in"));
+        } catch (e) {
+          return Left(LocalDatabaseFailure(message: e.toString()));
+        }
+      }
+
       return const Left(LocalDatabaseFailure(message: "No user logged in"));
     } catch (e) {
       return Left(LocalDatabaseFailure(message: e.toString()));
@@ -146,4 +167,47 @@ class AuthRepository implements IAuthRepository {
       return Left(LocalDatabaseFailure(message: e.toString()));
     }
   }
+
+
+@override
+Future<Either<Failure, AuthEntity>> updateProfilePicture({
+  required String authId,
+  required File imageFile,
+}) async {
+  if (await _networkInfo.isConnected) {
+    try {
+      
+      // Upload image to backend and get updated API model
+      final updatedApiModel =
+          await _authRemoteDataSource.uploadProfilePicture(authId, imageFile);
+
+      // Check for null
+      if (updatedApiModel == null) {
+        return const Left(ApiFailure(message: "Image upload failed"));
+      }
+
+      // Convert API model to entity
+      final updatedEntity = updatedApiModel.toEntity();
+
+      // Update Hive locally
+      final hiveModel = AuthHiveModel.fromEntity(updatedEntity);
+      await _authDataSource.updateUser(hiveModel);
+
+      // Return updated user
+      return Right(updatedEntity);
+    } on DioException catch (e) {
+      return Left(
+        ApiFailure(
+          message: e.response?.data['message'] ?? 'Image upload failed',
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Left(LocalDatabaseFailure(message: e.toString()));
+    }
+  } else {
+    return const Left(LocalDatabaseFailure(message: "No internet connection"));
+  }
+}
+
 }

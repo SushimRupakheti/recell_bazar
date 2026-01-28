@@ -24,8 +24,10 @@ class NetworkInfo implements INetworkInfo{
     if(result.contains(ConnectivityResult.none)){
       return false;
     }
-    debugPrint("Have internet ${_sachhikaiInternetChaKiNai().toString()}");
-  return _sachhikaiInternetChaKiNai();
+    // actually await the detailed internet check so we log the boolean
+    final hasInternet = await _sachhikaiInternetChaKiNai();
+    debugPrint("Have internet $hasInternet");
+    return hasInternet;
   }
 
   Future<bool> _sachhikaiInternetChaKiNai() async{

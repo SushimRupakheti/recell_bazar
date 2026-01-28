@@ -59,6 +59,7 @@ class RegisterUsecase
       address: params.address,
       password: params.password,
       contactNo: params.phoneNumber,
+      profileImage: null,
     );
 
     return _authRepository.register(authEntity);
