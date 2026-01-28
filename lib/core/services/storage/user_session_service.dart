@@ -10,9 +10,13 @@ final sharedPreferencesProvider = Provider<SharedPreferences> ((ref){
   throw UnimplementedError("shared prefs lai hamle main.dart ma initialize garinxa,so tmi dhukka basa sir dinu hunxa hai");
 });
 
-final userSessionServiceProvider =Provider <UserSessionServices>((ref) {
-  return UserSessionServices(prefs: ref.read(sharedPreferencesProvider));
+final userSessionServiceProvider = Provider<UserSessionServices>((ref) {
+  final prefs = ref.read(sharedPreferencesProvider); // SharedPreferences directly
+  return UserSessionServices(prefs: prefs);
 });
+
+
+
 
 class UserSessionServices{
   final SharedPreferences _prefs;
@@ -25,8 +29,9 @@ class UserSessionServices{
   static const String _keyUserEmail='user_email';
   static const String _keyUserFirstName='user_first_name';
   static const String _keyUserLastName='user_last_name';
-  static const String _keyUserPhoneNumber='user_phone_number';
+  static const String _keyUserContactNo='user_phone_number';
   static const String _keyUserAddress='user_address';
+  static const String _keyUserProfileImage='user_profile_image';
 
 // Store user session data
 
@@ -35,8 +40,9 @@ required String userId,
 required String email,
 required String firstName,
 required String lastName,
-String? phoneNumber,
+String? contactNo,
 String? address,
+String? profileImage,
 
 }) async {
 await _prefs.setBool(_keysIsLoggedIn, true);
@@ -44,13 +50,23 @@ await _prefs.setString(_keyUserId, userId);
 await _prefs.setString(_keyUserEmail, email);
 await _prefs.setString(_keyUserFirstName, firstName);
 await _prefs.setString(_keyUserLastName, lastName);
+  // For optional fields, overwrite or remove the key to avoid stale data
+  if (profileImage != null) {
+    await _prefs.setString(_keyUserProfileImage, profileImage);
+  } else {
+    await _prefs.remove(_keyUserProfileImage);
+  }
 
-  if (phoneNumber != null) {
-    await _prefs.setString(_keyUserPhoneNumber, phoneNumber);
+  if (contactNo != null) {
+    await _prefs.setString(_keyUserContactNo, contactNo);
+  } else {
+    await _prefs.remove(_keyUserContactNo);
   }
 
   if (address != null) {
     await _prefs.setString(_keyUserAddress, address);
+  } else {
+    await _prefs.remove(_keyUserAddress);
   }
 
 
@@ -62,8 +78,10 @@ await _prefs.setString(_keyUserLastName, lastName);
     await _prefs.remove(_keyUserEmail);
     await _prefs.remove(_keyUserFirstName);
     await _prefs.remove(_keyUserLastName);
-    await _prefs.remove(_keyUserPhoneNumber);
+    await _prefs.remove(_keyUserContactNo);
     await _prefs.remove(_keyUserAddress);
+    await _prefs.remove(_keyUserProfileImage);
+
  
   }
 
@@ -87,14 +105,20 @@ await _prefs.setString(_keyUserLastName, lastName);
   }
 
   String? getUserPhoneNumber() {
-  return _prefs.getString(_keyUserPhoneNumber);
+  return _prefs.getString(_keyUserContactNo);
   }
 
   String? getUserAddress() {
   return _prefs.getString(_keyUserAddress);
   }
 
+  String? getUserProfileImage() {
+  return _prefs.getString(_keyUserProfileImage);
+  }
+Future<void> saveProfileImage(String imageUrl) async {
+  await _prefs.setString(_keyUserProfileImage, imageUrl);
+}
 
-  
+
 
 }

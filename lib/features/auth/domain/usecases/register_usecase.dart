@@ -14,7 +14,7 @@ class RegisterUsecaseParams extends Equatable {
   final String email;
   final String address;
   final String password;
-  final String? phoneNumber;
+  final String contactNo;
 
 
   const RegisterUsecaseParams({
@@ -23,7 +23,7 @@ class RegisterUsecaseParams extends Equatable {
     required this.email,
     required this.address,
     required this.password,
-    this.phoneNumber,
+    required this.contactNo,
 
   });
 
@@ -34,7 +34,7 @@ class RegisterUsecaseParams extends Equatable {
     email,
     address,
     password,
-    phoneNumber,
+    contactNo,
   ];
 }
 
@@ -58,7 +58,8 @@ class RegisterUsecase
       email: params.email,
       address: params.address,
       password: params.password,
-      contactNo: params.phoneNumber,
+      contactNo: params.contactNo,
+      profileImage: null,
     );
 
     return _authRepository.register(authEntity);

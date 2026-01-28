@@ -1,11 +1,12 @@
 import 'package:hive/hive.dart';
+import 'package:recell_bazar/core/constants/hive_table_constant.dart';
 import 'package:uuid/uuid.dart';
+import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 
 part 'item_hive_model.g.dart';
 
-@HiveType(typeId: HiveTableConstant.iteTypeId)
+@HiveType(typeId: HiveTableConstant.itemTypeId)
 class ItemHiveModel extends HiveObject {
-
   @HiveField(0)
   final String itemId;
 
@@ -13,45 +14,57 @@ class ItemHiveModel extends HiveObject {
   final String sellerId;
 
   @HiveField(2)
-  final List<String> photos;
+  final String seller; // optional, from API if needed
 
   @HiveField(3)
-  final String category; // smartphone
+  final List<String> photos;
 
   @HiveField(4)
-  final String model;
+  final String category;
 
   @HiveField(5)
-  final double price;
+  final String model;
 
   @HiveField(6)
-  final int year;
+  final double price;
 
   @HiveField(7)
-  final String description;
+  final int year;
 
   @HiveField(8)
-  final String storage;
+  final String description;
 
   @HiveField(9)
-  final String screenCondition;
+  final String storage;
 
   @HiveField(10)
-  final int batteryHealth;
+  final String screenCondition;
 
   @HiveField(11)
-  final String cameraQuality;
+  final int batteryHealth;
 
   @HiveField(12)
-  final bool hasCharger;
+  final String cameraQuality;
 
   @HiveField(13)
+  final bool hasCharger;
+
+  @HiveField(14)
   final Map<String, dynamic>? extraAnswers;
 
+  @HiveField(15)
+  final DateTime? createdAt;
+
+  @HiveField(16)
+  final DateTime? updatedAt;
+
+  @HiveField(17)
+  final bool isSold;
 
   ItemHiveModel({
     String? itemId,
     required this.sellerId,
+    this.seller = '',
     required this.photos,
     required this.category,
     required this.model,
@@ -64,8 +77,53 @@ class ItemHiveModel extends HiveObject {
     required this.cameraQuality,
     required this.hasCharger,
     this.extraAnswers,
-  }) : itemId = itemId ?? Uuid().v4();
+    required this.isSold,
+    this.createdAt,
+    this.updatedAt,
+  }) : itemId = itemId ?? const Uuid().v4();
 
+    ItemHiveModel copyWith({
+        String? itemId,
+        String? sellerId,
+        String? seller,
+        List<String>? photos,
+        String? category,
+        String? model,
+        double? price,
+        int? year,
+        String? description,
+        String? storage,
+        String? screenCondition,
+        int? batteryHealth,
+        String? cameraQuality,
+        bool? hasCharger,
+        Map<String, dynamic>? extraAnswers,
+        bool isSold = false,
+        DateTime? createdAt,
+        DateTime? updatedAt,
+      }){
+        return ItemHiveModel(
+          itemId: itemId ?? this.itemId,
+          sellerId: sellerId ?? this.sellerId,
+          seller: seller ?? this.seller,
+          photos: photos ?? this.photos,
+          category: category ?? this.category,
+          model: model ?? this.model,
+          price: price ?? this.price,
+          year: year ?? this.year,
+          description: description ?? this.description,
+          storage: storage ?? this.storage,
+          screenCondition: screenCondition ?? this.screenCondition,
+          batteryHealth: batteryHealth ?? this.batteryHealth,
+          cameraQuality: cameraQuality ?? this.cameraQuality,
+          hasCharger: hasCharger ?? this.hasCharger,
+          extraAnswers: extraAnswers ?? this.extraAnswers,
+          isSold: isSold,
+          createdAt: createdAt ?? this.createdAt,
+          updatedAt: updatedAt ?? this.updatedAt,
+        );
+      }
+  // Convert Hive model to Entity
   ItemEntity toEntity() {
     return ItemEntity(
       itemId: itemId,
@@ -82,13 +140,17 @@ class ItemHiveModel extends HiveObject {
       cameraQuality: cameraQuality,
       hasCharger: hasCharger,
       extraAnswers: extraAnswers,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 
+  // Convert Entity to Hive model
   factory ItemHiveModel.fromEntity(ItemEntity entity) {
     return ItemHiveModel(
       itemId: entity.itemId,
       sellerId: entity.sellerId,
+      seller: '', // optional, can be filled from entity if you add seller name
       photos: entity.photos,
       category: entity.category,
       model: entity.model,
@@ -101,9 +163,12 @@ class ItemHiveModel extends HiveObject {
       cameraQuality: entity.cameraQuality,
       hasCharger: entity.hasCharger,
       extraAnswers: entity.extraAnswers,
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt, isSold: false,
     );
   }
 
+  // Convert list of Hive models to Entity list
   static List<ItemEntity> toEntityList(List<ItemHiveModel> models) {
     return models.map((model) => model.toEntity()).toList();
   }

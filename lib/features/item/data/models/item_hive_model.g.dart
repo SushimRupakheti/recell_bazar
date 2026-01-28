@@ -8,7 +8,7 @@ part of 'item_hive_model.dart';
 
 class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
   @override
-  final int typeId = 2;
+  final int typeId = 0;
 
   @override
   ItemHiveModel read(BinaryReader reader) {
@@ -18,48 +18,63 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
     };
     return ItemHiveModel(
       itemId: fields[0] as String?,
-      reportedBy: fields[1] as String?,
-      claimedBy: fields[2] as String?,
-      category: fields[3] as String?,
-      itemName: fields[4] as String,
-      description: fields[5] as String?,
-      type: fields[6] as String,
-      location: fields[7] as String,
-      media: fields[8] as String?,
-      mediaType: fields[9] as String?,
-      isClaimed: fields[10] as bool?,
-      status: fields[11] as String?,
+      sellerId: fields[1] as String,
+      seller: fields[2] as String,
+      photos: (fields[3] as List).cast<String>(),
+      category: fields[4] as String,
+      model: fields[5] as String,
+      price: fields[6] as double,
+      year: fields[7] as int,
+      description: fields[8] as String,
+      storage: fields[9] as String,
+      screenCondition: fields[10] as String,
+      batteryHealth: fields[11] as int,
+      cameraQuality: fields[12] as String,
+      hasCharger: fields[13] as bool,
+      extraAnswers: (fields[14] as Map?)?.cast<String, dynamic>(),
+      createdAt: fields[15] as DateTime?,
+      updatedAt: fields[16] as DateTime?, isSold: false,
     );
   }
 
   @override
   void write(BinaryWriter writer, ItemHiveModel obj) {
     writer
-      ..writeByte(12)
+      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.itemId)
       ..writeByte(1)
-      ..write(obj.reportedBy)
+      ..write(obj.sellerId)
       ..writeByte(2)
-      ..write(obj.claimedBy)
+      ..write(obj.seller)
       ..writeByte(3)
-      ..write(obj.category)
+      ..write(obj.photos)
       ..writeByte(4)
-      ..write(obj.itemName)
+      ..write(obj.category)
       ..writeByte(5)
-      ..write(obj.description)
+      ..write(obj.model)
       ..writeByte(6)
-      ..write(obj.type)
+      ..write(obj.price)
       ..writeByte(7)
-      ..write(obj.location)
+      ..write(obj.year)
       ..writeByte(8)
-      ..write(obj.media)
+      ..write(obj.description)
       ..writeByte(9)
-      ..write(obj.mediaType)
+      ..write(obj.storage)
       ..writeByte(10)
-      ..write(obj.isClaimed)
+      ..write(obj.screenCondition)
       ..writeByte(11)
-      ..write(obj.status);
+      ..write(obj.batteryHealth)
+      ..writeByte(12)
+      ..write(obj.cameraQuality)
+      ..writeByte(13)
+      ..write(obj.hasCharger)
+      ..writeByte(14)
+      ..write(obj.extraAnswers)
+      ..writeByte(15)
+      ..write(obj.createdAt)
+      ..writeByte(16)
+      ..write(obj.updatedAt);
   }
 
   @override

@@ -19,7 +19,7 @@ class ItemEntity extends Equatable {
 
   // Extra dynamic questions
   final Map<String, dynamic>? extraAnswers;
-
+  final bool isSold;
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -39,8 +39,49 @@ class ItemEntity extends Equatable {
     required this.hasCharger,
     this.extraAnswers,
     this.createdAt,
-    this.updatedAt,
+    this.updatedAt,  
+    this.isSold=false,
   });
+
+  ItemEntity copyWith({
+    String? itemId,
+    String? sellerId,
+    List<String>? photos,
+    String? category,
+    String? model,
+    double? price,
+    int? year,
+    String? description,
+    String? storage,
+    String? screenCondition,
+    int? batteryHealth,
+    String? cameraQuality,
+    bool? hasCharger,
+    Map<String, dynamic>? extraAnswers,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool isSold = false,
+  }) {
+    return ItemEntity(
+      itemId: itemId ?? this.itemId,
+      sellerId: sellerId ?? this.sellerId,
+      photos: photos ?? this.photos,
+      category: category ?? this.category,
+      model: model ?? this.model,
+      price: price ?? this.price,
+      year: year ?? this.year,
+      description: description ?? this.description,
+      storage: storage ?? this.storage,
+      screenCondition: screenCondition ?? this.screenCondition,
+      batteryHealth: batteryHealth ?? this.batteryHealth,
+      cameraQuality: cameraQuality ?? this.cameraQuality,
+      hasCharger: hasCharger ?? this.hasCharger,
+      extraAnswers: extraAnswers ?? this.extraAnswers,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isSold: isSold,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -60,5 +101,6 @@ class ItemEntity extends Equatable {
         extraAnswers,
         createdAt,
         updatedAt,
+        isSold,
       ];
 }

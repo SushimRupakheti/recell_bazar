@@ -2,7 +2,7 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   // Base URL - change this for production
-  // static const String baseUrl = 'http://92.168.31.161:5050/api';
+  // static const String baseUrl = 'http://localhost:5050/api/v1';
   static const String baseUrl = 'http://10.0.2.2:5050/api';
 
 
@@ -25,5 +25,18 @@ class ApiEndpoints {
   static const String login = '/auth/login';
 
 
-  //other endpoints
+  //item endpoints
+  static const String items = '/items';
+  static String itemById(String id) => '/items/$id';
+  static String markAsSold(String id) => '/items/$id/mark-sold';
+  static const String itemUploadPhoto = '/items/upload-photo';
+  static const String itemUploadVideo = '/items/upload-video';
+  static String itemsByCategory(String categoryId) => '/items/category/$categoryId';
+  static String itemsByUser(String userId) => '/items/user/$userId';
+  static String searchItems(String model, {String? categoryId}) =>'/items/search?model=$model${categoryId != null ? '&category=$categoryId' : ''}';
+
+  // User endpoints
+  static String uploadProfilePicture(String userId) => '/users/$userId/profile-picture';
+  static String userById(String id) => '/users/$id';
+
 }

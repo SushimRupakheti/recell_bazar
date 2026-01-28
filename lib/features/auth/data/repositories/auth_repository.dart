@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,11 +125,48 @@ class AuthRepository implements IAuthRepository {
   @override
   Future<Either<Failure, AuthEntity>> getCurrentUser(String authId) async {
     try {
+      // Try local first
       final model = await _authDataSource.getCurrentUser(authId);
       if (model != null) {
+        // If we have network, prefer the remote record to ensure fields
+        // like `profileImage` are up-to-date. If remote fetch fails,
+        // fall back to the local model.
+        if (await _networkInfo.isConnected) {
+          try {
+            final apiModel = await _authRemoteDataSource.getUserById(authId);
+            if (apiModel != null) {
+              final entity = apiModel.toEntity();
+              // Save to local hive for future fast access
+              final hiveModel = AuthHiveModel.fromEntity(entity);
+              await _authDataSource.updateUser(hiveModel);
+              return Right(entity);
+            }
+          } catch (_) {
+            // ignore and fall back to local
+          }
+        }
+
         final entity = model.toEntity();
         return Right(entity);
       }
+
+      // If not found locally, and we have network, try remote and sync locally
+      if (await _networkInfo.isConnected) {
+        try {
+          final apiModel = await _authRemoteDataSource.getUserById(authId);
+          if (apiModel != null) {
+            final entity = apiModel.toEntity();
+            // Save to local hive for future fast access
+            final hiveModel = AuthHiveModel.fromEntity(entity);
+            await _authDataSource.register(hiveModel);
+            return Right(entity);
+          }
+          return const Left(LocalDatabaseFailure(message: "No user logged in"));
+        } catch (e) {
+          return Left(LocalDatabaseFailure(message: e.toString()));
+        }
+      }
+
       return const Left(LocalDatabaseFailure(message: "No user logged in"));
     } catch (e) {
       return Left(LocalDatabaseFailure(message: e.toString()));
@@ -146,4 +185,58 @@ class AuthRepository implements IAuthRepository {
       return Left(LocalDatabaseFailure(message: e.toString()));
     }
   }
+
+
+@override
+Future<Either<Failure, AuthEntity>> updateProfilePicture({
+  required String authId,
+  required File imageFile,
+}) async {
+  if (await _networkInfo.isConnected) {
+    try {
+      
+      // Upload image to backend and get updated API model
+      final updatedApiModel =
+          await _authRemoteDataSource.uploadProfilePicture(authId, imageFile);
+
+      // Check for null
+      if (updatedApiModel == null) {
+        return const Left(ApiFailure(message: "Image upload failed"));
+      }
+
+      // Convert API model to entity
+      final updatedEntity = updatedApiModel.toEntity();
+
+      // Update Hive locally
+      final hiveModel = AuthHiveModel.fromEntity(updatedEntity);
+      await _authDataSource.updateUser(hiveModel);
+
+      // Return updated user
+      return Right(updatedEntity);
+    } on DioException catch (e) {
+      // Defensive handling: backend may return HTML (e.g., 404 page) or a Map.
+      String message = 'Image upload failed';
+      final respData = e.response?.data;
+      if (respData is Map && respData['message'] is String) {
+        message = respData['message'];
+      } else if (e.response?.statusMessage != null) {
+        message = e.response!.statusMessage!;
+      } else if (e.message != null) {
+        message = e.message!;
+      }
+
+      return Left(
+        ApiFailure(
+          message: message,
+          statusCode: e.response?.statusCode,
+        ),
+      );
+    } catch (e) {
+      return Left(LocalDatabaseFailure(message: e.toString()));
+    }
+  } else {
+    return const Left(LocalDatabaseFailure(message: "No internet connection"));
+  }
+}
+
 }

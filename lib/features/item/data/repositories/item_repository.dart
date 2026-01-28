@@ -2,6 +2,15 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recell_bazar/core/error/failure.dart';
+import 'package:recell_bazar/core/services/connectivity/network_info.dart';
+import 'package:recell_bazar/features/item/data/datasources/item_datasource.dart';
+import 'package:recell_bazar/features/item/data/datasources/local/item_local_datasource.dart';
+import 'package:recell_bazar/features/item/data/datasources/remote/item_remote_datasource.dart';
+import 'package:recell_bazar/features/item/data/models/item_api_model.dart';
+import 'package:recell_bazar/features/item/data/models/item_hive_model.dart';
+import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
+import 'package:recell_bazar/features/item/domain/repositories/item_repository.dart';
 
 final itemRepositoryProvider = Provider<IItemRepository>((ref) {
   final localDatasource = ref.read(itemLocalDatasourceProvider);
@@ -23,64 +32,25 @@ class ItemRepository implements IItemRepository {
     required IItemLocalDataSource localDatasource,
     required IItemRemoteDataSource remoteDatasource,
     required NetworkInfo networkInfo,
-  }) : _localDataSource = localDatasource,
-       _remoteDataSource = remoteDatasource,
-       _networkInfo = networkInfo;
+  })  : _localDataSource = localDatasource,
+        _remoteDataSource = remoteDatasource,
+        _networkInfo = networkInfo;
 
-  @override
-  Future<Either<Failure, bool>> createItem(ItemEntity item) async {
-    if (await _networkInfo.isConnected) {
-      try {
-        final itemApiModel = ItemApiModel.fromEntity(item);
-        await _remoteDataSource.createItem(itemApiModel);
-        return const Right(true);
-      } catch (e) {
-        return Left(ApiFailure(message: e.toString()));
-      }
-    } else {
-      return const Left(NetworkFailure(message: 'No internet connection'));
-    }
-  }
-
-  @override
-  Future<Either<Failure, bool>> deleteItem(String itemId) async {
-    if (await _networkInfo.isConnected) {
-      try {
-        await _remoteDataSource.deleteItem(itemId);
-        return const Right(true);
-      } catch (e) {
-        return Left(ApiFailure(message: e.toString()));
-      }
-    } else {
-      try {
-        final result = await _localDataSource.deleteItem(itemId);
-        if (result) {
-          return const Right(true);
-        }
-        return const Left(
-          LocalDatabaseFailure(message: "Failed to delete item"),
-        );
-      } catch (e) {
-        return Left(LocalDatabaseFailure(message: e.toString()));
-      }
-    }
-  }
+  // ---------------------- Browsing ----------------------
 
   @override
   Future<Either<Failure, List<ItemEntity>>> getAllItems() async {
     if (await _networkInfo.isConnected) {
       try {
         final models = await _remoteDataSource.getAllItems();
-        final entities = ItemApiModel.toEntityList(models);
-        return Right(entities);
+        return Right(ItemApiModel.toEntityList(models));
       } catch (e) {
         return Left(ApiFailure(message: e.toString()));
       }
     } else {
       try {
         final models = await _localDataSource.getAllItems();
-        final entities = ItemHiveModel.toEntityList(models);
-        return Right(entities);
+        return Right(ItemHiveModel.toEntityList(models));
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
       }
@@ -99,9 +69,7 @@ class ItemRepository implements IItemRepository {
     } else {
       try {
         final model = await _localDataSource.getItemById(itemId);
-        if (model != null) {
-          return Right(model.toEntity());
-        }
+        if (model != null) return Right(model.toEntity());
         return const Left(LocalDatabaseFailure(message: 'Item not found'));
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
@@ -110,87 +78,132 @@ class ItemRepository implements IItemRepository {
   }
 
   @override
-  Future<Either<Failure, List<ItemEntity>>> getItemsByUser(
-    String userId,
-  ) async {
-    if (await _networkInfo.isConnected) {
-      try {
-        final models = await _remoteDataSource.getItemsByUser(userId);
-        final entities = ItemApiModel.toEntityList(models);
-        return Right(entities);
-      } catch (e) {
-        return Left(ApiFailure(message: e.toString()));
-      }
-    } else {
-      try {
-        final models = await _localDataSource.getItemsByUser(userId);
-        final entities = ItemHiveModel.toEntityList(models);
-        return Right(entities);
-      } catch (e) {
-        return Left(LocalDatabaseFailure(message: e.toString()));
-      }
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<ItemEntity>>> getLostItems() async {
-    if (await _networkInfo.isConnected) {
-      try {
-        final models = await _remoteDataSource.getLostItems();
-        final entities = ItemApiModel.toEntityList(models);
-        return Right(entities);
-      } catch (e) {
-        return Left(ApiFailure(message: e.toString()));
-      }
-    } else {
-      try {
-        final models = await _localDataSource.getLostItems();
-        final entities = ItemHiveModel.toEntityList(models);
-        return Right(entities);
-      } catch (e) {
-        return Left(LocalDatabaseFailure(message: e.toString()));
-      }
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<ItemEntity>>> getFoundItems() async {
-    if (await _networkInfo.isConnected) {
-      try {
-        final models = await _remoteDataSource.getFoundItems();
-        final entities = ItemApiModel.toEntityList(models);
-        return Right(entities);
-      } catch (e) {
-        return Left(ApiFailure(message: e.toString()));
-      }
-    } else {
-      try {
-        final models = await _localDataSource.getFoundItems();
-        final entities = ItemHiveModel.toEntityList(models);
-        return Right(entities);
-      } catch (e) {
-        return Left(LocalDatabaseFailure(message: e.toString()));
-      }
-    }
-  }
-
-  @override
   Future<Either<Failure, List<ItemEntity>>> getItemsByCategory(
-    String categoryId,
-  ) async {
+      String categoryId) async {
     if (await _networkInfo.isConnected) {
       try {
         final models = await _remoteDataSource.getItemsByCategory(categoryId);
-        final entities = ItemApiModel.toEntityList(models);
-        return Right(entities);
+        return Right(ItemApiModel.toEntityList(models));
       } catch (e) {
         return Left(ApiFailure(message: e.toString()));
       }
     } else {
       try {
         final models = await _localDataSource.getItemsByCategory(categoryId);
-        final entities = ItemHiveModel.toEntityList(models);
-        return Right(entities);
+        return Right(ItemHiveModel.toEntityList(models));
+      } catch (e) {
+        return Left(LocalDatabaseFailure(message: e.toString()));
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ItemEntity>>> searchItems(
+      String model, String? categoryId) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final allItems = await _remoteDataSource.getAllItems();
+        final filtered = allItems
+            .where((item) =>
+                item.model.toLowerCase().contains(model.toLowerCase()) &&
+                (categoryId == null ||
+                    item.category.toLowerCase() ==
+                        categoryId.toLowerCase()))
+            .toList();
+        return Right(ItemApiModel.toEntityList(filtered));
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      try {
+        final allItems = await _localDataSource.getAllItems();
+        final filtered = allItems
+            .where((item) =>
+                item.model.toLowerCase().contains(model.toLowerCase()) &&
+                (categoryId == null ||
+                    item.category.toLowerCase() ==
+                        categoryId.toLowerCase()))
+            .toList();
+        return Right(ItemHiveModel.toEntityList(filtered));
+      } catch (e) {
+        return Left(LocalDatabaseFailure(message: e.toString()));
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<ItemEntity>>> getRelatedItems(
+      String itemId) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final item = await _remoteDataSource.getItemById(itemId);
+        final allItems = await _remoteDataSource.getAllItems();
+        final related = allItems
+            .where((i) =>
+                i.id != item.id && i.category.toLowerCase() == item.category.toLowerCase())
+            .toList();
+        return Right(ItemApiModel.toEntityList(related));
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      try {
+        final item = await _localDataSource.getItemById(itemId);
+        final allItems = await _localDataSource.getAllItems();
+        final related = allItems
+            .where((i) =>
+                i.itemId != item?.itemId &&
+                i.category.toLowerCase() == item?.category.toLowerCase())
+            .toList();
+        return Right(ItemHiveModel.toEntityList(related));
+      } catch (e) {
+        return Left(LocalDatabaseFailure(message: e.toString()));
+      }
+    }
+  }
+
+  // ---------------------- Seller ----------------------
+
+  @override
+  Future<Either<Failure, List<ItemEntity>>> getItemsBySeller(
+      String sellerId) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        final models = await _remoteDataSource.getAllItems();
+        final filtered = models
+            .where((i) => i.sellerId.toLowerCase() == sellerId.toLowerCase())
+            .toList();
+        return Right(ItemApiModel.toEntityList(filtered));
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      try {
+        final models = await _localDataSource.getAllItems();
+        final filtered = models
+            .where((i) => i.sellerId.toLowerCase() == sellerId.toLowerCase())
+            .toList();
+        return Right(ItemHiveModel.toEntityList(filtered));
+      } catch (e) {
+        return Left(LocalDatabaseFailure(message: e.toString()));
+      }
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> createItem(ItemEntity item) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.createItem(ItemApiModel.fromEntity(item));
+        return const Right(true);
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      try {
+        final result = await _localDataSource.createItem(ItemHiveModel.fromEntity(item));
+        if (result) return const Right(true);
+        return const Left(LocalDatabaseFailure(message: 'Failed to create item'));
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
       }
@@ -201,27 +214,83 @@ class ItemRepository implements IItemRepository {
   Future<Either<Failure, bool>> updateItem(ItemEntity item) async {
     if (await _networkInfo.isConnected) {
       try {
-        final itemApiModel = ItemApiModel.fromEntity(item);
-        await _remoteDataSource.updateItem(itemApiModel);
+        await _remoteDataSource.updateItem(ItemApiModel.fromEntity(item));
         return const Right(true);
       } catch (e) {
         return Left(ApiFailure(message: e.toString()));
       }
     } else {
       try {
-        final itemModel = ItemHiveModel.fromEntity(item);
-        final result = await _localDataSource.updateItem(itemModel);
-        if (result) {
-          return const Right(true);
-        }
-        return const Left(
-          LocalDatabaseFailure(message: "Failed to update item"),
-        );
+        final result = await _localDataSource.updateItem(ItemHiveModel.fromEntity(item));
+        if (result) return const Right(true);
+        return const Left(LocalDatabaseFailure(message: 'Failed to update item'));
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
       }
     }
   }
+
+  @override
+  Future<Either<Failure, bool>> deleteItem(String itemId) async {
+    if (await _networkInfo.isConnected) {
+      try {
+        await _remoteDataSource.deleteItem(itemId);
+        return const Right(true);
+      } catch (e) {
+        return Left(ApiFailure(message: e.toString()));
+      }
+    } else {
+      try {
+        final result = await _localDataSource.deleteItem(itemId);
+        if (result) return const Right(true);
+        return const Left(LocalDatabaseFailure(message: 'Failed to delete item'));
+      } catch (e) {
+        return Left(LocalDatabaseFailure(message: e.toString()));
+      }
+    }
+  }
+
+@override
+Future<Either<Failure, bool>> markItemAsSold(String itemId) async {
+  if (await _networkInfo.isConnected) {
+    try {
+      final item = await _remoteDataSource.getItemById(itemId);
+      final updated = item.toEntity().copyWith(isSold: true);
+      await _remoteDataSource.updateItem(ItemApiModel.fromEntity(updated));
+      return const Right(true);
+    } catch (e) {
+      return Left(ApiFailure(message: e.toString()));
+    }
+  } else {
+    return const Left(NetworkFailure(message: 'No internet connection'));
+  }
+}
+
+
+  // ---------------------- Cart ----------------------
+
+  @override
+  Future<Either<Failure, bool>> addToCart(String itemId) async {
+    // implement your cart logic
+    return const Left(ApiFailure(message: 'Not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, bool>> removeFromCart(String itemId) async {
+    return const Left(ApiFailure(message: 'Not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, List<ItemEntity>>> getCartItems() async {
+    return const Left(ApiFailure(message: 'Not implemented'));
+  }
+
+  @override
+  Future<Either<Failure, bool>> clearCart() async {
+    return const Left(ApiFailure(message: 'Not implemented'));
+  }
+
+  // ---------------------- Media ----------------------
 
   @override
   Future<Either<Failure, String>> uploadPhoto(File photo) async {

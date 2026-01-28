@@ -26,7 +26,7 @@ class AuthHiveModel extends HiveObject{
   final String email;
 
   @HiveField(4)
-  final String? phoneNumber;
+  final String contactNo;
 
   @HiveField(5)
   final String address;
@@ -34,15 +34,19 @@ class AuthHiveModel extends HiveObject{
   @HiveField(6)
   final String? password;
 
+  @HiveField(7)
+  final String? profileImage;
+
 
   AuthHiveModel({
     String? authId,
     required this.firstName,
     required this.lastName,
     required this.email,
-    this.phoneNumber,
+    required this.contactNo,
     required this.address,
     this.password,
+    this.profileImage,
   }) : authId = authId ?? Uuid().v4();
 
   // To Entity
@@ -52,7 +56,7 @@ class AuthHiveModel extends HiveObject{
       firstName: firstName,
       lastName: lastName,
       email: email,
-      contactNo: phoneNumber,
+      contactNo: contactNo,
       address: address,
       password: password,
     );
@@ -65,7 +69,7 @@ class AuthHiveModel extends HiveObject{
       firstName: entity.firstName,
       lastName: entity.lastName,
       email: entity.email,
-      phoneNumber: entity.contactNo,
+      contactNo: entity.contactNo,
       address: entity.address,
       password: entity.password,
     );

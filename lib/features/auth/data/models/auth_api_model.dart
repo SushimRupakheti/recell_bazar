@@ -5,9 +5,10 @@ class AuthApiModel {
   final String firstName;
   final String lastName;
   final String email;
-  final String? contactNo;
+  final String contactNo;
   final String? password;
   final String? address;
+  final String? profileImage;
 
   AuthApiModel({
     this.id,
@@ -16,7 +17,8 @@ class AuthApiModel {
     required this.email,
     required this.contactNo,
     this.password,
-    this.address,
+    required this.address,
+    this.profileImage,
   });
 
   //toJson
@@ -28,6 +30,7 @@ class AuthApiModel {
       "contactNo":contactNo,
       "password":password,
       "address":address,
+      "profileImage":profileImage,
     };
   }
 
@@ -39,8 +42,9 @@ class AuthApiModel {
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       email: json ['email'] as String,
-      contactNo: json['contactNo'] as String?,
-      address: json['address'] as String?,
+      contactNo: json['contactNo'] as String,
+      address: json['address'] as String,
+      profileImage: json['profileImage'] as String?,
       );
   }
 
@@ -53,6 +57,8 @@ class AuthApiModel {
       email: email,
       contactNo: contactNo,
       address: address ?? '',
+      password: password,
+      profileImage: profileImage,
     );
   }
 
@@ -65,7 +71,8 @@ class AuthApiModel {
       email: entity.email,
       password: entity.password,
       contactNo: entity.contactNo,
-      address: entity.address, 
+      address: entity.address,
+      profileImage: entity.profileImage, 
     );
   }
 
