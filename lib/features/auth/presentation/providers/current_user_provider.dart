@@ -12,7 +12,7 @@ final currentUserProvider = Provider<AuthEntity>((ref) {
     firstName: session.getFirstName() ?? '',
     lastName: session.getUserLastName() ?? '',
     email: session.getUserEmail() ?? '',
-    contactNo: session.getUserPhoneNumber(),
+    contactNo: session.getUserPhoneNumber() ?? '',
     address: session.getUserAddress() ?? '',
   );
 });

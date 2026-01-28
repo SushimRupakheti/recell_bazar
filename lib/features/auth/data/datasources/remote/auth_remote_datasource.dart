@@ -33,8 +33,21 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource{
 
   @override
   Future<AuthApiModel?> getUserById(String authId) {
-    // TODO: implement getUserById
-    throw UnimplementedError();
+    return _getUserByIdInternal(authId);
+  }
+
+  // internal implementation to perform the GET request
+  Future<AuthApiModel?> _getUserByIdInternal(String authId) async {
+    try {
+      final response = await _apiClient.get(ApiEndpoints.userById(authId));
+      if (response.data['success'] == true) {
+        final data = response.data['data'] as Map<String, dynamic>;
+        return AuthApiModel.fromJson(data);
+      }
+      return null;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
@@ -49,13 +62,14 @@ class AuthRemoteDatasource implements IAuthRemoteDataSource{
 
       // save to session
       await _userSessionServices.saveUserSession(
-        userId: user.id!, 
-        email: email,  
+        userId: user.id!,
+        email: email,
         firstName: user.firstName,
         lastName: user.lastName,
         contactNo: user.contactNo,
         address: user.address,
-        );
+          profileImage: user.profileImage,
+      );
       return user;
     }
     return null;
@@ -82,9 +96,11 @@ Future<AuthApiModel?> uploadProfilePicture(String authId, File imageFile) async 
       'profileImage': await MultipartFile.fromFile(imageFile.path, filename: imageFile.path.split('/').last),
     });
 
-    final response = await _apiClient.post(
-      '${ApiEndpoints.baseUrl}/users/$authId/profile-picture', // adjust endpoint as per backend
-      data: formData,
+    // Use ApiClient.uploadFile with a relative path so BaseOptions.baseUrl and
+    // interceptors are applied consistently.
+    final response = await _apiClient.uploadFile(
+      ApiEndpoints.uploadProfilePicture(authId),
+      formData: formData,
       options: Options(
         headers: {
           'Content-Type': 'multipart/form-data',

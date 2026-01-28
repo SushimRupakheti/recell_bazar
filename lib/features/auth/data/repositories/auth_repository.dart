@@ -128,6 +128,24 @@ class AuthRepository implements IAuthRepository {
       // Try local first
       final model = await _authDataSource.getCurrentUser(authId);
       if (model != null) {
+        // If we have network, prefer the remote record to ensure fields
+        // like `profileImage` are up-to-date. If remote fetch fails,
+        // fall back to the local model.
+        if (await _networkInfo.isConnected) {
+          try {
+            final apiModel = await _authRemoteDataSource.getUserById(authId);
+            if (apiModel != null) {
+              final entity = apiModel.toEntity();
+              // Save to local hive for future fast access
+              final hiveModel = AuthHiveModel.fromEntity(entity);
+              await _authDataSource.updateUser(hiveModel);
+              return Right(entity);
+            }
+          } catch (_) {
+            // ignore and fall back to local
+          }
+        }
+
         final entity = model.toEntity();
         return Right(entity);
       }
@@ -196,9 +214,20 @@ Future<Either<Failure, AuthEntity>> updateProfilePicture({
       // Return updated user
       return Right(updatedEntity);
     } on DioException catch (e) {
+      // Defensive handling: backend may return HTML (e.g., 404 page) or a Map.
+      String message = 'Image upload failed';
+      final respData = e.response?.data;
+      if (respData is Map && respData['message'] is String) {
+        message = respData['message'];
+      } else if (e.response?.statusMessage != null) {
+        message = e.response!.statusMessage!;
+      } else if (e.message != null) {
+        message = e.message!;
+      }
+
       return Left(
         ApiFailure(
-          message: e.response?.data['message'] ?? 'Image upload failed',
+          message: message,
           statusCode: e.response?.statusCode,
         ),
       );

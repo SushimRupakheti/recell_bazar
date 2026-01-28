@@ -5,7 +5,7 @@ class AuthApiModel {
   final String firstName;
   final String lastName;
   final String email;
-  final String? contactNo;
+  final String contactNo;
   final String? password;
   final String? address;
   final String? profileImage;
@@ -17,7 +17,7 @@ class AuthApiModel {
     required this.email,
     required this.contactNo,
     this.password,
-    this.address,
+    required this.address,
     this.profileImage,
   });
 
@@ -42,8 +42,8 @@ class AuthApiModel {
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       email: json ['email'] as String,
-      contactNo: json['contactNo'] as String?,
-      address: json['address'] as String?,
+      contactNo: json['contactNo'] as String,
+      address: json['address'] as String,
       profileImage: json['profileImage'] as String?,
       );
   }

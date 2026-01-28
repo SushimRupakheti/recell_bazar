@@ -35,4 +35,8 @@ class ApiEndpoints {
   static String itemsByUser(String userId) => '/items/user/$userId';
   static String searchItems(String model, {String? categoryId}) =>'/items/search?model=$model${categoryId != null ? '&category=$categoryId' : ''}';
 
+  // User endpoints
+  static String uploadProfilePicture(String userId) => '/users/$userId/profile-picture';
+  static String userById(String id) => '/users/$id';
+
 }

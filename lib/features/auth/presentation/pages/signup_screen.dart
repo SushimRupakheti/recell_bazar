@@ -67,7 +67,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           email: emailController.text.trim(),
           address: addressController.text.trim(),
           password: password,
-          phoneNumber: contactNoController.text.trim().isEmpty ? null : contactNoController.text.trim(),
+          contactNo: contactNoController.text.trim(),
           batchId: "",
         );
   }

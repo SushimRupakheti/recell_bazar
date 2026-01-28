@@ -50,16 +50,23 @@ await _prefs.setString(_keyUserId, userId);
 await _prefs.setString(_keyUserEmail, email);
 await _prefs.setString(_keyUserFirstName, firstName);
 await _prefs.setString(_keyUserLastName, lastName);
+  // For optional fields, overwrite or remove the key to avoid stale data
   if (profileImage != null) {
     await _prefs.setString(_keyUserProfileImage, profileImage);
+  } else {
+    await _prefs.remove(_keyUserProfileImage);
   }
 
   if (contactNo != null) {
     await _prefs.setString(_keyUserContactNo, contactNo);
+  } else {
+    await _prefs.remove(_keyUserContactNo);
   }
 
   if (address != null) {
     await _prefs.setString(_keyUserAddress, address);
+  } else {
+    await _prefs.remove(_keyUserAddress);
   }
 
 
@@ -73,6 +80,7 @@ await _prefs.setString(_keyUserLastName, lastName);
     await _prefs.remove(_keyUserLastName);
     await _prefs.remove(_keyUserContactNo);
     await _prefs.remove(_keyUserAddress);
+    await _prefs.remove(_keyUserProfileImage);
 
  
   }

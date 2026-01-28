@@ -30,7 +30,7 @@ class AuthViewModel extends Notifier<AuthState> {
     required String email,
     required String address,
     required String password,
-    String? phoneNumber,
+    required String contactNo,
     String? batchId,
   }) async {
     // ✅ RESET STATE FIRST
@@ -43,7 +43,7 @@ class AuthViewModel extends Notifier<AuthState> {
         email: email,
         address: address,
         password: password,
-        phoneNumber: phoneNumber,
+        contactNo: contactNo,
       ),
     );
 

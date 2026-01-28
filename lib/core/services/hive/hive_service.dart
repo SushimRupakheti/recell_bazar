@@ -163,7 +163,7 @@ class HiveService {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        phoneNumber: user.phoneNumber,
+        contactNo: user.contactNo,
         address: user.address,
         password: user.password,
         profileImage: imagePath,

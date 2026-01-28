@@ -36,14 +36,15 @@ class AuthLocalDatasource implements IAuthLocalDataSource {
     try {
       final user = _hiveService.login(email, password);
       if(user != null){
-        await _userSessionServices.saveUserSession(
-          userId: user.authId!,
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          contactNo: user.phoneNumber,
-          address: user.address,
-        );
+          await _userSessionServices.saveUserSession(
+            userId: user.authId!,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            contactNo: user.contactNo,
+            address: user.address,
+            profileImage: user.profileImage,
+          );
       }
       return Future.value(user);
     } catch (e) {
@@ -56,6 +57,8 @@ class AuthLocalDatasource implements IAuthLocalDataSource {
   Future<bool> logout() async {
     try {
       await _hiveService.logout();
+      // Clear saved session in SharedPreferences to prevent automatic re-login
+      await _userSessionServices.clearUserSession();
       return Future.value(true);
     } catch (e) {
       return Future.value(false);
