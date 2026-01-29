@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/core/services/storage/user_session_service.dart';
 import 'package:recell_bazar/features/auth/domain/usecases/get_current_user.dart';
-import 'package:dartz/dartz.dart';
 import 'package:recell_bazar/screens/dashboard.dart';
 import 'package:recell_bazar/screens/onboarding_screen.dart';
 
