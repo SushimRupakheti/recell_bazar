@@ -44,15 +44,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       );
     }
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: SafeArea(
+      child: SingleChildScrollView( // <-- make scrollable to avoid overflow
         child: Column(
           children: [
-
-            // Skip Button (Top Right)
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -62,31 +60,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     MaterialPageRoute(builder: (_) => const LoginScreen()),
                   );
                 },
-                child: const Text("Skip",style: TextStyle(
-                  fontFamily: "Montserrat-SemiBold",
-                ),),
+                child: const Text(
+                  "Skip",
+                  style: TextStyle(
+                    fontFamily: "Montserrat-SemiBold",
+                  ),
+                ),
               ),
             ),
-
-            // PageView Section
-            Expanded(
-              flex: 4,
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.7, // allow pageview space
               child: PageView.builder(
                 controller: _pageController,
                 itemCount: pages.length,
-                onPageChanged: (index) {
-                  setState(() => currentIndex = index);
-                },
+                onPageChanged: (index) => setState(() => currentIndex = index),
                 itemBuilder: (context, index) {
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
                         pages[index]["image"]!,
-                        height: 450,
+                        height: 300, // smaller for testable height
                       ),
-
-
                       Text(
                         pages[index]["title"]!,
                         style: const TextStyle(
@@ -96,15 +91,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           color: Color(0xFF0B7C7C),
                         ),
                       ),
-
                       const SizedBox(height: 10),
-
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
                         child: Text(
                           pages[index]["subtitle"]!,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 18, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 18, color: Colors.grey),
                         ),
                       ),
                     ],
@@ -112,10 +106,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 },
               ),
             ),
-
             const SizedBox(height: 20),
-
-            // Page Indicator (Dots)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
@@ -134,10 +125,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 30),
-
-            // Next / Get Started Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: SizedBox(
@@ -158,11 +146,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 40),
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

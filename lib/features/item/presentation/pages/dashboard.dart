@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:recell_bazar/screens/dashboard_screens/cart.dart';
-import 'package:recell_bazar/screens/dashboard_screens/home.dart';
-import 'package:recell_bazar/screens/dashboard_screens/profile.dart';
-import 'package:recell_bazar/screens/dashboard_screens/sell.dart';
+import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/cart.dart';
+import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/home.dart';
+import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/profile.dart';
+import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/sell.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
