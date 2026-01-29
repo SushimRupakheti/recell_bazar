@@ -42,6 +42,6 @@ class GetCurrentUserUsecase implements UsecaseWithoutParams<AuthEntity> {
     }
 
     // Fetch user from repository
-    return _authRepository.getCurrentUser(authId);
+    return _authRepository.getCurrentUser(authId); //current user ko fetch garne
   }
 }
