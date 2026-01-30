@@ -9,7 +9,7 @@ import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 import 'package:recell_bazar/features/item/domain/repositories/item_repository.dart';
 import 'package:recell_bazar/features/item/data/repositories/item_repository.dart';
 
-/// ✅ Update Item Params
+///  Update Item Params
 class UpdateItemParams extends Equatable {
   final String itemId;
 
@@ -17,6 +17,10 @@ class UpdateItemParams extends Equatable {
   final List<String>? photos;
   final String? category;
   final String? model;
+
+  //price
+  final String? finalPrice;
+  final String? basePrice;
 
   // TextField Inputs
   final int? year;
@@ -47,6 +51,8 @@ class UpdateItemParams extends Equatable {
     this.category,
     this.model,
     this.year,
+    this.finalPrice,
+    this.basePrice,
     this.batteryHealth,
     this.description,
     this.deviceCondition,
@@ -70,6 +76,8 @@ class UpdateItemParams extends Equatable {
         category,
         model,
         year,
+        finalPrice,
+        basePrice,
         batteryHealth,
         description,
         deviceCondition,
@@ -87,13 +95,13 @@ class UpdateItemParams extends Equatable {
       ];
 }
 
-/// ✅ Provider for UpdateItemUsecase
+///  Provider for UpdateItemUsecase
 final updateItemUsecaseProvider = Provider<UpdateItemUsecase>((ref) {
   final itemRepository = ref.read(itemRepositoryProvider);
   return UpdateItemUsecase(itemRepository: itemRepository);
 });
 
-/// ✅ Update Item Usecase
+///  Update Item Usecase
 class UpdateItemUsecase implements UsecaseWithParams<bool, UpdateItemParams> {
   final IItemRepository _itemRepository;
 
@@ -112,6 +120,10 @@ class UpdateItemUsecase implements UsecaseWithParams<bool, UpdateItemParams> {
       photos: params.photos ?? [],
       category: params.category ?? "",
       model: params.model ?? "",
+
+      //price
+      finalPrice: params.finalPrice ?? "",
+      basePrice: params.basePrice ?? "",
 
       // TextField Inputs
       year: params.year ?? 0,

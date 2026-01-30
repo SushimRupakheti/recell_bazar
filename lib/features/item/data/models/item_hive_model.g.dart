@@ -41,13 +41,14 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       createdAt: fields[21] as DateTime?,
       updatedAt: fields[22] as DateTime?,
       isSold: fields[23] as bool,
+      finalPrice: fields[24] as String,
+      basePrice: fields[25] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ItemHiveModel obj) {
     writer
-      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.itemId)
       ..writeByte(1)
@@ -95,7 +96,11 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       ..writeByte(22)
       ..write(obj.updatedAt)
       ..writeByte(23)
-      ..write(obj.isSold);
+      ..write(obj.isSold)
+      ..writeByte(24)
+      ..write(obj.finalPrice)
+      ..writeByte(25)
+      ..write(obj.basePrice);
   }
 
   @override

@@ -20,6 +20,10 @@ class CreateItemParams extends Equatable {
   final int batteryHealth;
   final String description;
 
+  //price
+  final String finalPrice;
+  final String basePrice;
+
   // Radio Button
   final String deviceCondition;
 
@@ -44,6 +48,8 @@ class CreateItemParams extends Equatable {
     required this.category,
     required this.model,
     required this.year,
+    required this.finalPrice,
+    required this.basePrice,
     required this.batteryHealth,
     required this.description,
     required this.deviceCondition,
@@ -67,6 +73,8 @@ class CreateItemParams extends Equatable {
         category,
         model,
         year,
+        finalPrice,
+        basePrice,
         batteryHealth,
         description,
         deviceCondition,
@@ -106,6 +114,10 @@ class CreateItemUsecase
       model: params.model,
 
       year: params.year,
+
+      finalPrice: params.finalPrice,
+      basePrice: params.basePrice,
+      
       batteryHealth: params.batteryHealth,
       description: params.description,
 

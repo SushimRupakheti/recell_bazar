@@ -11,6 +11,10 @@ class ItemEntity extends Equatable {
   final String category;
   final String model;
 
+  //PRICE
+  final String finalPrice;
+  final String basePrice;
+
   // TextFields
   final int year;
   final int batteryHealth;
@@ -46,6 +50,9 @@ class ItemEntity extends Equatable {
 
     required this.category,
     required this.model,
+
+    required this.finalPrice,
+    required this.basePrice,
 
     required this.year,
     required this.batteryHealth,
@@ -84,6 +91,9 @@ class ItemEntity extends Equatable {
     int? batteryHealth,
     String? description,
 
+    String? finalPrice,
+    String? basePrice,
+
     String? deviceCondition,
 
     bool? chargerAvailable,
@@ -110,6 +120,9 @@ class ItemEntity extends Equatable {
 
       category: category ?? this.category,
       model: model ?? this.model,
+
+      finalPrice: finalPrice ?? this.finalPrice,
+      basePrice: basePrice ?? this.basePrice,
 
       year: year ?? this.year,
       batteryHealth: batteryHealth ?? this.batteryHealth,
@@ -144,6 +157,9 @@ class ItemEntity extends Equatable {
 
         category,
         model,
+
+        finalPrice,
+        basePrice,
 
         year,
         batteryHealth,

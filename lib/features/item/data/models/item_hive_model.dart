@@ -74,6 +74,12 @@ class ItemHiveModel extends HiveObject {
   @HiveField(23)
   final bool isSold;
 
+  @HiveField(24)
+  final String finalPrice;
+
+  @HiveField(25)
+  final String basePrice;
+
   ItemHiveModel({
     String? itemId,
     required this.sellerId,
@@ -82,6 +88,8 @@ class ItemHiveModel extends HiveObject {
     required this.category,
     required this.model,
     required this.year,
+    required this.finalPrice,
+    required this.basePrice,
     required this.batteryHealth,
     required this.description,
     required this.deviceCondition,
@@ -109,6 +117,8 @@ class ItemHiveModel extends HiveObject {
     String? category,
     String? model,
     int? year,
+    String? finalPrice,
+    String? basePrice,
     int? batteryHealth,
     String? description,
     String? deviceCondition,
@@ -135,6 +145,8 @@ class ItemHiveModel extends HiveObject {
       category: category ?? this.category,
       model: model ?? this.model,
       year: year ?? this.year,
+      finalPrice: finalPrice ?? this.finalPrice,
+      basePrice: basePrice ?? this.basePrice,
       batteryHealth: batteryHealth ?? this.batteryHealth,
       description: description ?? this.description,
       deviceCondition: deviceCondition ?? this.deviceCondition,
@@ -164,6 +176,8 @@ class ItemHiveModel extends HiveObject {
       category: category,
       model: model,
       year: year,
+      finalPrice: finalPrice,
+      basePrice: basePrice,
       batteryHealth: batteryHealth,
       description: description,
       deviceCondition: deviceCondition,
@@ -196,6 +210,8 @@ class ItemHiveModel extends HiveObject {
       year: entity.year,
       batteryHealth: entity.batteryHealth,
       description: entity.description,
+      finalPrice: entity.finalPrice,
+      basePrice: entity.basePrice,
       deviceCondition: entity.deviceCondition,
       chargerAvailable: entity.chargerAvailable,
       factoryUnlock: entity.factoryUnlock,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recell_bazar/features/item/presentation/pages/selling_screens/second_selling_screen.dart';
 
 class PhoneBrandSelectionScreen extends StatefulWidget {
   @override
@@ -69,7 +70,9 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: selectedBrand == brand ? Colors.teal : Colors.transparent,
+                        color: selectedBrand == brand
+                            ? Colors.teal
+                            : Colors.transparent,
                         width: 3,
                       ),
                       borderRadius: BorderRadius.circular(12),
@@ -110,13 +113,13 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                 ),
                 items: selectedBrand != null
                     ? phoneModels[selectedBrand]!
-                        .map(
-                          (model) => DropdownMenuItem(
-                            value: model,
-                            child: Text(model),
-                          ),
-                        )
-                        .toList()
+                          .map(
+                            (model) => DropdownMenuItem(
+                              value: model,
+                              child: Text(model),
+                            ),
+                          )
+                          .toList()
                     : [],
                 onChanged: (value) {
                   setState(() {
@@ -129,85 +132,106 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
             const SizedBox(height: 30),
 
             // Center the question and radio buttons
-Center(
-  child: Column(
-    children: [
-      Text(
-        'Is Your Phone Factory Unlocked, Officially Registered?',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-      ),
-      const SizedBox(height: 10),
-      
-      Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Yes Button
-          OutlinedButton(
-            onPressed: () {
-              setState(() {
-                isUnlocked = true;
-              });
-            },
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: isUnlocked == true ? Colors.teal : const Color.fromARGB(255, 207, 207, 207),
-                width: 1,
-              ),
-              backgroundColor: isUnlocked == true ? Colors.teal.withOpacity(0.1) : Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            child: Text(
-              'Yes',
-              style: TextStyle(
-                color: isUnlocked == true ? Colors.teal : Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(width: 16),
-          
-          // No Button
-          OutlinedButton(
-            onPressed: () {
-              setState(() {
-                isUnlocked = false;
-              });
-            },
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: isUnlocked == true ? Colors.teal : const Color.fromARGB(255, 207, 207, 207),
-                width: 1,
-              ),
-              backgroundColor: isUnlocked == false ? Colors.teal.withOpacity(0.1) : Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            child: Text(
-              'No',
-              style: TextStyle(
-                color: isUnlocked == false ? Colors.teal : Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
-      ),
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    'Is Your Phone Factory Unlocked, Officially Registered?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 10),
 
-      const SizedBox(height: 20),
-      Text(
-        'We will not accept any phone that is unlocked or unofficial registration to prevent from anti theft.',
-        textAlign: TextAlign.center,
-        style: TextStyle(color: const Color.fromARGB(255, 153, 153, 153), fontSize: 14),
-      ),
-    ],
-  ),
-),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Yes Button
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            isUnlocked = true;
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: isUnlocked == true
+                                ? Colors.teal
+                                : const Color.fromARGB(255, 207, 207, 207),
+                            width: 1,
+                          ),
+                          backgroundColor: isUnlocked == true
+                              ? Colors.teal.withOpacity(0.1)
+                              : Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: Text(
+                          'Yes',
+                          style: TextStyle(
+                            color: isUnlocked == true
+                                ? Colors.teal
+                                : Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 16),
+
+                      // No Button
+                      OutlinedButton(
+                        onPressed: () {
+                          setState(() {
+                            isUnlocked = false;
+                          });
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: isUnlocked == true
+                                ? Colors.teal
+                                : const Color.fromARGB(255, 207, 207, 207),
+                            width: 1,
+                          ),
+                          backgroundColor: isUnlocked == false
+                              ? Colors.teal.withOpacity(0.1)
+                              : Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: Text(
+                          'No',
+                          style: TextStyle(
+                            color: isUnlocked == false
+                                ? Colors.teal
+                                : Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+                  Text(
+                    'We will not accept any phone that is unlocked or unofficial registration to prevent from anti theft.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: const Color.fromARGB(255, 153, 153, 153),
+                      fontSize: 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
             const SizedBox(height: 20),
 
@@ -236,11 +260,18 @@ Center(
                 ),
                 SizedBox(width: 30),
                 ElevatedButton(
-                  onPressed: selectedBrand != null &&
+                  onPressed:
+                      selectedBrand != null &&
                           selectedModel != null &&
                           isUnlocked != null
                       ? () {
                           // Handle next step
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SecondSellingScreen(),
+                            ),
+                          );
                         }
                       : null,
                   style: ElevatedButton.styleFrom(

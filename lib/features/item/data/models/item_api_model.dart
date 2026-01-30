@@ -9,6 +9,9 @@ class ItemApiModel {
   final String category;
   final String model;
 
+  final String finalPrice;
+  final String basePrice;
+
   final int year;
   final int batteryHealth;
   final String description;
@@ -49,6 +52,8 @@ class ItemApiModel {
     required this.displayCondition,
     required this.displayCracked,
     required this.displayOriginal,
+    required this.finalPrice,
+    required this.basePrice,
   });
 
   Map<String, dynamic> toJson() {
@@ -72,6 +77,8 @@ class ItemApiModel {
       "displayCracked": displayCracked,
       "displayOriginal": displayOriginal,
       "sellerId": sellerId,
+      "finalPrice": finalPrice,
+      "basePrice": basePrice,
     };
   }
 
@@ -97,6 +104,8 @@ class ItemApiModel {
       displayCondition: json["displayCondition"],
       displayCracked: json["displayCracked"],
       displayOriginal: json["displayOriginal"],
+      finalPrice: json["finalPrice"],
+      basePrice: json["basePrice"],
     );
   }
 
@@ -122,6 +131,8 @@ class ItemApiModel {
       displayCondition: displayCondition,
       displayCracked: displayCracked,
       displayOriginal: displayOriginal,
+      finalPrice: finalPrice,
+      basePrice: basePrice,
     );
   }
 
@@ -147,6 +158,8 @@ class ItemApiModel {
       displayCondition: entity.displayCondition,
       displayCracked: entity.displayCracked,
       displayOriginal: entity.displayOriginal,
+      finalPrice: entity.finalPrice,
+      basePrice: entity.basePrice,
     );
   }
     static List<ItemEntity> toEntityList(List<ItemApiModel> models) {
