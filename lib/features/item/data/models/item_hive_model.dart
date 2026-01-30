@@ -1,3 +1,6 @@
+// flutter pub run build_runner build --delete-conflicting-outputs
+
+
 import 'package:hive/hive.dart';
 import 'package:recell_bazar/core/constants/hive_table_constant.dart';
 import 'package:uuid/uuid.dart';
