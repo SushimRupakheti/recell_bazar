@@ -118,15 +118,22 @@ Future<void> createItem({
   required List<String> photos,
   required String category,
   required String model,
-  required String price,
   required int year,
-  required String description,
-  required String storage,
-  required String screenCondition,
   required int batteryHealth,
-  required String cameraQuality,
-  required bool hasCharger,
-  Map<String, dynamic>? extraAnswers,
+  required String description,
+  required String deviceCondition,
+  required bool chargerAvailable,
+
+  required bool factoryUnlock,
+  required bool liquidDamage,
+  required bool switchOn,
+  required bool receiveCall,
+  required bool features1Condition,
+  required bool features2Condition,
+  required bool cameraCondition,
+  required bool displayCondition,
+  required bool displayCracked,
+  required bool displayOriginal,
 }) async {
   state = state.copyWith(status: ItemStatus.loading);
 
@@ -136,15 +143,22 @@ Future<void> createItem({
       photos: photos,
       category: category,
       model: model,
-      price: double.parse(price),
       year: year,
-      description: description,
-      storage: storage,
-      screenCondition: screenCondition,
       batteryHealth: batteryHealth,
-      cameraQuality: cameraQuality,
-      hasCharger: hasCharger,
-      extraAnswers: extraAnswers,
+      description: description,
+      deviceCondition: deviceCondition,
+      chargerAvailable: chargerAvailable,
+
+      factoryUnlock: factoryUnlock,
+      liquidDamage: liquidDamage,
+      switchOn: switchOn,
+      receiveCall: receiveCall,
+      features1Condition: features1Condition,
+      features2Condition: features2Condition,
+      cameraCondition: cameraCondition,
+      displayCondition: displayCondition,
+      displayCracked: displayCracked,
+      displayOriginal: displayOriginal,
     ),
   );
 
@@ -154,14 +168,12 @@ Future<void> createItem({
       errorMessage: failure.message,
     ),
     (success) {
-      state = state.copyWith(
-        status: ItemStatus.created,
-        resetUploadedPhotoUrl: true,
-      );
-      getAllItems(); // Refresh the items after creating
+      state = state.copyWith(status: ItemStatus.created);
+      getAllItems();
     },
   );
 }
+
 
 Future<void> updateItem({
   required String itemId,
@@ -169,34 +181,46 @@ Future<void> updateItem({
   required List<String> photos,
   required String category,
   required String model,
-  required String price,
   required int year,
-  required String description,
-  required String storage,
-  required String screenCondition,
   required int batteryHealth,
-  required String cameraQuality,
-  required bool hasCharger,
-  Map<String, dynamic>? extraAnswers,
+  required String description,
+  required String deviceCondition,
+  required bool chargerAvailable,
+  // Boolean evaluation questions
+  required bool factoryUnlock,
+  required bool liquidDamage,
+  required bool switchOn,
+  required bool receiveCall,
+  required bool features1Condition,
+  required bool features2Condition,
+  required bool cameraCondition,
+  required bool displayCondition,
+  required bool displayCracked,
+  required bool displayOriginal,
 }) async {
   state = state.copyWith(status: ItemStatus.loading);
 
   final result = await _updateItemUsecase(
     UpdateItemParams(
       itemId: itemId,
-      sellerId: sellerId,
       photos: photos,
       category: category,
       model: model,
-      price: double.parse(price),
       year: year,
-      description: description,
-      storage: storage,
-      screenCondition: screenCondition,
       batteryHealth: batteryHealth,
-      cameraQuality: cameraQuality,
-      hasCharger: hasCharger,
-      extraAnswers: extraAnswers,
+      description: description,
+      deviceCondition: deviceCondition,
+      chargerAvailable: chargerAvailable,
+      factoryUnlock: factoryUnlock,
+      liquidDamage: liquidDamage,
+      switchOn: switchOn,
+      receiveCall: receiveCall,
+      features1Condition: features1Condition,
+      features2Condition: features2Condition,
+      cameraCondition: cameraCondition,
+      displayCondition: displayCondition,
+      displayCracked: displayCracked,
+      displayOriginal: displayOriginal,
     ),
   );
 
@@ -211,6 +235,7 @@ Future<void> updateItem({
     },
   );
 }
+
 
   Future<void> deleteItem(String itemId) async {
     state = state.copyWith(status: ItemStatus.loading);
@@ -336,48 +361,48 @@ Future<void> updateItem({
 
   // ---------------- MARK SOLD ----------------
 
-Future<void> markItemAsSold(String itemId) async {
-  state = state.copyWith(status: ItemStatus.loading);
+// Future<void> markItemAsSold(String itemId) async {
+//   state = state.copyWith(status: ItemStatus.loading);
 
-  final result = await _markItemAsSoldUsecase(itemId);
+//   final result = await _markItemAsSoldUsecase(itemId);
 
-  result.fold(
-    (failure) => state = state.copyWith(
-      status: ItemStatus.error,
-      errorMessage: failure.message,
-    ),
-    (success) {
-      // Update the selectedItem if it matches
-      final updatedSelectedItem = state.selectedItem?.itemId == itemId
-          ? state.selectedItem!.copyWith(
-              extraAnswers: {
-                ...?state.selectedItem!.extraAnswers,
-                'isSold': true,
-              },
-            )
-          : state.selectedItem;
+//   result.fold(
+//     (failure) => state = state.copyWith(
+//       status: ItemStatus.error,
+//       errorMessage: failure.message,
+//     ),
+//     (success) {
+//       // Update the selectedItem if it matches
+//       final updatedSelectedItem = state.selectedItem?.itemId == itemId
+//           ? state.selectedItem!.copyWith(
+//               extraAnswers: {
+//                 ...?state.selectedItem!.extraAnswers,
+//                 'isSold': true,
+//               },
+//             )
+//           : state.selectedItem;
 
-      // Update items list as well
-      final updatedItems = state.items.map((item) {
-        if (item.itemId == itemId) {
-          return item.copyWith(
-            extraAnswers: {
-              ...?item.extraAnswers,
-              'isSold': true,
-            },
-          );
-        }
-        return item;
-      }).toList();
+//       // Update items list as well
+//       final updatedItems = state.items.map((item) {
+//         if (item.itemId == itemId) {
+//           return item.copyWith(
+//             extraAnswers: {
+//               ...?item.extraAnswers,
+//               'isSold': true,
+//             },
+//           );
+//         }
+//         return item;
+//       }).toList();
 
-      state = state.copyWith(
-        status: ItemStatus.updated,
-        selectedItem: updatedSelectedItem,
-        items: updatedItems,
-      );
-    },
-  );
-}
+//       state = state.copyWith(
+//         status: ItemStatus.updated,
+//         selectedItem: updatedSelectedItem,
+//         items: updatedItems,
+//       );
+//     },
+//   );
+// }
 
   // ---------------- CART ----------------
 

@@ -23,24 +23,31 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       photos: (fields[3] as List).cast<String>(),
       category: fields[4] as String,
       model: fields[5] as String,
-      price: fields[6] as double,
-      year: fields[7] as int,
+      year: fields[6] as int,
+      batteryHealth: fields[7] as int,
       description: fields[8] as String,
-      storage: fields[9] as String,
-      screenCondition: fields[10] as String,
-      batteryHealth: fields[11] as int,
-      cameraQuality: fields[12] as String,
-      hasCharger: fields[13] as bool,
-      extraAnswers: (fields[14] as Map?)?.cast<String, dynamic>(),
-      createdAt: fields[15] as DateTime?,
-      updatedAt: fields[16] as DateTime?, isSold: false,
+      deviceCondition: fields[9] as String,
+      chargerAvailable: fields[10] as bool,
+      factoryUnlock: fields[11] as bool,
+      liquidDamage: fields[12] as bool,
+      switchOn: fields[13] as bool,
+      receiveCall: fields[14] as bool,
+      features1Condition: fields[15] as bool,
+      features2Condition: fields[16] as bool,
+      cameraCondition: fields[17] as bool,
+      displayCondition: fields[18] as bool,
+      displayCracked: fields[19] as bool,
+      displayOriginal: fields[20] as bool,
+      createdAt: fields[21] as DateTime?,
+      updatedAt: fields[22] as DateTime?,
+      isSold: fields[23] as bool,
     );
   }
 
   @override
   void write(BinaryWriter writer, ItemHiveModel obj) {
     writer
-      ..writeByte(17)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.itemId)
       ..writeByte(1)
@@ -54,27 +61,41 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       ..writeByte(5)
       ..write(obj.model)
       ..writeByte(6)
-      ..write(obj.price)
-      ..writeByte(7)
       ..write(obj.year)
+      ..writeByte(7)
+      ..write(obj.batteryHealth)
       ..writeByte(8)
       ..write(obj.description)
       ..writeByte(9)
-      ..write(obj.storage)
+      ..write(obj.deviceCondition)
       ..writeByte(10)
-      ..write(obj.screenCondition)
+      ..write(obj.chargerAvailable)
       ..writeByte(11)
-      ..write(obj.batteryHealth)
+      ..write(obj.factoryUnlock)
       ..writeByte(12)
-      ..write(obj.cameraQuality)
+      ..write(obj.liquidDamage)
       ..writeByte(13)
-      ..write(obj.hasCharger)
+      ..write(obj.switchOn)
       ..writeByte(14)
-      ..write(obj.extraAnswers)
+      ..write(obj.receiveCall)
       ..writeByte(15)
-      ..write(obj.createdAt)
+      ..write(obj.features1Condition)
       ..writeByte(16)
-      ..write(obj.updatedAt);
+      ..write(obj.features2Condition)
+      ..writeByte(17)
+      ..write(obj.cameraCondition)
+      ..writeByte(18)
+      ..write(obj.displayCondition)
+      ..writeByte(19)
+      ..write(obj.displayCracked)
+      ..writeByte(20)
+      ..write(obj.displayOriginal)
+      ..writeByte(21)
+      ..write(obj.createdAt)
+      ..writeByte(22)
+      ..write(obj.updatedAt)
+      ..writeByte(23)
+      ..write(obj.isSold);
   }
 
   @override

@@ -14,32 +14,50 @@ class CreateItemParams extends Equatable {
   final List<String> photos;
   final String category;
   final String model;
-  final double price;
-  final int year;
-  final String description;
-  final String storage;
-  final String screenCondition;
-  final int batteryHealth;
-  final String cameraQuality;
-  final bool hasCharger;
 
-  // Extra dynamic questions
-  final Map<String, dynamic>? extraAnswers;
+  // TextFields
+  final int year;
+  final int batteryHealth;
+  final String description;
+
+  // Radio Button
+  final String deviceCondition;
+
+  // Charger Available
+  final bool chargerAvailable;
+
+  // Boolean Evaluation Questions
+  final bool factoryUnlock;
+  final bool liquidDamage;
+  final bool switchOn;
+  final bool receiveCall;
+  final bool features1Condition;
+  final bool features2Condition;
+  final bool cameraCondition;
+  final bool displayCondition;
+  final bool displayCracked;
+  final bool displayOriginal;
 
   const CreateItemParams({
     required this.sellerId,
     required this.photos,
     required this.category,
     required this.model,
-    required this.price,
     required this.year,
-    required this.description,
-    required this.storage,
-    required this.screenCondition,
     required this.batteryHealth,
-    required this.cameraQuality,
-    required this.hasCharger,
-    this.extraAnswers,
+    required this.description,
+    required this.deviceCondition,
+    required this.chargerAvailable,
+    required this.factoryUnlock,
+    required this.liquidDamage,
+    required this.switchOn,
+    required this.receiveCall,
+    required this.features1Condition,
+    required this.features2Condition,
+    required this.cameraCondition,
+    required this.displayCondition,
+    required this.displayCracked,
+    required this.displayOriginal,
   });
 
   @override
@@ -48,18 +66,23 @@ class CreateItemParams extends Equatable {
         photos,
         category,
         model,
-        price,
         year,
-        description,
-        storage,
-        screenCondition,
         batteryHealth,
-        cameraQuality,
-        hasCharger,
-        extraAnswers,
+        description,
+        deviceCondition,
+        chargerAvailable,
+        factoryUnlock,
+        liquidDamage,
+        switchOn,
+        receiveCall,
+        features1Condition,
+        features2Condition,
+        cameraCondition,
+        displayCondition,
+        displayCracked,
+        displayOriginal,
       ];
 }
-
 
 final createItemUsecaseProvider = Provider<CreateItemUsecase>((ref) {
   final itemRepository = ref.read(itemRepositoryProvider);
@@ -78,17 +101,28 @@ class CreateItemUsecase
     final itemEntity = ItemEntity(
       sellerId: params.sellerId,
       photos: params.photos,
+
       category: params.category,
       model: params.model,
-      price: params.price,
+
       year: params.year,
-      description: params.description,
-      storage: params.storage,
-      screenCondition: params.screenCondition,
       batteryHealth: params.batteryHealth,
-      cameraQuality: params.cameraQuality,
-      hasCharger: params.hasCharger,
-      extraAnswers: params.extraAnswers,
+      description: params.description,
+
+      deviceCondition: params.deviceCondition,
+
+      chargerAvailable: params.chargerAvailable,
+
+      factoryUnlock: params.factoryUnlock,
+      liquidDamage: params.liquidDamage,
+      switchOn: params.switchOn,
+      receiveCall: params.receiveCall,
+      features1Condition: params.features1Condition,
+      features2Condition: params.features2Condition,
+      cameraCondition: params.cameraCondition,
+      displayCondition: params.displayCondition,
+      displayCracked: params.displayCracked,
+      displayOriginal: params.displayOriginal,
     );
 
     return _itemRepository.createItem(itemEntity);
