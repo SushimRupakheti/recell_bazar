@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/item/presentation/pages/selling_screens/fourth_selling_screen.dart';
-import 'package:recell_bazar/features/item/presentation/widgets/progree_indicator.dart';
+import 'package:recell_bazar/features/item/presentation/widgets/progress_indicator.dart';
 import 'package:recell_bazar/features/item/presentation/widgets/question_design_widget.dart';
 
 class ThirdSellingScreen extends ConsumerStatefulWidget {
@@ -33,10 +33,10 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
             onPressed: () => onChanged(true),
             style: OutlinedButton.styleFrom(
               side: BorderSide(
-                color: value == true ? Colors.teal : Colors.grey.shade400,
+                color: value == true ? Color(0xFF0B7C7C) : Colors.grey.shade400,
               ),
               backgroundColor: value == true
-                  ? Colors.teal.withOpacity(0.1)
+                  ? Color(0xFF0B7C7C).withOpacity(0.1)
                   : Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -49,7 +49,7 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
             child: Text(
               'Yes',
               style: TextStyle(
-                color: value == true ? Colors.teal : Colors.black,
+                color: value == true ? Color(0xFF0B7C7C) : Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -59,10 +59,10 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
             onPressed: () => onChanged(false),
             style: OutlinedButton.styleFrom(
               side: BorderSide(
-                color: value == false ? Colors.teal : Colors.grey.shade400,
+                color: value == false ? Color(0xFF0B7C7C) : Colors.grey.shade400,
               ),
               backgroundColor: value == false
-                  ? Colors.teal.withOpacity(0.1)
+                  ? Color(0xFF0B7C7C).withOpacity(0.1)
                   : Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -75,7 +75,7 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
             child: Text(
               'No',
               style: TextStyle(
-                color: value == false ? Colors.teal : Colors.black,
+                color: value == false ? Color(0xFF0B7C7C) : Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -170,7 +170,7 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
                 OutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.teal, width: 2),
+                    side: const BorderSide(color: Color(0xFF0B7C7C), width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -182,7 +182,7 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
                   child: const Text(
                     'Cancel',
                     style: TextStyle(
-                      color: Colors.teal,
+                      color: Color(0xFF0B7C7C),
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -201,8 +201,8 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    disabledBackgroundColor: Colors.teal.withOpacity(0.4),
+                    backgroundColor: Color(0xFF0B7C7C),
+                    disabledBackgroundColor: Color(0xFF0B7C7C).withOpacity(0.4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

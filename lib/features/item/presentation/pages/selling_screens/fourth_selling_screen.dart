@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/item/presentation/pages/selling_screens/second_selling_screen.dart';
-import 'package:recell_bazar/features/item/presentation/widgets/progree_indicator.dart';
+import 'package:recell_bazar/features/item/presentation/widgets/progress_indicator.dart';
 import 'package:recell_bazar/features/item/presentation/widgets/question_design_widget.dart';
 
 class FourthSellingScreen extends ConsumerStatefulWidget {
@@ -40,10 +40,10 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
             onPressed: () => onChanged(true),
             style: OutlinedButton.styleFrom(
               side: BorderSide(
-                color: value == true ? Colors.teal : Colors.grey.shade400,
+                color: value == true ? Color(0xFF0B7C7C) : Colors.grey.shade400,
               ),
               backgroundColor: value == true
-                  ? Colors.teal.withOpacity(0.1)
+                  ? Color(0xFF0B7C7C).withOpacity(0.1)
                   : Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -53,7 +53,7 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
             child: Text(
               'Yes',
               style: TextStyle(
-                color: value == true ? Colors.teal : Colors.black,
+                color: value == true ? Color(0xFF0B7C7C) : Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -63,10 +63,10 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
             onPressed: () => onChanged(false),
             style: OutlinedButton.styleFrom(
               side: BorderSide(
-                color: value == false ? Colors.teal : Colors.grey.shade400,
+                color: value == false ? Color(0xFF0B7C7C) : Colors.grey.shade400,
               ),
               backgroundColor: value == false
-                  ? Colors.teal.withOpacity(0.1)
+                  ? Color(0xFF0B7C7C).withOpacity(0.1)
                   : Colors.transparent,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -76,7 +76,7 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
             child: Text(
               'No',
               style: TextStyle(
-                color: value == false ? Colors.teal : Colors.black,
+                color: value == false ? Color(0xFF0B7C7C) : Colors.black,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -164,14 +164,14 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.teal, width: 1.5),
+                  border: Border.all(color: Color(0xFF0B7C7C), width: 1.5),
                   borderRadius: BorderRadius.circular(12),
-                  color: Colors.teal.withOpacity(0.05),
+                  color: Color(0xFF0B7C7C).withOpacity(0.05),
                 ),
                 child: Column(
                   children: [
                     const Icon(Icons.camera_alt,
-                        size: 40, color: Colors.teal),
+                        size: 40, color: Color(0xFF0B7C7C)),
                     const SizedBox(height: 8),
                     Text(
                       selectedPhotos.isEmpty
@@ -215,7 +215,7 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Colors.teal, width: 2),
+                  borderSide: const BorderSide(color: Color(0xFF0B7C7C), width: 2),
                 ),
               ),
               onChanged: (_) => setState(() {}),
@@ -232,7 +232,7 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                 OutlinedButton(
                   onPressed: () => Navigator.pop(context),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Colors.teal, width: 2),
+                    side: const BorderSide(color: Color(0xFF0B7C7C), width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -244,7 +244,7 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                   child: const Text(
                     'Cancel',
                     style: TextStyle(
-                      color: Colors.teal,
+                      color: Color(0xFF0B7C7C),
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -263,8 +263,8 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    disabledBackgroundColor: Colors.teal.withOpacity(0.4),
+                    backgroundColor: Color(0xFF0B7C7C),
+                    disabledBackgroundColor: Color(0xFF0B7C7C).withOpacity(0.4),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

@@ -25,7 +25,7 @@ class StepProgressIndicator extends StatelessWidget {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isActive ? Colors.teal : Colors.grey.shade300,
+                color: isActive ? Color(0xFF0B7C7C) : Colors.grey.shade300,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
@@ -45,7 +45,7 @@ class StepProgressIndicator extends StatelessWidget {
                 width: 40, // 👈 controls spacing between steps
                 height: 2,
                 margin: const EdgeInsets.symmetric(horizontal: 6),
-                color: isActive ? Colors.teal : Colors.grey.shade300,
+                color: isActive ? Color(0xFF0B7C7C) : Colors.grey.shade300,
               ),
           ],
         );

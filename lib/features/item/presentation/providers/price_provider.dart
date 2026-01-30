@@ -26,6 +26,8 @@ class PhonePriceData {
   bool liquidDamage;
   bool switchOn;
   bool receiveCall;
+  bool repairedBoard;
+
 
   bool features1Condition;
   bool features2Condition;
@@ -53,6 +55,7 @@ class PhonePriceData {
     this.liquidDamage = false,
     this.switchOn = true,
     this.receiveCall = true,
+    this.repairedBoard = false,
 
     this.features1Condition = true,
     this.features2Condition = true,
@@ -82,6 +85,8 @@ class PhonePriceData {
     bool? liquidDamage,
     bool? switchOn,
     bool? receiveCall,
+    bool? repairedBoard,
+
 
     bool? features1Condition,
     bool? features2Condition,
@@ -109,6 +114,7 @@ class PhonePriceData {
       liquidDamage: liquidDamage ?? this.liquidDamage,
       switchOn: switchOn ?? this.switchOn,
       receiveCall: receiveCall ?? this.receiveCall,
+      repairedBoard: repairedBoard ?? this.repairedBoard,
 
       features1Condition: features1Condition ?? this.features1Condition,
       features2Condition: features2Condition ?? this.features2Condition,
@@ -187,6 +193,9 @@ class PhonePriceNotifier extends StateNotifier<PhonePriceData> {
       case "displayOriginal":
         state = state.copyWith(displayOriginal: value);
         break;
+
+      case "repairedBoard":
+        state = state.copyWith(repairedBoard: value);
     }
 
     _calculateFinalPrice();
@@ -227,6 +236,9 @@ class PhonePriceNotifier extends StateNotifier<PhonePriceData> {
     if (age > 0) {
       price *= (1 - (0.05 * age));
     }
+
+    // Repaired Board Deduction
+    if (state.repairedBoard) price *= 0.8; // Apply a 20% discount if the board is repaired
 
     // Prevent Negative Price
     if (price < 0) price = 0;

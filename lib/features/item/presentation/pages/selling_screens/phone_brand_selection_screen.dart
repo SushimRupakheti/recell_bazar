@@ -37,7 +37,7 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select Phone Brand'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Color(0xFF0B7C7C),
         titleTextStyle: TextStyle(
           color: Colors.white,
           fontSize: 20,
@@ -71,7 +71,7 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: selectedBrand == brand
-                            ? Colors.teal
+                            ? Color(0xFF0B7C7C)
                             : Colors.transparent,
                         width: 3,
                       ),
@@ -155,12 +155,12 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(
                             color: isUnlocked == true
-                                ? Colors.teal
+                                ? Color(0xFF0B7C7C)
                                 : const Color.fromARGB(255, 207, 207, 207),
                             width: 1,
                           ),
                           backgroundColor: isUnlocked == true
-                              ? Colors.teal.withOpacity(0.1)
+                              ? Color(0xFF0B7C7C).withOpacity(0.1)
                               : Colors.transparent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -174,7 +174,7 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                           'Yes',
                           style: TextStyle(
                             color: isUnlocked == true
-                                ? Colors.teal
+                                ? Color(0xFF0B7C7C)
                                 : Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
@@ -192,12 +192,12 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                         style: OutlinedButton.styleFrom(
                           side: BorderSide(
                             color: isUnlocked == true
-                                ? Colors.teal
+                                ? Color(0xFF0B7C7C)
                                 : const Color.fromARGB(255, 207, 207, 207),
                             width: 1,
                           ),
                           backgroundColor: isUnlocked == false
-                              ? Colors.teal.withOpacity(0.1)
+                              ? Color(0xFF0B7C7C).withOpacity(0.1)
                               : Colors.transparent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -211,7 +211,7 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                           'No',
                           style: TextStyle(
                             color: isUnlocked == false
-                                ? Colors.teal
+                                ? Color(0xFF0B7C7C)
                                 : Colors.black,
                             fontWeight: FontWeight.bold,
                           ),
@@ -243,7 +243,7 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                     Navigator.pop(context);
                   },
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.teal, width: 2),
+                    side: BorderSide(color: Color(0xFF0B7C7C), width: 2),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -252,7 +252,7 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                   child: Text(
                     'Cancel',
                     style: TextStyle(
-                      color: Colors.teal,
+                      color: Color(0xFF0B7C7C),
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
                     ),
@@ -275,7 +275,7 @@ class _PhoneBrandSelectionScreenState extends State<PhoneBrandSelectionScreen> {
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
+                    backgroundColor: Color(0xFF0B7C7C),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),

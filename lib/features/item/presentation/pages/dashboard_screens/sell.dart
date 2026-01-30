@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:recell_bazar/features/item/presentation/pages/selling_screens/phone_brand_selection_screen.dart';
+import 'package:recell_bazar/features/item/presentation/pages/selling_screens/selling_info_screen.dart';
 
 class Sell extends StatelessWidget {
   const Sell({super.key});
@@ -10,7 +11,7 @@ class Sell extends StatelessWidget {
       // AppBar optional
       appBar: AppBar(
         title: const Text('Sell'),
-        backgroundColor: Colors.teal,
+        backgroundColor: Color(0xFF0B7C7C),
       ),
       body: const Center(
         child: Text(
@@ -24,11 +25,11 @@ class Sell extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>  PhoneBrandSelectionScreen(),
+              builder: (context) =>  SellingInfoScreen(),
             ),
           );
         },
-        backgroundColor: Colors.teal,
+        backgroundColor: Color(0xFF0B7C7C),
         child: const Icon(Icons.add, size: 30),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
