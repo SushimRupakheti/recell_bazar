@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:recell_bazar/features/item/presentation/pages/selling_screens/second_selling_screen.dart';
-import 'package:recell_bazar/features/item/presentation/widgets/progress_indicator.dart';
-import 'package:recell_bazar/features/item/presentation/widgets/question_design_widget.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:recell_bazar/features/item/presentation/providers/price_provider.dart';
+import 'package:recell_bazar/features/item/presentation/state/item_state.dart';
+import 'package:recell_bazar/features/item/presentation/view_model/item_viewmodel.dart';
+
 
 class FourthSellingScreen extends ConsumerStatefulWidget {
   const FourthSellingScreen({super.key});
@@ -13,276 +17,342 @@ class FourthSellingScreen extends ConsumerStatefulWidget {
 }
 
 class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
-  bool? displayCondition;
-  bool? displayCracked;
-  bool? displayOriginal;
-
-  final TextEditingController batteryController = TextEditingController(
-    text: "98",
-  );
-  
-  // Description Controller
   final TextEditingController descriptionController = TextEditingController();
+  final ImagePicker picker = ImagePicker();
 
-  // Photos List (later you can connect image picker)
-  List<String> selectedPhotos = [];
+  List<File> selectedPhotos = [];
 
-  Widget buildYesNoQuestion(
-    String question,
-    bool? value,
-    Function(bool) onChanged,
-  ) {
-    return QuestionDesignWidget(
-      question: question,
-      child: Row(
-        children: [
-          OutlinedButton(
-            onPressed: () => onChanged(true),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: value == true ? Color(0xFF0B7C7C) : Colors.grey.shade400,
-              ),
-              backgroundColor: value == true
-                  ? Color(0xFF0B7C7C).withOpacity(0.1)
-                  : Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+  // ✅ Pick Photo
+  Future<void> pickPhoto(ImageSource source) async {
+    final XFile? file = await picker.pickImage(
+      source: source,
+      imageQuality: 70,
+    );
+
+    if (file != null) {
+      setState(() {
+        selectedPhotos.add(File(file.path));
+      });
+    }
+  }
+
+  // ✅ Bottom Sheet
+  void showPhotoPickerSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text("Take Photo"),
+              onTap: () {
+                Navigator.pop(context);
+                pickPhoto(ImageSource.camera);
+              },
             ),
-            child: Text(
-              'Yes',
-              style: TextStyle(
-                color: value == true ? Color(0xFF0B7C7C) : Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text("Choose From Gallery"),
+              onTap: () {
+                Navigator.pop(context);
+                pickPhoto(ImageSource.gallery);
+              },
             ),
-          ),
-          const SizedBox(width: 16),
-          OutlinedButton(
-            onPressed: () => onChanged(false),
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(
-                color: value == false ? Color(0xFF0B7C7C) : Colors.grey.shade400,
-              ),
-              backgroundColor: value == false
-                  ? Color(0xFF0B7C7C).withOpacity(0.1)
-                  : Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            ),
-            child: Text(
-              'No',
-              style: TextStyle(
-                color: value == false ? Color(0xFF0B7C7C) : Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  bool get isFormValid =>
-      displayCondition != null &&
-      displayCracked != null &&
-      displayOriginal != null &&
-      batteryController.text.isNotEmpty &&
-      descriptionController.text.isNotEmpty &&
-      selectedPhotos.isNotEmpty;
-
+  @override
+  void dispose() {
+    descriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final phoneData = ref.watch(phonePriceProvider);
+    final notifier = ref.read(phonePriceProvider.notifier);
+
+    final itemState = ref.watch(itemViewModelProvider);
+
+    // ✅ Form Validation
+    final bool isFormValid =
+        selectedPhotos.isNotEmpty && descriptionController.text.isNotEmpty;
+
     return Scaffold(
-      // backgroundColor: const Color(0xFFFFF1F1),
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.black,
-        titleTextStyle: TextStyle(
-          color: Colors.black,
-          fontSize: 20,
-          fontFamily: 'Montserrat-Bold',
-        ),
-        title: const Text("Answer The Questions Below"),
+        title: const Text("Step 4 of 4"),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const StepProgressIndicator(currentStep: 3, totalSteps: 4),
-            const SizedBox(height: 32),
-
-            // Questions
-            buildYesNoQuestion(
-              "IS your display the original one that came with the phone?",
-              displayOriginal,
-              (v) => setState(() => displayOriginal = v),
-            ),
-            buildYesNoQuestion(
-              "Is your display working properly?",
-              displayCondition,
-              (v) => setState(() => displayCondition = v),
-            ),
-
-            buildYesNoQuestion(
-              "Is your display cracked?",
-              displayCracked,
-              (v) => setState(() => displayCracked = v),
-            ),
-
-            //PHOTOS
-                        // =====================================================
-            // ✅ PHOTO FIELD (NOT RELATED TO YES/NO)
-            // =====================================================
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Upload Phone Photos",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-
-            GestureDetector(
-              onTap: () {
-                // TODO: Add Image Picker Here
-                setState(() {
-                  selectedPhotos.add("dummy_photo");
-                });
-              },
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFF0B7C7C), width: 1.5),
-                  borderRadius: BorderRadius.circular(12),
-                  color: Color(0xFF0B7C7C).withOpacity(0.05),
-                ),
-                child: Column(
-                  children: [
-                    const Icon(Icons.camera_alt,
-                        size: 40, color: Color(0xFF0B7C7C)),
-                    const SizedBox(height: 8),
-                    Text(
-                      selectedPhotos.isEmpty
-                          ? "Tap to upload photos"
-                          : "${selectedPhotos.length} photo(s) selected",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            // ✅ Progress Bar
+            LinearProgressIndicator(
+              value: 1.0,
+              minHeight: 8,
+              borderRadius: BorderRadius.circular(10),
+              backgroundColor: Colors.grey.shade300,
+              color: Colors.teal,
             ),
 
             const SizedBox(height: 25),
 
-            // =====================================================
-            // ✅ DESCRIPTION FIELD (NOT RELATED TO YES/NO)
-            // =====================================================
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Add Description",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
+            // ===================================================
+            // ✅ DISPLAY QUESTIONS
+            // ===================================================
+
+            const Text(
+              "Display Condition",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
+
+            // DropdownButtonFormField<String>(
+            //   value: phoneData.displayCondition.isEmpty
+            //       ? null
+            //       : phoneData.displayCondition,
+            //   decoration: InputDecoration(
+            //     border: OutlineInputBorder(
+            //       borderRadius: BorderRadius.circular(14),
+            //     ),
+            //   ),
+            //   items: ["Good", "Average", "Poor"]
+            //       .map((e) => DropdownMenuItem(
+            //             value: e,
+            //             child: Text(e),
+            //           ))
+            //       .toList(),
+            //   onChanged: (value) {
+            //     notifier.updateField("displayCondition", value!);
+            //   },
+            // ),
+
+            const SizedBox(height: 20),
+
+            // ✅ Display Cracked
+            const Text(
+              "Is Display Cracked?",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<bool>(
+                    title: const Text("Yes"),
+                    value: true,
+                    groupValue: phoneData.displayCracked,
+                    onChanged: (v) {
+                      notifier.updateField("displayCracked", v.toString());
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<bool>(
+                    title: const Text("No"),
+                    value: false,
+                    groupValue: phoneData.displayCracked,
+                    onChanged: (v) {
+                      notifier.updateField("displayCracked", v.toString());
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 15),
+
+            // ✅ Display Original
+            const Text(
+              "Is Display Original?",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+
+            Row(
+              children: [
+                Expanded(
+                  child: RadioListTile<bool>(
+                    title: const Text("Yes"),
+                    value: true,
+                    groupValue: phoneData.displayOriginal,
+                    onChanged: (v) {
+                      notifier.updateField("displayOriginal", v.toString());
+                    },
+                  ),
+                ),
+                Expanded(
+                  child: RadioListTile<bool>(
+                    title: const Text("No"),
+                    value: false,
+                    groupValue: phoneData.displayOriginal,
+                    onChanged: (v) {
+                      notifier.updateField("displayOriginal", v.toString());
+                    },
+                  ),
+                ),
+              ],
+            ),
+
+            const Divider(height: 35),
+
+            // ===================================================
+            // ✅ PHOTO UPLOAD SECTION
+            // ===================================================
+
+            const Text(
+              "Upload Photos",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 10),
+
+            GestureDetector(
+              onTap: showPhotoPickerSheet,
+              child: Container(
+                width: double.infinity,
+                height: 140,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: Colors.teal, width: 2),
+                ),
+                child: const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.add_a_photo,
+                          size: 40, color: Colors.teal),
+                      SizedBox(height: 10),
+                      Text("Tap to Upload Photos"),
+                    ],
+                  ),
                 ),
               ),
             ),
+
+            const SizedBox(height: 15),
+
+            if (selectedPhotos.isNotEmpty)
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: selectedPhotos.map((file) {
+                  return ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.file(
+                      file,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    ),
+                  );
+                }).toList(),
+              ),
+
+            const SizedBox(height: 25),
+
+            // ===================================================
+            // ✅ DESCRIPTION
+            // ===================================================
+
+            const Text(
+              "Description",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+
             const SizedBox(height: 10),
 
             TextField(
               controller: descriptionController,
               maxLines: 4,
               decoration: InputDecoration(
-                hintText: "Write details about your phone...",
+                hintText: "Write phone description...",
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: Color(0xFF0B7C7C), width: 2),
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
               onChanged: (_) => setState(() {}),
             ),
 
+            const SizedBox(height: 25),
 
+            // ===================================================
+            // ✅ SUBMIT BUTTON
+            // ===================================================
 
-            const SizedBox(height: 20),
-
-            // Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: OutlinedButton.styleFrom(
-                    side: const BorderSide(color: Color(0xFF0B7C7C), width: 2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 60,
-                      vertical: 16,
-                    ),
-                  ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      color: Color(0xFF0B7C7C),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                const SizedBox(width: 30),
-                ElevatedButton(
-                  onPressed: isFormValid
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SecondSellingScreen(),
-                            ),
-                          );
+                onPressed: (!isFormValid ||
+                        itemState.status == ItemStatus.loading)
+                    ? null
+                    : () async {
+                        final itemVM =
+                            ref.read(itemViewModelProvider.notifier);
+
+                        // ✅ Upload Photos
+                        List<String> uploadedUrls = [];
+
+                        for (File photo in selectedPhotos) {
+                          final url = await itemVM.uploadPhoto(photo);
+                          if (url != null) uploadedUrls.add(url);
                         }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF0B7C7C),
-                    disabledBackgroundColor: Color(0xFF0B7C7C).withOpacity(0.4),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 60,
-                      vertical: 16,
-                    ),
-                  ),
-                  child: const Text(
-                    'Next',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ),
-              ],
+
+                        // ✅ Create Item
+                        await itemVM.createItem(
+                          sellerId: "USER_ID_HERE",
+                          photos: uploadedUrls,
+                          category: phoneData.category,
+                          phoneModel: phoneData.phoneModel,
+                          year: phoneData.year,
+                          batteryHealth: phoneData.batteryHealth,
+                          description: descriptionController.text,
+                          basePrice: phoneData.basePrice.toString(),
+                          finalPrice: phoneData.finalPrice.toString(),
+                          deviceCondition: phoneData.deviceCondition,
+                          chargerAvailable: phoneData.chargerAvailable,
+                          factoryUnlock: phoneData.factoryUnlock,
+                          liquidDamage: phoneData.liquidDamage,
+                          switchOn: phoneData.switchOn,
+                          receiveCall: phoneData.receiveCall,
+                          features1Condition: phoneData.features1Condition,
+                          features2Condition: phoneData.features2Condition,
+                          cameraCondition: phoneData.cameraCondition,
+                          displayCondition: phoneData.displayCondition,
+                          displayCracked: phoneData.displayCracked,
+                          displayOriginal: phoneData.displayOriginal,
+                        );
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Item Posted Successfully ✅"),
+                          ),
+                        );
+
+                        Navigator.popUntil(
+                            context, (route) => route.isFirst);
+                      },
+                child: itemState.status == ItemStatus.loading
+                    ? const CircularProgressIndicator()
+                    : const Text(
+                        "Submit Item",
+                        style: TextStyle(fontSize: 16),
+                      ),
+              ),
             ),
           ],
         ),
