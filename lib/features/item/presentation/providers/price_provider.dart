@@ -1,11 +1,10 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 /// Full model for holding all phone evaluation + price calculation data
 class PhonePriceData {
   // Basic Info
   String category;
-  String model;
+  String phoneModel;
 
   // Price
   double basePrice;
@@ -39,7 +38,7 @@ class PhonePriceData {
 
   PhonePriceData({
     this.category = '',
-    this.model = '',
+    this.phoneModel = '',
 
     this.basePrice = 0,
     this.finalPrice = 0,
@@ -69,7 +68,7 @@ class PhonePriceData {
   /// CopyWith for updating fields safely
   PhonePriceData copyWith({
     String? category,
-    String? model,
+    String? phoneModel,
 
     double? basePrice,
     double? finalPrice,
@@ -98,7 +97,7 @@ class PhonePriceData {
   }) {
     return PhonePriceData(
       category: category ?? this.category,
-      model: model ?? this.model,
+      phoneModel: phoneModel ?? this.phoneModel,
 
       basePrice: basePrice ?? this.basePrice,
       finalPrice: finalPrice ?? this.finalPrice,

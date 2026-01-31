@@ -9,7 +9,7 @@ class ItemEntity extends Equatable {
 
   // Basic phone info
   final String category;
-  final String model;
+  final String phoneModel;
 
   //PRICE
   final String finalPrice;
@@ -49,7 +49,7 @@ class ItemEntity extends Equatable {
     required this.photos,
 
     required this.category,
-    required this.model,
+    required this.phoneModel,
 
     required this.finalPrice,
     required this.basePrice,
@@ -85,7 +85,7 @@ class ItemEntity extends Equatable {
     List<String>? photos,
 
     String? category,
-    String? model,
+    String? phoneModel,
 
     int? year,
     int? batteryHealth,
@@ -119,7 +119,7 @@ class ItemEntity extends Equatable {
       photos: photos ?? this.photos,
 
       category: category ?? this.category,
-      model: model ?? this.model,
+      phoneModel: phoneModel ?? this.phoneModel,
 
       finalPrice: finalPrice ?? this.finalPrice,
       basePrice: basePrice ?? this.basePrice,
@@ -156,7 +156,7 @@ class ItemEntity extends Equatable {
         photos,
 
         category,
-        model,
+        phoneModel,
 
         finalPrice,
         basePrice,

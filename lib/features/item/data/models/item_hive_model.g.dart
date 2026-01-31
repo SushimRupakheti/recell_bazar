@@ -22,7 +22,7 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       seller: fields[2] as String,
       photos: (fields[3] as List).cast<String>(),
       category: fields[4] as String,
-      model: fields[5] as String,
+      phoneModel: fields[5] as String,
       year: fields[6] as int,
       batteryHealth: fields[7] as int,
       description: fields[8] as String,
@@ -60,7 +60,7 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       ..writeByte(4)
       ..write(obj.category)
       ..writeByte(5)
-      ..write(obj.model)
+      ..write(obj.phoneModel)
       ..writeByte(6)
       ..write(obj.year)
       ..writeByte(7)

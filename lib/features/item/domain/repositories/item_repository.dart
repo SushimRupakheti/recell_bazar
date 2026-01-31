@@ -18,7 +18,7 @@ abstract interface class IItemRepository {
 
   // Model-based search ONLY
   Future<Either<Failure, List<ItemEntity>>> searchItems(
-    String model,
+    String phoneModel,
     String? categoryId,
   );
 

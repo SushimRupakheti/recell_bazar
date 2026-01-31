@@ -167,7 +167,7 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
   }
 
   @override
-  Future<List<ItemApiModel>> searchItems(String model, {String? categoryId}) {
+  Future<List<ItemApiModel>> searchItems(String phoneModel, {String? categoryId}) {
     // TODO: implement searchItems
     throw UnimplementedError();
   }

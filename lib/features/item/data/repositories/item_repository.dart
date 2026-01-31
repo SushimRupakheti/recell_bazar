@@ -98,18 +98,18 @@ class ItemRepository implements IItemRepository {
   }
 
   @override
-  Future<Either<Failure, List<ItemEntity>>> searchItems(
-      String model, String? categoryId) async {
+    Future<Either<Failure, List<ItemEntity>>> searchItems(
+      String phoneModel, String? categoryId) async {
     if (await _networkInfo.isConnected) {
       try {
         final allItems = await _remoteDataSource.getAllItems();
         final filtered = allItems
-            .where((item) =>
-                item.model.toLowerCase().contains(model.toLowerCase()) &&
-                (categoryId == null ||
-                    item.category.toLowerCase() ==
-                        categoryId.toLowerCase()))
-            .toList();
+          .where((item) =>
+            item.phoneModel.toLowerCase().contains(phoneModel.toLowerCase()) &&
+            (categoryId == null ||
+              item.category.toLowerCase() ==
+                categoryId.toLowerCase()))
+          .toList();
         return Right(ItemApiModel.toEntityList(filtered));
       } catch (e) {
         return Left(ApiFailure(message: e.toString()));
@@ -118,12 +118,12 @@ class ItemRepository implements IItemRepository {
       try {
         final allItems = await _localDataSource.getAllItems();
         final filtered = allItems
-            .where((item) =>
-                item.model.toLowerCase().contains(model.toLowerCase()) &&
-                (categoryId == null ||
-                    item.category.toLowerCase() ==
-                        categoryId.toLowerCase()))
-            .toList();
+          .where((item) =>
+            item.phoneModel.toLowerCase().contains(phoneModel.toLowerCase()) &&
+            (categoryId == null ||
+              item.category.toLowerCase() ==
+                categoryId.toLowerCase()))
+          .toList();
         return Right(ItemHiveModel.toEntityList(filtered));
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));

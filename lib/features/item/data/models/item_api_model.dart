@@ -7,7 +7,7 @@ class ItemApiModel {
   final List<String> photos;
 
   final String category;
-  final String model;
+  final String phoneModel;
 
   final String finalPrice;
   final String basePrice;
@@ -36,7 +36,7 @@ class ItemApiModel {
     required this.sellerId,
     required this.photos,
     required this.category,
-    required this.model,
+    required this.phoneModel,
     required this.year,
     required this.batteryHealth,
     required this.description,
@@ -60,7 +60,7 @@ class ItemApiModel {
     return {
       "photos": photos,
       "category": category,
-      "model": model,
+      "phoneModel": phoneModel,
       "year": year,
       "batteryHealth": batteryHealth,
       "description": description,
@@ -88,7 +88,7 @@ class ItemApiModel {
       sellerId: json["sellerId"],
       photos: List<String>.from(json["photos"]),
       category: json["category"],
-      model: json["model"],
+      phoneModel: json["phoneModel"],
       year: json["year"],
       batteryHealth: json["batteryHealth"],
       description: json["description"],
@@ -115,7 +115,7 @@ class ItemApiModel {
       sellerId: sellerId,
       photos: photos,
       category: category,
-      model: model,
+      phoneModel: phoneModel,
       year: year,
       batteryHealth: batteryHealth,
       description: description,
@@ -142,7 +142,7 @@ class ItemApiModel {
       sellerId: entity.sellerId,
       photos: entity.photos,
       category: entity.category,
-      model: entity.model,
+      phoneModel: entity.phoneModel,
       year: entity.year,
       batteryHealth: entity.batteryHealth,
       description: entity.description,

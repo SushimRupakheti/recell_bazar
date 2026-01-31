@@ -11,7 +11,7 @@ import 'package:recell_bazar/features/item/domain/usecases/upload_photo_usecase.
 import 'package:recell_bazar/features/item/domain/usecases/upload_video_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/search_item_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/get_related_items_usecase.dart';
-import 'package:recell_bazar/features/item/domain/usecases/mark_item_as_sold_usecase.dart';
+// import 'package:recell_bazar/features/item/domain/usecases/mark_item_as_sold_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/add_to_cart_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/remove_from_cart_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/get_cart_items_usecase.dart';
@@ -34,7 +34,7 @@ class ItemViewModel extends Notifier<ItemState> {
   late final SearchItemsUsecase _searchItemsUsecase;
   late final GetItemsByCategoryUsecase _getItemsByCategoryUsecase;
   late final GetRelatedItemsUsecase _getRelatedItemsUsecase;
-  late final MarkItemAsSoldUsecase _markItemAsSoldUsecase;
+  // late final MarkItemAsSoldUsecase _markItemAsSoldUsecase;
   late final AddToCartUsecase _addToCartUsecase;
   late final RemoveFromCartUsecase _removeFromCartUsecase;
   late final GetCartItemsUsecase _getCartItemsUsecase;
@@ -52,7 +52,7 @@ class ItemViewModel extends Notifier<ItemState> {
     _searchItemsUsecase = ref.read(searchItemsUsecaseProvider);
     _getItemsByCategoryUsecase = ref.read(getItemsByCategoryUsecaseProvider);
     _getRelatedItemsUsecase = ref.read(getRelatedItemsUsecaseProvider);
-    _markItemAsSoldUsecase = ref.read(markItemAsSoldUsecaseProvider);
+    // _markItemAsSoldUsecase = ref.read(markItemAsSoldUsecaseProvider);
     _addToCartUsecase = ref.read(addToCartUsecaseProvider);
     _removeFromCartUsecase = ref.read(removeFromCartUsecaseProvider);
     _getCartItemsUsecase = ref.read(getCartItemsUsecaseProvider);
@@ -117,7 +117,7 @@ Future<void> createItem({
   required String sellerId,
   required List<String> photos,
   required String category,
-  required String model,
+  required String phoneModel,
   required int year,
   required String finalPrice,
   required String basePrice,
@@ -144,7 +144,7 @@ Future<void> createItem({
       sellerId: sellerId,
       photos: photos,
       category: category,
-      model: model,
+        phoneModel: phoneModel,
       year: year,
       finalPrice: finalPrice,
       basePrice: basePrice,
@@ -184,7 +184,7 @@ Future<void> updateItem({
   required String sellerId,
   required List<String> photos,
   required String category,
-  required String model,
+  required String phoneModel,
   required int year,
   required String finalPrice,
   required String basePrice,
@@ -211,7 +211,7 @@ Future<void> updateItem({
       itemId: itemId,
       photos: photos,
       category: category,
-      model: model,
+        phoneModel: phoneModel,
       year: year,
       finalPrice: finalPrice,
       basePrice: basePrice,
@@ -312,11 +312,11 @@ Future<void> updateItem({
 
   // ---------------- SEARCH / FILTER ----------------
 
-  Future<void> searchItems({String? model, String? category}) async {
+  Future<void> searchItems({String? phoneModel, String? category}) async {
     state = state.copyWith(status: ItemStatus.loading);
 
     final result = await _searchItemsUsecase(
-      SearchItemsParams(model: model, category: category),
+      SearchItemsParams(phoneModel: phoneModel, category: category),
     );
 
     result.fold(

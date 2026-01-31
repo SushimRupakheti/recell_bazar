@@ -33,7 +33,7 @@ class ApiEndpoints {
   static const String itemUploadVideo = '/items/upload-video';
   static String itemsByCategory(String categoryId) => '/items/category/$categoryId';
   static String itemsByUser(String userId) => '/items/user/$userId';
-  static String searchItems(String model, {String? categoryId}) =>'/items/search?model=$model${categoryId != null ? '&category=$categoryId' : ''}';
+  static String searchItems(String phoneModel, {String? categoryId}) =>'/items/search?model=$phoneModel${categoryId != null ? '&category=$categoryId' : ''}';
 
   // User endpoints
   static String uploadProfilePicture(String userId) => '/users/$userId/profile-picture';

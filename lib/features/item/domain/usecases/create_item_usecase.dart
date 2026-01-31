@@ -13,7 +13,7 @@ class CreateItemParams extends Equatable {
   // Mandatory fields
   final List<String> photos;
   final String category;
-  final String model;
+  final String phoneModel;
 
   // TextFields
   final int year;
@@ -46,7 +46,7 @@ class CreateItemParams extends Equatable {
     required this.sellerId,
     required this.photos,
     required this.category,
-    required this.model,
+    required this.phoneModel,
     required this.year,
     required this.finalPrice,
     required this.basePrice,
@@ -71,7 +71,7 @@ class CreateItemParams extends Equatable {
         sellerId,
         photos,
         category,
-        model,
+        phoneModel,
         year,
         finalPrice,
         basePrice,
@@ -111,7 +111,7 @@ class CreateItemUsecase
       photos: params.photos,
 
       category: params.category,
-      model: params.model,
+      phoneModel: params.phoneModel,
 
       year: params.year,
 

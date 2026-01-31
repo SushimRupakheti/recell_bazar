@@ -16,7 +16,7 @@ class UpdateItemParams extends Equatable {
   // Basic Fields
   final List<String>? photos;
   final String? category;
-  final String? model;
+  final String? phoneModel;
 
   //price
   final String? finalPrice;
@@ -49,7 +49,7 @@ class UpdateItemParams extends Equatable {
     required this.itemId,
     this.photos,
     this.category,
-    this.model,
+    this.phoneModel,
     this.year,
     this.finalPrice,
     this.basePrice,
@@ -74,7 +74,7 @@ class UpdateItemParams extends Equatable {
         itemId,
         photos,
         category,
-        model,
+        phoneModel,
         year,
         finalPrice,
         basePrice,
@@ -119,7 +119,7 @@ class UpdateItemUsecase implements UsecaseWithParams<bool, UpdateItemParams> {
       // Basic Fields
       photos: params.photos ?? [],
       category: params.category ?? "",
-      model: params.model ?? "",
+      phoneModel: params.phoneModel ?? "",
 
       //price
       finalPrice: params.finalPrice ?? "",

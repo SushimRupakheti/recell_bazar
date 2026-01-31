@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:recell_bazar/features/item/presentation/pages/selling_screens/phone_brand_selection_screen.dart';
 import 'package:recell_bazar/features/item/presentation/pages/selling_screens/selling_info_screen.dart';
 
 class Sell extends StatelessWidget {

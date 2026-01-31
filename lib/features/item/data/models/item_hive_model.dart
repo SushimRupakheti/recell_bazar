@@ -26,7 +26,7 @@ class ItemHiveModel extends HiveObject {
   final String category;
 
   @HiveField(5)
-  final String model;
+  final String phoneModel;
 
   @HiveField(6)
   final int year;
@@ -86,7 +86,7 @@ class ItemHiveModel extends HiveObject {
     this.seller = '',
     required this.photos,
     required this.category,
-    required this.model,
+    required this.phoneModel,
     required this.year,
     required this.finalPrice,
     required this.basePrice,
@@ -115,7 +115,7 @@ class ItemHiveModel extends HiveObject {
     String? seller,
     List<String>? photos,
     String? category,
-    String? model,
+    String? phoneModel,
     int? year,
     String? finalPrice,
     String? basePrice,
@@ -143,7 +143,7 @@ class ItemHiveModel extends HiveObject {
       seller: seller ?? this.seller,
       photos: photos ?? this.photos,
       category: category ?? this.category,
-      model: model ?? this.model,
+      phoneModel: phoneModel ?? this.phoneModel,
       year: year ?? this.year,
       finalPrice: finalPrice ?? this.finalPrice,
       basePrice: basePrice ?? this.basePrice,
@@ -174,7 +174,7 @@ class ItemHiveModel extends HiveObject {
       sellerId: sellerId,
       photos: photos,
       category: category,
-      model: model,
+      phoneModel: phoneModel,
       year: year,
       finalPrice: finalPrice,
       basePrice: basePrice,
@@ -206,7 +206,7 @@ class ItemHiveModel extends HiveObject {
       seller: '',
       photos: entity.photos,
       category: entity.category,
-      model: entity.model,
+      phoneModel: entity.phoneModel,
       year: entity.year,
       batteryHealth: entity.batteryHealth,
       description: entity.description,
