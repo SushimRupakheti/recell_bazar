@@ -16,8 +16,6 @@ class ItemApiModel {
   final int batteryHealth;
   final String description;
 
-  final String deviceCondition;
-
   final bool chargerAvailable;
 
   final bool factoryUnlock;
@@ -40,7 +38,6 @@ class ItemApiModel {
     required this.year,
     required this.batteryHealth,
     required this.description,
-    required this.deviceCondition,
     required this.chargerAvailable,
     required this.factoryUnlock,
     required this.liquidDamage,
@@ -64,7 +61,6 @@ class ItemApiModel {
       "year": year,
       "batteryHealth": batteryHealth,
       "description": description,
-      "deviceCondition": deviceCondition,
       "chargerAvailable": chargerAvailable,
       "factoryUnlock": factoryUnlock,
       "liquidDamage": liquidDamage,
@@ -92,7 +88,7 @@ class ItemApiModel {
       year: json["year"],
       batteryHealth: json["batteryHealth"],
       description: json["description"],
-      deviceCondition: json["deviceCondition"],
+      // deviceCondition removed
       chargerAvailable: json["chargerAvailable"],
       factoryUnlock: json["factoryUnlock"],
       liquidDamage: json["liquidDamage"],
@@ -119,7 +115,7 @@ class ItemApiModel {
       year: year,
       batteryHealth: batteryHealth,
       description: description,
-      deviceCondition: deviceCondition,
+      // deviceCondition removed
       chargerAvailable: chargerAvailable,
       factoryUnlock: factoryUnlock,
       liquidDamage: liquidDamage,
@@ -146,7 +142,7 @@ class ItemApiModel {
       year: entity.year,
       batteryHealth: entity.batteryHealth,
       description: entity.description,
-      deviceCondition: entity.deviceCondition,
+      // deviceCondition removed,
       chargerAvailable: entity.chargerAvailable,
       factoryUnlock: entity.factoryUnlock,
       liquidDamage: entity.liquidDamage,

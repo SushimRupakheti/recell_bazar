@@ -123,7 +123,6 @@ Future<void> createItem({
   required String basePrice,
   required int batteryHealth,
   required String description,
-  required String deviceCondition,
   required bool chargerAvailable,
 
   required bool factoryUnlock,
@@ -150,7 +149,6 @@ Future<void> createItem({
       basePrice: basePrice,
       batteryHealth: batteryHealth,
       description: description,
-      deviceCondition: deviceCondition,
       chargerAvailable: chargerAvailable,
 
       factoryUnlock: factoryUnlock,
@@ -190,7 +188,6 @@ Future<void> updateItem({
   required String basePrice,
   required int batteryHealth,
   required String description,
-  required String deviceCondition,
   required bool chargerAvailable,
   // Boolean evaluation questions
   required bool factoryUnlock,
@@ -217,7 +214,6 @@ Future<void> updateItem({
       basePrice: basePrice,
       batteryHealth: batteryHealth,
       description: description,
-      deviceCondition: deviceCondition,
       chargerAvailable: chargerAvailable,
       factoryUnlock: factoryUnlock,
       liquidDamage: liquidDamage,

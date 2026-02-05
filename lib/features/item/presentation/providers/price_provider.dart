@@ -15,7 +15,7 @@ class PhonePriceData {
   int batteryHealth;
 
   // Radio Field
-  String deviceCondition;
+  // deviceCondition removed
 
   // Charger
   bool chargerAvailable;
@@ -35,18 +35,19 @@ class PhonePriceData {
   bool displayCondition;
   bool displayCracked;
   bool displayOriginal;
+  String sellerId;
 
   PhonePriceData({
     this.category = '',
     this.phoneModel = '',
 
-    this.basePrice = 0,
-    this.finalPrice = 0,
+    this.basePrice = 0.0,
+    this.finalPrice = 0.0,
 
     this.year = 2025,
     this.batteryHealth = 100,
 
-    this.deviceCondition = '',
+    // deviceCondition removed
 
     this.chargerAvailable = true,
 
@@ -63,6 +64,7 @@ class PhonePriceData {
     this.displayCondition = true,
     this.displayCracked = false,
     this.displayOriginal = true,
+    this.sellerId = '',
   });
 
   /// CopyWith for updating fields safely
@@ -76,7 +78,7 @@ class PhonePriceData {
     int? year,
     int? batteryHealth,
 
-    String? deviceCondition,
+    // deviceCondition removed
 
     bool? chargerAvailable,
 
@@ -94,6 +96,7 @@ class PhonePriceData {
     bool? displayCondition,
     bool? displayCracked,
     bool? displayOriginal,
+    String? sellerId,
   }) {
     return PhonePriceData(
       category: category ?? this.category,
@@ -105,7 +108,7 @@ class PhonePriceData {
       year: year ?? this.year,
       batteryHealth: batteryHealth ?? this.batteryHealth,
 
-      deviceCondition: deviceCondition ?? this.deviceCondition,
+      // deviceCondition removed
 
       chargerAvailable: chargerAvailable ?? this.chargerAvailable,
 
@@ -122,6 +125,7 @@ class PhonePriceData {
       displayCondition: displayCondition ?? this.displayCondition,
       displayCracked: displayCracked ?? this.displayCracked,
       displayOriginal: displayOriginal ?? this.displayOriginal,
+      sellerId: sellerId ?? this.sellerId,
     );
   }
 }
@@ -138,71 +142,93 @@ class PhonePriceNotifier extends StateNotifier<PhonePriceData> {
 
   /// Update any field dynamically
   void updateField(String field, dynamic value) {
-    switch (field) {
+  switch (field) {
+    case "category":
+      state = state.copyWith(category: value as String);
+      break;
 
+    case "phoneModel":
+      state = state.copyWith(phoneModel: value as String);
+      break;
 
-      case "batteryHealth":
-        state = state.copyWith(batteryHealth: value);
-        break;
+    case "basePrice":
+      state = state.copyWith(
+        basePrice: (value as num).toDouble(),
+      );
+      break;
 
-      case "deviceCondition":
-        state = state.copyWith(deviceCondition: value);
-        break;
+    case "finalPrice":
+      state = state.copyWith(
+        finalPrice: (value as num).toDouble(),
+      );
+      break;
 
-      case "chargerAvailable":
-        state = state.copyWith(chargerAvailable: value);
-        break;
+    case "year":
+      state = state.copyWith(year: value as int);
+      break;
 
-      case "factoryUnlock":
-        state = state.copyWith(factoryUnlock: value);
-        break;
+    case "batteryHealth":
+      state = state.copyWith(batteryHealth: value as int);
+      break;
 
-      case "liquidDamage":
-        state = state.copyWith(liquidDamage: value);
-        break;
+    // deviceCondition removed
 
-      case "switchOn":
-        state = state.copyWith(switchOn: value);
-        break;
+    case "chargerAvailable":
+      state = state.copyWith(chargerAvailable: value as bool);
+      break;
 
-      case "receiveCall":
-        state = state.copyWith(receiveCall: value);
-        break;
+    case "factoryUnlock":
+      state = state.copyWith(factoryUnlock: value as bool);
+      break;
 
-      case "features1Condition":
-        state = state.copyWith(features1Condition: value);
-        break;
+    case "liquidDamage":
+      state = state.copyWith(liquidDamage: value as bool);
+      break;
 
-      case "features2Condition":
-        state = state.copyWith(features2Condition: value);
-        break;
+    case "switchOn":
+      state = state.copyWith(switchOn: value as bool);
+      break;
 
-      case "cameraCondition":
-        state = state.copyWith(cameraCondition: value);
-        break;
+    case "receiveCall":
+      state = state.copyWith(receiveCall: value as bool);
+      break;
 
-      case "displayCondition":
-        state = state.copyWith(displayCondition: value);
-        break;
+    case "features1Condition":
+      state = state.copyWith(features1Condition: value as bool);
+      break;
 
-      case "displayCracked":
-        state = state.copyWith(displayCracked: value);
-        break;
+    case "features2Condition":
+      state = state.copyWith(features2Condition: value as bool);
+      break;
 
-      case "displayOriginal":
-        state = state.copyWith(displayOriginal: value);
-        break;
+    case "cameraCondition":
+      state = state.copyWith(cameraCondition: value as bool);
+      break;
 
-      case "repairedBoard":
-        state = state.copyWith(repairedBoard: value);
-    }
+    case "displayCondition":
+      state = state.copyWith(displayCondition: value as bool);
+      break;
 
+    case "displayCracked":
+      state = state.copyWith(displayCracked: value as bool);
+      break;
+
+    case "displayOriginal":
+      state = state.copyWith(displayOriginal: value as bool);
+      break;
+
+    case "repairedBoard":
+      state = state.copyWith(repairedBoard: value as bool);
+      break;
+  }
     _calculateFinalPrice();
   }
 
   /// Price Calculation Logic
   void _calculateFinalPrice() {
     double price = state.basePrice;
+
+
 
     // Major Issues
     if (state.liquidDamage) price *= 0.5;
@@ -244,5 +270,8 @@ class PhonePriceNotifier extends StateNotifier<PhonePriceData> {
 
     // Update final price
     state = state.copyWith(finalPrice: price);
+  }
+    void setSellerId(String id) {
+    state = state.copyWith(sellerId: id);
   }
 }

@@ -24,8 +24,6 @@ class CreateItemParams extends Equatable {
   final String finalPrice;
   final String basePrice;
 
-  // Radio Button
-  final String deviceCondition;
 
   // Charger Available
   final bool chargerAvailable;
@@ -52,7 +50,6 @@ class CreateItemParams extends Equatable {
     required this.basePrice,
     required this.batteryHealth,
     required this.description,
-    required this.deviceCondition,
     required this.chargerAvailable,
     required this.factoryUnlock,
     required this.liquidDamage,
@@ -77,7 +74,6 @@ class CreateItemParams extends Equatable {
         basePrice,
         batteryHealth,
         description,
-        deviceCondition,
         chargerAvailable,
         factoryUnlock,
         liquidDamage,
@@ -121,7 +117,7 @@ class CreateItemUsecase
       batteryHealth: params.batteryHealth,
       description: params.description,
 
-      deviceCondition: params.deviceCondition,
+      // deviceCondition removed
 
       chargerAvailable: params.chargerAvailable,
 

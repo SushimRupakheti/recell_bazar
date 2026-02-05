@@ -27,8 +27,6 @@ class UpdateItemParams extends Equatable {
   final int? batteryHealth;
   final String? description;
 
-  // Radio Button Input
-  final String? deviceCondition;
 
   // Charger
   final bool? chargerAvailable;
@@ -55,7 +53,6 @@ class UpdateItemParams extends Equatable {
     this.basePrice,
     this.batteryHealth,
     this.description,
-    this.deviceCondition,
     this.chargerAvailable,
     this.factoryUnlock,
     this.liquidDamage,
@@ -80,7 +77,6 @@ class UpdateItemParams extends Equatable {
         basePrice,
         batteryHealth,
         description,
-        deviceCondition,
         chargerAvailable,
         factoryUnlock,
         liquidDamage,
@@ -130,8 +126,7 @@ class UpdateItemUsecase implements UsecaseWithParams<bool, UpdateItemParams> {
       batteryHealth: params.batteryHealth ?? 0,
       description: params.description ?? "",
 
-      // Radio Button
-      deviceCondition: params.deviceCondition ?? "",
+      // deviceCondition removed
 
       // Charger
       chargerAvailable: params.chargerAvailable ?? false,

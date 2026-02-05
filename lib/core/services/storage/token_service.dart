@@ -20,7 +20,8 @@ class TokenService {
 
   // Get token
   Future<String?> getToken() async {
-    return _prefs.getString(_tokenKey);
+    final token = _prefs.getString(_tokenKey);
+    return token;
   }
 
   // Remove token (for logout)

@@ -37,8 +37,6 @@ class ItemHiveModel extends HiveObject {
   @HiveField(8)
   final String description;
 
-  @HiveField(9)
-  final String deviceCondition;
 
   @HiveField(10)
   final bool chargerAvailable;
@@ -92,7 +90,6 @@ class ItemHiveModel extends HiveObject {
     required this.basePrice,
     required this.batteryHealth,
     required this.description,
-    required this.deviceCondition,
     required this.chargerAvailable,
     required this.factoryUnlock,
     required this.liquidDamage,
@@ -121,7 +118,6 @@ class ItemHiveModel extends HiveObject {
     String? basePrice,
     int? batteryHealth,
     String? description,
-    String? deviceCondition,
     bool? chargerAvailable,
     bool? factoryUnlock,
     bool? liquidDamage,
@@ -149,7 +145,7 @@ class ItemHiveModel extends HiveObject {
       basePrice: basePrice ?? this.basePrice,
       batteryHealth: batteryHealth ?? this.batteryHealth,
       description: description ?? this.description,
-      deviceCondition: deviceCondition ?? this.deviceCondition,
+      // deviceCondition removed
       chargerAvailable: chargerAvailable ?? this.chargerAvailable,
       factoryUnlock: factoryUnlock ?? this.factoryUnlock,
       liquidDamage: liquidDamage ?? this.liquidDamage,
@@ -180,7 +176,6 @@ class ItemHiveModel extends HiveObject {
       basePrice: basePrice,
       batteryHealth: batteryHealth,
       description: description,
-      deviceCondition: deviceCondition,
       chargerAvailable: chargerAvailable,
       factoryUnlock: factoryUnlock,
       liquidDamage: liquidDamage,
@@ -212,7 +207,6 @@ class ItemHiveModel extends HiveObject {
       description: entity.description,
       finalPrice: entity.finalPrice,
       basePrice: entity.basePrice,
-      deviceCondition: entity.deviceCondition,
       chargerAvailable: entity.chargerAvailable,
       factoryUnlock: entity.factoryUnlock,
       liquidDamage: entity.liquidDamage,

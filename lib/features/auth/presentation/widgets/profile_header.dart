@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recell_bazar/features/auth/presentation/widgets/user_profile_screen.dart';
+import 'package:recell_bazar/features/auth/presentation/pages/user_profile_screen.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});

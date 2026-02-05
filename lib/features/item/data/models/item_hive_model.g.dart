@@ -8,7 +8,7 @@ part of 'item_hive_model.dart';
 
 class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
   @override
-  final int typeId = 0;
+      // deviceCondition removed
 
   @override
   ItemHiveModel read(BinaryReader reader) {
@@ -26,7 +26,6 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       year: fields[6] as int,
       batteryHealth: fields[7] as int,
       description: fields[8] as String,
-      deviceCondition: fields[9] as String,
       chargerAvailable: fields[10] as bool,
       factoryUnlock: fields[11] as bool,
       liquidDamage: fields[12] as bool,
@@ -51,8 +50,7 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
     writer
       ..writeByte(0)
       ..write(obj.itemId)
-      ..writeByte(1)
-      ..write(obj.sellerId)
+      // deviceCondition removed
       ..writeByte(2)
       ..write(obj.seller)
       ..writeByte(3)
@@ -67,39 +65,39 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       ..write(obj.batteryHealth)
       ..writeByte(8)
       ..write(obj.description)
+      // ..writeByte(9)
+      // ..write(obj.deviceCondition)
       ..writeByte(9)
-      ..write(obj.deviceCondition)
-      ..writeByte(10)
       ..write(obj.chargerAvailable)
-      ..writeByte(11)
+      ..writeByte(10)
       ..write(obj.factoryUnlock)
-      ..writeByte(12)
+      ..writeByte(11)
       ..write(obj.liquidDamage)
-      ..writeByte(13)
+      ..writeByte(12)
       ..write(obj.switchOn)
-      ..writeByte(14)
+      ..writeByte(13)
       ..write(obj.receiveCall)
-      ..writeByte(15)
+      ..writeByte(14)
       ..write(obj.features1Condition)
-      ..writeByte(16)
+      ..writeByte(15)
       ..write(obj.features2Condition)
-      ..writeByte(17)
+      ..writeByte(16)
       ..write(obj.cameraCondition)
-      ..writeByte(18)
+      ..writeByte(17)
       ..write(obj.displayCondition)
-      ..writeByte(19)
+      ..writeByte(18)
       ..write(obj.displayCracked)
-      ..writeByte(20)
+      ..writeByte(19)
       ..write(obj.displayOriginal)
-      ..writeByte(21)
+      ..writeByte(20)
       ..write(obj.createdAt)
-      ..writeByte(22)
+      ..writeByte(21)
       ..write(obj.updatedAt)
-      ..writeByte(23)
+      ..writeByte(22)
       ..write(obj.isSold)
-      ..writeByte(24)
+      ..writeByte(23)
       ..write(obj.finalPrice)
-      ..writeByte(25)
+      ..writeByte(24)
       ..write(obj.basePrice);
   }
 
@@ -112,4 +110,8 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       other is ItemHiveModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
+          
+            @override
+            // TODO: implement typeId
+            int get typeId => throw UnimplementedError();
 }

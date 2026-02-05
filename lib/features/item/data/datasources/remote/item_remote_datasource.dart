@@ -12,19 +12,15 @@ import 'package:recell_bazar/features/item/data/models/item_api_model.dart';
 final itemRemoteDatasourceProvider = Provider<IItemRemoteDataSource>((ref) {
   return ItemRemoteDatasource(
     apiClient: ref.read(apiClientProvider),
-    tokenService: ref.read(tokenServiceProvider),
   );
 });
 
 class ItemRemoteDatasource implements IItemRemoteDataSource {
   final ApiClient _apiClient;
-  final TokenService _tokenService;
 
   ItemRemoteDatasource({
     required ApiClient apiClient,
-    required TokenService tokenService,
-  }) : _apiClient = apiClient,
-       _tokenService = tokenService;
+  }) : _apiClient = apiClient;
 
   @override
   Future<String> uploadPhoto(File photo) async {
@@ -33,11 +29,9 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       'itemPhoto': await MultipartFile.fromFile(photo.path, filename: fileName),
     });
     // Get token from token service
-    final token = await _tokenService.getToken();
     final response = await _apiClient.uploadFile(
       ApiEndpoints.itemUploadPhoto,
       formData: formData,
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
 
     return response.data['data'];
@@ -50,11 +44,9 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
       'itemVideo': await MultipartFile.fromFile(video.path, filename: fileName),
     });
     // Get token from token service
-    final token = await _tokenService.getToken();
     final response = await _apiClient.uploadFile(
       ApiEndpoints.itemUploadVideo,
       formData: formData,
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
 
     return response.data['data'];
@@ -62,11 +54,9 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
 
   @override
   Future<ItemApiModel> createItem(ItemApiModel item) async {
-    final token = await _tokenService.getToken();
     final response = await _apiClient.post(
       ApiEndpoints.items,
       data: item.toJson(),
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
 
     return ItemApiModel.fromJson(response.data['data']);
@@ -111,21 +101,17 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
 
   @override
   Future<bool> updateItem(ItemApiModel item) async {
-    final token = await _tokenService.getToken();
     await _apiClient.put(
       ApiEndpoints.itemById(item.id!),
       data: item.toJson(),
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return true;
   }
 
   @override
   Future<bool> deleteItem(String itemId) async {
-    final token = await _tokenService.getToken();
     await _apiClient.delete(
       ApiEndpoints.itemById(itemId),
-      options: Options(headers: {'Authorization': 'Bearer $token'}),
     );
     return true;
   }

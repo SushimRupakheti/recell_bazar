@@ -20,9 +20,6 @@ class ItemEntity extends Equatable {
   final int batteryHealth;
   final String description;
 
-  // Radio Button Field
-  final String deviceCondition;
-
   // Charger Available
   final bool chargerAvailable;
 
@@ -58,8 +55,6 @@ class ItemEntity extends Equatable {
     required this.batteryHealth,
     required this.description,
 
-    required this.deviceCondition,
-
     required this.chargerAvailable,
 
     required this.factoryUnlock,
@@ -94,7 +89,7 @@ class ItemEntity extends Equatable {
     String? finalPrice,
     String? basePrice,
 
-    String? deviceCondition,
+    // deviceCondition removed
 
     bool? chargerAvailable,
 
@@ -128,7 +123,7 @@ class ItemEntity extends Equatable {
       batteryHealth: batteryHealth ?? this.batteryHealth,
       description: description ?? this.description,
 
-      deviceCondition: deviceCondition ?? this.deviceCondition,
+      // deviceCondition removed
 
       chargerAvailable: chargerAvailable ?? this.chargerAvailable,
 
@@ -165,7 +160,7 @@ class ItemEntity extends Equatable {
         batteryHealth,
         description,
 
-        deviceCondition,
+        // deviceCondition removed
 
         chargerAvailable,
 
