@@ -316,7 +316,21 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
 
                           for (File photo in selectedPhotos) {
                             final url = await itemVM.uploadPhoto(photo);
+                            debugPrint('uploadPhoto returned: $url');
                             if (url != null) uploadedUrls.add(url);
+                          }
+
+                          debugPrint('All uploadedUrls: $uploadedUrls');
+
+                          // If uploads failed and there are no URLs, abort and show error
+                          if (uploadedUrls.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Failed to upload photos. Please try again.'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                            return;
                           }
 
                           await itemVM.createItem(

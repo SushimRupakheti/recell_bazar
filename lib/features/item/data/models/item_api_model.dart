@@ -1,4 +1,5 @@
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
+import 'package:recell_bazar/core/api/api_endpoints.dart';
 
 class ItemApiModel {
   final String? id;
@@ -81,8 +82,21 @@ class ItemApiModel {
   factory ItemApiModel.fromJson(Map<String, dynamic> json) {
     return ItemApiModel(
       id: json["_id"],
-      sellerId: json["sellerId"],
-      photos: List<String>.from(json["photos"]),
+      sellerId: (() {
+        final s = json['sellerId'];
+        if (s == null) return '';
+        if (s is String) return s;
+        if (s is Map && s.containsKey('_id')) return s['_id'].toString();
+        return s.toString();
+      })(),
+      photos: (() {
+        final raw = json['photos'];
+        if (raw == null) return <String>[];
+        if (raw is List) return raw.map((e) => e?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+        // If backend returned a comma-separated string
+        if (raw is String && raw.trim().isNotEmpty) return raw.split(',').map((s) => s.trim()).toList();
+        return <String>[];
+      })(),
       category: json["category"],
       phoneModel: json["phoneModel"],
       year: json["year"],
@@ -106,10 +120,20 @@ class ItemApiModel {
   }
 
   ItemEntity toEntity() {
+    String resolveUrl(String path) {
+      if (path.isEmpty) return '';
+      if (path.startsWith('http')) return path;
+      // Remove the trailing '/api' from base URL if present so media paths map correctly.
+      final mediaBase = ApiEndpoints.baseUrl.replaceFirst('/api', '');
+      return mediaBase + (path.startsWith('/') ? path : '/$path');
+    }
+
+    final resolvedPhotos = photos.map((p) => resolveUrl(p)).where((s) => s.isNotEmpty).toList();
+
     return ItemEntity(
       itemId: id,
       sellerId: sellerId,
-      photos: photos,
+      photos: resolvedPhotos,
       category: category,
       phoneModel: phoneModel,
       year: year,

@@ -1,130 +1,157 @@
-  import 'package:flutter/material.dart';
-  import '../../models/product_model.dart';
+import 'package:flutter/material.dart';
+import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 
-  class ProductCard extends StatelessWidget {
-    final Product product;
-    final VoidCallback? onTap;
-    final VoidCallback? onFavoriteTap;
 
-    const ProductCard({
-      super.key,
-      required this.product,
-      this.onTap,
-      this.onFavoriteTap,
-    });
+class ProductCard extends StatelessWidget {
+  final ItemEntity item;
+  final VoidCallback? onTap;
+  final VoidCallback? onFavoriteTap;
 
-    @override
-    Widget build(BuildContext context) {
-      return GestureDetector(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 8,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Image
-              AspectRatio(
-                aspectRatio: 1.2, // controls image height nicely
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(12),
-                      ),
-                      child: Image.asset(
-                        product.imageUrl,
-                        width: double.infinity,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: GestureDetector(
-                        onTap: onFavoriteTap,
-                        child: CircleAvatar(
-                          radius: 16,
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            product.isFavorite
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+  const ProductCard({
+    super.key,
+    required this.item,
+    this.onTap,
+    this.onFavoriteTap,
+  });
 
-              // Content
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      product.category,
-                      style: const TextStyle(fontSize: 11, color: Colors.grey),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      product.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'NPR ${product.price.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        const Icon(Icons.star, size: 14),
-                        const SizedBox(width: 4),
-                        Text(
-                          product.rating.toString(),
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        const Spacer(),
-                        Text(
-                          '${product.storage} GB',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+  // ⭐ Rating Calculation
+  double calculateRating() {
+    final finalP = double.tryParse(item.finalPrice) ?? 0;
+    final baseP = double.tryParse(item.basePrice) ?? 1;
+
+    double rating = (finalP / baseP) * 5;
+
+    if (rating > 5) rating = 5;
+    if (rating < 0) rating = 0;
+
+    return double.parse(rating.toStringAsFixed(1));
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final rating = calculateRating();
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ✅ Image (From Backend)
+            AspectRatio(
+              aspectRatio: 1.2,
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    child: item.photos.isNotEmpty
+                        ? Image.network(
+                            item.photos.first,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(color: Colors.grey[200]),
+                  ),
+
+                  // Favorite Button (Optional - You can connect later)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: GestureDetector(
+                      onTap: onFavoriteTap,
+                      child: const CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Colors.white,
+                        child: Icon(Icons.favorite_border, size: 18),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ✅ Content
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Brand / Category
+                  Text(
+                    item.category,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 4),
+
+                  // Model Name
+                  Text(
+                    item.phoneModel,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  // Final Price
+                  Text(
+                    'NPR ${item.finalPrice}',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  // ⭐ Rating + Year
+                  Row(
+                    children: [
+                      const Icon(Icons.star, size: 14),
+                      const SizedBox(width: 4),
+                      Text(
+                        rating.toString(),
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '${item.year}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

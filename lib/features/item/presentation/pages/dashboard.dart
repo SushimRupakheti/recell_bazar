@@ -1,28 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/cart.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/home.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/profile.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/sell.dart';
+import 'package:recell_bazar/features/auth/presentation/providers/current_user_provider.dart';
 
-class Dashboard extends StatefulWidget {
+class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({super.key});
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  ConsumerState<Dashboard> createState() => _DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _DashboardState extends ConsumerState<Dashboard> {
   int _selectedIndex = 0;
-
-  final List<Widget> _screens = const [
-    Home(),
-    Cart(),
-    Sell(),
-    Profile(),
-  ];
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = ref.watch(currentUserProvider);
+    final sellerId = currentUser.authId ?? '';
+
+    final List<Widget> _screens = [
+      const Home(),
+      const Cart(),
+      SellScreen(sellerId: sellerId),
+      const Profile(),
+    ];
+
     return Scaffold(
       body: _screens[_selectedIndex],
 

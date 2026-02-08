@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/item/presentation/pages/selling_screens/fourth_selling_screen.dart';
+import 'package:recell_bazar/features/item/presentation/providers/price_provider.dart';
 import 'package:recell_bazar/features/item/presentation/widgets/progress_indicator.dart';
 import 'package:recell_bazar/features/item/presentation/widgets/question_design_widget.dart';
 
@@ -94,6 +95,8 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final notifier = ref.read(phonePriceProvider.notifier);
+
     return Scaffold(
       // backgroundColor: const Color(0xFFFFF1F1),
       appBar: AppBar(
@@ -192,6 +195,11 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
                 ElevatedButton(
                   onPressed: isFormValid
                       ? () {
+                          final raw = batteryController.text.trim();
+                          final parsed = int.tryParse(raw) ?? 100;
+                          final battery = parsed.clamp(0, 100);
+                          notifier.updateField("batteryHealth", battery);
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
