@@ -5,6 +5,7 @@ import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/profile.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/sell.dart';
 import 'package:recell_bazar/features/auth/presentation/providers/current_user_provider.dart';
+import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({super.key});
@@ -39,6 +40,18 @@ class _DashboardState extends ConsumerState<Dashboard> {
           setState(() {
             _selectedIndex = index;
           });
+
+          // Force-refresh seller items when navigating to Sell tab
+          if (index == 2) {
+            final currentUser = ref.read(currentUserProvider);
+            final sellerId = currentUser.authId ?? '';
+            try {
+              ref.refresh(sellerItemsProvider(sellerId));
+              debugPrint('Dashboard: refreshed sellerItemsProvider for $sellerId');
+            } catch (_) {
+              debugPrint('Dashboard: failed to refresh sellerItemsProvider for $sellerId');
+            }
+          }
         },
         items: const [
           BottomNavigationBarItem(

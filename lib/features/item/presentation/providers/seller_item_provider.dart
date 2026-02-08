@@ -10,6 +10,20 @@ final sellerItemsProvider =
 
   return result.fold(
     (failure) => throw Exception(failure.message),
-    (items) => items,
+    (items) {
+      // Defensive filter: ensure only items that actually belong to the requested
+      // sellerId are returned. Handles backends returning nested seller objects
+      // or unfiltered lists.
+      final normRequested = sellerId.trim().toLowerCase();
+      final filtered = items.where((it) {
+        try {
+          return (it.sellerId ?? '').trim().toLowerCase() == normRequested;
+        } catch (_) {
+          return false;
+        }
+      }).toList();
+
+      return filtered;
+    },
   );
 });

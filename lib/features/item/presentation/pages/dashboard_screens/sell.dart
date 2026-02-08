@@ -38,23 +38,37 @@ class SellScreen extends ConsumerWidget {
           for (var it in filtered) debugPrint('  item ${it.itemId} sellerId=${it.sellerId}');
 
           if (filtered.isEmpty) {
-            return const Center(
-              child: Text("No items posted yet"),
+            return RefreshIndicator(
+              onRefresh: () async {
+                await ref.refresh(sellerItemsProvider(sellerId).future);
+              },
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: const [
+                  SizedBox(height: 200),
+                  Center(child: Text("No items posted yet")),
+                ],
+              ),
             );
           }
 
-          return ListView.builder(
-            itemCount: filtered.length,
-            itemBuilder: (context, index) {
-              final item = filtered[index];
-
-              return SellCard(
-                item: item,
-                onTap: () {
-                  // Navigate to detail if needed
-                },
-              );
+          return RefreshIndicator(
+            onRefresh: () async {
+              await ref.refresh(sellerItemsProvider(sellerId).future);
             },
+            child: ListView.builder(
+              itemCount: filtered.length,
+              itemBuilder: (context, index) {
+                final item = filtered[index];
+
+                return SellCard(
+                  item: item,
+                  onTap: () {
+                    // Navigate to detail if needed
+                  },
+                );
+              },
+            ),
           );
         },
       ),
