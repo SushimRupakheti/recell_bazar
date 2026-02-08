@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
+import 'package:recell_bazar/core/providers/cart_provider.dart';
 
-class SingleItemScreen extends StatefulWidget {
+class SingleItemScreen extends ConsumerStatefulWidget {
   final ItemEntity item;
 
   const SingleItemScreen({super.key, required this.item});
 
   @override
-  State<SingleItemScreen> createState() => _SingleItemScreenState();
+  ConsumerState<SingleItemScreen> createState() => _SingleItemScreenState();
 }
 
-class _SingleItemScreenState extends State<SingleItemScreen> {
+class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
   final PageController _pageController = PageController();
   int _activeIndex = 0;
 
@@ -84,15 +86,7 @@ class _SingleItemScreenState extends State<SingleItemScreen> {
                       ),
                     ),
 
-                    // Bag (like screenshot)
-                    Positioned(
-                      right: 10,
-                      top: 10,
-                      child: _TopIconButton(
-                        icon: Icons.shopping_bag_outlined,
-                        onTap: () {},
-                      ),
-                    ),
+                    // removed top-right bag icon per request
                   ],
                 ),
               ),
@@ -266,7 +260,7 @@ class _SingleItemScreenState extends State<SingleItemScreen> {
         ),
       ),
 
-      // ===== BOTTOM BAR BUTTON =====
+      // ===== BOTTOM BAR BUTTONS =====
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -282,20 +276,45 @@ class _SingleItemScreenState extends State<SingleItemScreen> {
         child: SafeArea(
           top: false,
           child: SizedBox(
-            height: 52,
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0B7C7C),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                elevation: 0,
-              ),
-              onPressed: () {
-                // TODO: implement booking / action
-              },
-              child: const Text(
-                "Book Now",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-              ),
+            height: 56,
+            child: Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0B7C7C),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      elevation: 0,
+                    ),
+                    onPressed: () {
+                      // TODO: implement booking / action
+                    },
+                    child: const Text(
+                      "Book Now",
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                SizedBox(
+                  width: 140,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      side: BorderSide(color: Colors.grey.shade300),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                    onPressed: () {
+                      // add to cart via provider
+                      ref.read(cartProvider.notifier).addItem(widget.item);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Added to cart')),
+                      );
+                    },
+                    child: const Text('Add to Cart', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

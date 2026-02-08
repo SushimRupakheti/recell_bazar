@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/item/presentation/pages/selling_screens/phone_brand_selection_screen.dart';
 import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
 import 'package:recell_bazar/features/item/presentation/widgets/sell_card_widget.dart';
+import 'package:recell_bazar/features/item/domain/usecases/get_item_by_id_usecase.dart';
+import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/single_item_screen.dart';
 
 class SellScreen extends ConsumerWidget {
   final String sellerId;
@@ -20,9 +22,9 @@ class SellScreen extends ConsumerWidget {
     debugPrint('SellScreen: requested sellerId=$sellerId');
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("My Listings"),
-      ),
+      // appBar: AppBar(
+      //   title: const Text("My Listings"),
+      // ),
       body: itemsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
 
@@ -63,8 +65,31 @@ class SellScreen extends ConsumerWidget {
 
                 return SellCard(
                   item: item,
-                  onTap: () {
-                    // Navigate to detail if needed
+                  onTap: () async {
+                    final getItemUsecase = ref.read(getItemByIdUsecaseProvider);
+                    final id = item.itemId;
+                    if (id == null || id.isEmpty) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => SingleItemScreen(item: item)),
+                      );
+                      return;
+                    }
+
+                    final result = await getItemUsecase(GetItemByIdParams(itemId: id));
+                    result.fold(
+                      (failure) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to load item: ${failure.message}')),
+                        );
+                      },
+                      (freshItem) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => SingleItemScreen(item: freshItem)),
+                        );
+                      },
+                    );
                   },
                 );
               },
@@ -73,7 +98,7 @@ class SellScreen extends ConsumerWidget {
         },
       ),
 
-      // ✅ Floating Add Button (Like Screenshot)
+      // Floating Add Button (Like Screenshot)
       floatingActionButton: FloatingActionButton(
         onPressed: () {
                                     Navigator.push(
@@ -83,7 +108,8 @@ class SellScreen extends ConsumerWidget {
                             ),
                           );
         },
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: Color(0xFF0B7C7C),
       ),
     );
   }

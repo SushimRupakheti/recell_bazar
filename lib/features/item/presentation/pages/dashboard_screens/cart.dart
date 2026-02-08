@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:recell_bazar/core/widgets/cart_product.dart';
-import 'package:recell_bazar/core/widgets/topbar.dart';
 
 class Cart extends StatelessWidget {
   const Cart({super.key});
@@ -12,11 +11,12 @@ class Cart extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            Topbar(),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CartProduct(),
-            ),   
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ProductList(),
+              ),
+            ),
           ],
         ),
       ),

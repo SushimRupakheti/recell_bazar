@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/core/api/api_client.dart';
 import 'package:recell_bazar/core/api/api_endpoints.dart';
-import 'package:recell_bazar/core/services/storage/token_service.dart';
 import 'package:recell_bazar/features/item/data/datasources/item_datasource.dart';
 import 'package:recell_bazar/features/item/data/models/item_api_model.dart';
 
@@ -144,7 +143,7 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
 
         // Always defensively filter by seller id in case backend returns all items
         final normRequested = userId.trim().toLowerCase();
-        final filtered = models.where((m) => (m.sellerId ?? '').trim().toLowerCase() == normRequested).toList();
+        final filtered = models.where((m) => (m.sellerId ).trim().toLowerCase() == normRequested).toList();
         debugPrint('ItemRemoteDatasource.getItemsByUser: filtered ${filtered.length} items for userId=$userId');
         return filtered;
     } on DioError catch (e) {
@@ -160,7 +159,7 @@ class ItemRemoteDatasource implements IItemRemoteDataSource {
         debugPrint('ItemRemoteDatasource.getItemsByUser: fallback getAllItems returned ${models.length} items');
 
         final normRequested = userId.trim().toLowerCase();
-        final filtered = models.where((m) => (m.sellerId ?? '').trim().toLowerCase() == normRequested).toList();
+        final filtered = models.where((m) => (m.sellerId ).trim().toLowerCase() == normRequested).toList();
         debugPrint('ItemRemoteDatasource.getItemsByUser: fallback filtered ${filtered.length} items for userId=$userId');
         return filtered;
     }

@@ -379,7 +379,7 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                       : const Text(
                           'Submit',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                 ),
               ],

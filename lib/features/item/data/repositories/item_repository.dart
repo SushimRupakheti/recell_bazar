@@ -175,7 +175,7 @@ class ItemRepository implements IItemRepository {
 
         final normRequested = sellerId.trim().toLowerCase();
         final filtered = models.where((m) {
-          final sid = (m.sellerId ?? '').trim().toLowerCase();
+          final sid = (m.sellerId).trim().toLowerCase();
           return sid == normRequested;
         }).toList();
 
@@ -190,8 +190,8 @@ class ItemRepository implements IItemRepository {
         debugPrint('ItemRepository.getItemsBySeller (local): requested sellerId=$sellerId, localCount=${models.length}');
         final normRequested = sellerId.trim().toLowerCase();
         final filtered = models.where((m) {
-          final sid = (m.sellerId ?? '').trim().toLowerCase();
-          final sellerField = (m.seller ?? '').trim().toLowerCase();
+          final sid = (m.sellerId ).trim().toLowerCase();
+          final sellerField = (m.seller ).trim().toLowerCase();
           return sid == normRequested || sellerField == normRequested;
         }).toList();
         debugPrint('ItemRepository.getItemsBySeller (local): filtered=${filtered.length}');

@@ -242,7 +242,7 @@ class PhoneBrandSelectionScreen extends ConsumerWidget {
                 ElevatedButton(
                   onPressed: phoneData.category.isNotEmpty &&
                           phoneData.phoneModel.isNotEmpty &&
-                          phoneData.factoryUnlock != null
+                          phoneData.factoryUnlock
                       ? () {
                           Navigator.push(
                             context,

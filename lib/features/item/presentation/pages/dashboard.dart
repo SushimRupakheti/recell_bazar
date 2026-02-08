@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
+import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/cart.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/home.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/profile.dart';
@@ -17,10 +19,30 @@ class Dashboard extends ConsumerStatefulWidget {
 class _DashboardState extends ConsumerState<Dashboard> {
   int _selectedIndex = 0;
 
+
+  // NOTE: `ref.listen` must be used inside build for ConsumerState/ConsumerWidget.
+  // We'll register the listener in `build` below.
   @override
   Widget build(BuildContext context) {
-    final currentUser = ref.watch(currentUserProvider);
-    final sellerId = currentUser.authId ?? '';
+    // listen to auth changes and refresh/invalidate seller cache when needed
+    ref.listen<AuthState>(authViewModelProvider, (previous, next) {
+      final prevId = previous?.user?.authId ?? '';
+      final nextId = next.user?.authId ?? '';
+      if (prevId != nextId) {
+        try {
+          if (prevId.isNotEmpty) ref.invalidate(sellerItemsProvider(prevId));
+        } catch (_) {}
+        if (nextId.isNotEmpty) {
+          try {
+            ref.refresh(sellerItemsProvider(nextId));
+            debugPrint('Dashboard: auth changed, refreshed sellerItems for $nextId');
+          } catch (_) {}
+        }
+      }
+    });
+
+    final authState = ref.watch(authViewModelProvider);
+    final sellerId = authState.user?.authId ?? '';
 
     final List<Widget> _screens = [
       const Home(),
@@ -40,6 +62,18 @@ class _DashboardState extends ConsumerState<Dashboard> {
           setState(() {
             _selectedIndex = index;
           });
+
+          // Force-refresh seller items when navigating to Sell tab
+          if (index == 2) {
+            try {
+              if (sellerId.isNotEmpty) {
+                ref.refresh(sellerItemsProvider(sellerId));
+                debugPrint('Dashboard: refreshed sellerItemsProvider for $sellerId');
+              }
+            } catch (_) {
+              debugPrint('Dashboard: failed to refresh sellerItemsProvider for $sellerId');
+            }
+          }
 
           // Force-refresh seller items when navigating to Sell tab
           if (index == 2) {

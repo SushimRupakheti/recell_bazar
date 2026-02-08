@@ -17,7 +17,7 @@ final sellerItemsProvider =
       final normRequested = sellerId.trim().toLowerCase();
       final filtered = items.where((it) {
         try {
-          return (it.sellerId ?? '').trim().toLowerCase() == normRequested;
+          return (it.sellerId).trim().toLowerCase() == normRequested;
         } catch (_) {
           return false;
         }
