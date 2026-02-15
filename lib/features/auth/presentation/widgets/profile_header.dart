@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:recell_bazar/screens/user_profile_screen.dart';
+import 'package:recell_bazar/features/auth/presentation/pages/user_profile_screen.dart';
 
 class ProfileHeader extends StatelessWidget {
   const ProfileHeader({super.key});
@@ -20,7 +20,7 @@ class ProfileHeader extends StatelessWidget {
         children: [
           const CircleAvatar(
             radius: 30,
-            backgroundImage: AssetImage("assets/images/profile.jpg"),
+            backgroundImage: AssetImage("assets/images/user.jpg"),
           ),
           const SizedBox(width: 16),
           Expanded(

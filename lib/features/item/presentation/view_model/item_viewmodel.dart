@@ -11,7 +11,7 @@ import 'package:recell_bazar/features/item/domain/usecases/upload_photo_usecase.
 import 'package:recell_bazar/features/item/domain/usecases/upload_video_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/search_item_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/get_related_items_usecase.dart';
-import 'package:recell_bazar/features/item/domain/usecases/mark_item_as_sold_usecase.dart';
+// import 'package:recell_bazar/features/item/domain/usecases/mark_item_as_sold_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/add_to_cart_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/remove_from_cart_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/get_cart_items_usecase.dart';
@@ -34,7 +34,7 @@ class ItemViewModel extends Notifier<ItemState> {
   late final SearchItemsUsecase _searchItemsUsecase;
   late final GetItemsByCategoryUsecase _getItemsByCategoryUsecase;
   late final GetRelatedItemsUsecase _getRelatedItemsUsecase;
-  late final MarkItemAsSoldUsecase _markItemAsSoldUsecase;
+  // late final MarkItemAsSoldUsecase _markItemAsSoldUsecase;
   late final AddToCartUsecase _addToCartUsecase;
   late final RemoveFromCartUsecase _removeFromCartUsecase;
   late final GetCartItemsUsecase _getCartItemsUsecase;
@@ -52,7 +52,7 @@ class ItemViewModel extends Notifier<ItemState> {
     _searchItemsUsecase = ref.read(searchItemsUsecaseProvider);
     _getItemsByCategoryUsecase = ref.read(getItemsByCategoryUsecaseProvider);
     _getRelatedItemsUsecase = ref.read(getRelatedItemsUsecaseProvider);
-    _markItemAsSoldUsecase = ref.read(markItemAsSoldUsecaseProvider);
+    // _markItemAsSoldUsecase = ref.read(markItemAsSoldUsecaseProvider);
     _addToCartUsecase = ref.read(addToCartUsecaseProvider);
     _removeFromCartUsecase = ref.read(removeFromCartUsecaseProvider);
     _getCartItemsUsecase = ref.read(getCartItemsUsecaseProvider);
@@ -117,16 +117,24 @@ Future<void> createItem({
   required String sellerId,
   required List<String> photos,
   required String category,
-  required String model,
-  required String price,
+  required String phoneModel,
   required int year,
-  required String description,
-  required String storage,
-  required String screenCondition,
+  required String finalPrice,
+  required String basePrice,
   required int batteryHealth,
-  required String cameraQuality,
-  required bool hasCharger,
-  Map<String, dynamic>? extraAnswers,
+  required String description,
+  required bool chargerAvailable,
+
+  required bool factoryUnlock,
+  required bool liquidDamage,
+  required bool switchOn,
+  required bool receiveCall,
+  required bool features1Condition,
+  required bool features2Condition,
+  required bool cameraCondition,
+  required bool displayCondition,
+  required bool displayCracked,
+  required bool displayOriginal,
 }) async {
   state = state.copyWith(status: ItemStatus.loading);
 
@@ -135,16 +143,24 @@ Future<void> createItem({
       sellerId: sellerId,
       photos: photos,
       category: category,
-      model: model,
-      price: double.parse(price),
+        phoneModel: phoneModel,
       year: year,
-      description: description,
-      storage: storage,
-      screenCondition: screenCondition,
+      finalPrice: finalPrice,
+      basePrice: basePrice,
       batteryHealth: batteryHealth,
-      cameraQuality: cameraQuality,
-      hasCharger: hasCharger,
-      extraAnswers: extraAnswers,
+      description: description,
+      chargerAvailable: chargerAvailable,
+
+      factoryUnlock: factoryUnlock,
+      liquidDamage: liquidDamage,
+      switchOn: switchOn,
+      receiveCall: receiveCall,
+      features1Condition: features1Condition,
+      features2Condition: features2Condition,
+      cameraCondition: cameraCondition,
+      displayCondition: displayCondition,
+      displayCracked: displayCracked,
+      displayOriginal: displayOriginal,
     ),
   );
 
@@ -154,49 +170,61 @@ Future<void> createItem({
       errorMessage: failure.message,
     ),
     (success) {
-      state = state.copyWith(
-        status: ItemStatus.created,
-        resetUploadedPhotoUrl: true,
-      );
-      getAllItems(); // Refresh the items after creating
+      state = state.copyWith(status: ItemStatus.created);
+      getAllItems();
     },
   );
 }
+
 
 Future<void> updateItem({
   required String itemId,
   required String sellerId,
   required List<String> photos,
   required String category,
-  required String model,
-  required String price,
+  required String phoneModel,
   required int year,
-  required String description,
-  required String storage,
-  required String screenCondition,
+  required String finalPrice,
+  required String basePrice,
   required int batteryHealth,
-  required String cameraQuality,
-  required bool hasCharger,
-  Map<String, dynamic>? extraAnswers,
+  required String description,
+  required bool chargerAvailable,
+  // Boolean evaluation questions
+  required bool factoryUnlock,
+  required bool liquidDamage,
+  required bool switchOn,
+  required bool receiveCall,
+  required bool features1Condition,
+  required bool features2Condition,
+  required bool cameraCondition,
+  required bool displayCondition,
+  required bool displayCracked,
+  required bool displayOriginal,
 }) async {
   state = state.copyWith(status: ItemStatus.loading);
 
   final result = await _updateItemUsecase(
     UpdateItemParams(
       itemId: itemId,
-      sellerId: sellerId,
       photos: photos,
       category: category,
-      model: model,
-      price: double.parse(price),
+        phoneModel: phoneModel,
       year: year,
-      description: description,
-      storage: storage,
-      screenCondition: screenCondition,
+      finalPrice: finalPrice,
+      basePrice: basePrice,
       batteryHealth: batteryHealth,
-      cameraQuality: cameraQuality,
-      hasCharger: hasCharger,
-      extraAnswers: extraAnswers,
+      description: description,
+      chargerAvailable: chargerAvailable,
+      factoryUnlock: factoryUnlock,
+      liquidDamage: liquidDamage,
+      switchOn: switchOn,
+      receiveCall: receiveCall,
+      features1Condition: features1Condition,
+      features2Condition: features2Condition,
+      cameraCondition: cameraCondition,
+      displayCondition: displayCondition,
+      displayCracked: displayCracked,
+      displayOriginal: displayOriginal,
     ),
   );
 
@@ -211,6 +239,7 @@ Future<void> updateItem({
     },
   );
 }
+
 
   Future<void> deleteItem(String itemId) async {
     state = state.copyWith(status: ItemStatus.loading);
@@ -279,11 +308,11 @@ Future<void> updateItem({
 
   // ---------------- SEARCH / FILTER ----------------
 
-  Future<void> searchItems({String? model, String? category}) async {
+  Future<void> searchItems({String? phoneModel, String? category}) async {
     state = state.copyWith(status: ItemStatus.loading);
 
     final result = await _searchItemsUsecase(
-      SearchItemsParams(model: model, category: category),
+      SearchItemsParams(phoneModel: phoneModel, category: category),
     );
 
     result.fold(
@@ -336,48 +365,48 @@ Future<void> updateItem({
 
   // ---------------- MARK SOLD ----------------
 
-Future<void> markItemAsSold(String itemId) async {
-  state = state.copyWith(status: ItemStatus.loading);
+// Future<void> markItemAsSold(String itemId) async {
+//   state = state.copyWith(status: ItemStatus.loading);
 
-  final result = await _markItemAsSoldUsecase(itemId);
+//   final result = await _markItemAsSoldUsecase(itemId);
 
-  result.fold(
-    (failure) => state = state.copyWith(
-      status: ItemStatus.error,
-      errorMessage: failure.message,
-    ),
-    (success) {
-      // Update the selectedItem if it matches
-      final updatedSelectedItem = state.selectedItem?.itemId == itemId
-          ? state.selectedItem!.copyWith(
-              extraAnswers: {
-                ...?state.selectedItem!.extraAnswers,
-                'isSold': true,
-              },
-            )
-          : state.selectedItem;
+//   result.fold(
+//     (failure) => state = state.copyWith(
+//       status: ItemStatus.error,
+//       errorMessage: failure.message,
+//     ),
+//     (success) {
+//       // Update the selectedItem if it matches
+//       final updatedSelectedItem = state.selectedItem?.itemId == itemId
+//           ? state.selectedItem!.copyWith(
+//               extraAnswers: {
+//                 ...?state.selectedItem!.extraAnswers,
+//                 'isSold': true,
+//               },
+//             )
+//           : state.selectedItem;
 
-      // Update items list as well
-      final updatedItems = state.items.map((item) {
-        if (item.itemId == itemId) {
-          return item.copyWith(
-            extraAnswers: {
-              ...?item.extraAnswers,
-              'isSold': true,
-            },
-          );
-        }
-        return item;
-      }).toList();
+//       // Update items list as well
+//       final updatedItems = state.items.map((item) {
+//         if (item.itemId == itemId) {
+//           return item.copyWith(
+//             extraAnswers: {
+//               ...?item.extraAnswers,
+//               'isSold': true,
+//             },
+//           );
+//         }
+//         return item;
+//       }).toList();
 
-      state = state.copyWith(
-        status: ItemStatus.updated,
-        selectedItem: updatedSelectedItem,
-        items: updatedItems,
-      );
-    },
-  );
-}
+//       state = state.copyWith(
+//         status: ItemStatus.updated,
+//         selectedItem: updatedSelectedItem,
+//         items: updatedItems,
+//       );
+//     },
+//   );
+// }
 
   // ---------------- CART ----------------
 

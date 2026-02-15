@@ -1,142 +1,188 @@
-
-
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
+import 'package:recell_bazar/core/api/api_endpoints.dart';
 
 class ItemApiModel {
   final String? id;
-  final String seller;
-  
-  // mandatory feilds
-  final List<String> photos;
-  final String category; // smartphone
-  final String model;
-  final double price;
-  final int year;
-  final String description;
-  final String storage;
-  final String screenCondition;
-  final int batteryHealth; // %
-  final String cameraQuality;
-  final bool hasCharger;
   final String sellerId;
 
-  final Map<String, dynamic>? extraAnswers;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
-  
-  // Constructor
+  final List<String> photos;
+
+  final String category;
+  final String phoneModel;
+
+  final String finalPrice;
+  final String basePrice;
+
+  final int year;
+  final int batteryHealth;
+  final String description;
+
+  final bool chargerAvailable;
+
+  final bool factoryUnlock;
+  final bool liquidDamage;
+  final bool switchOn;
+  final bool receiveCall;
+  final bool features1Condition;
+  final bool features2Condition;
+  final bool cameraCondition;
+  final bool displayCondition;
+  final bool displayCracked;
+  final bool displayOriginal;
+
   ItemApiModel({
     this.id,
-    required this.seller,
+    required this.sellerId,
     required this.photos,
     required this.category,
-    required this.model,
-    required this.price,
+    required this.phoneModel,
     required this.year,
-    required this.description,
-    required this.storage,
-    required this.screenCondition,
     required this.batteryHealth,
-    required this.cameraQuality,
-    required this.hasCharger,
-    this.extraAnswers,
-    this.createdAt,
-    this.updatedAt, 
-    required this.sellerId,
+    required this.description,
+    required this.chargerAvailable,
+    required this.factoryUnlock,
+    required this.liquidDamage,
+    required this.switchOn,
+    required this.receiveCall,
+    required this.features1Condition,
+    required this.features2Condition,
+    required this.cameraCondition,
+    required this.displayCondition,
+    required this.displayCracked,
+    required this.displayOriginal,
+    required this.finalPrice,
+    required this.basePrice,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'photos': photos,
-      'category': category,
-      'model': model,
-      'price': price,
-      'year': year,
-      'description': description,
-      'storage': storage,
-      'screenCondition': screenCondition,
-      'batteryHealth': batteryHealth,
-      'cameraQuality': cameraQuality,
-      'hasCharger': hasCharger,
-      'sellerId': sellerId,
-      if (extraAnswers != null) 'extraAnswers': extraAnswers,
+      "photos": photos,
+      "category": category,
+      "phoneModel": phoneModel,
+      "year": year,
+      "batteryHealth": batteryHealth,
+      "description": description,
+      "chargerAvailable": chargerAvailable,
+      "factoryUnlock": factoryUnlock,
+      "liquidDamage": liquidDamage,
+      "switchOn": switchOn,
+      "receiveCall": receiveCall,
+      "features1Condition": features1Condition,
+      "features2Condition": features2Condition,
+      "cameraCondition": cameraCondition,
+      "displayCondition": displayCondition,
+      "displayCracked": displayCracked,
+      "displayOriginal": displayOriginal,
+      "sellerId": sellerId,
+      "finalPrice": finalPrice,
+      "basePrice": basePrice,
     };
   }
 
-
   factory ItemApiModel.fromJson(Map<String, dynamic> json) {
     return ItemApiModel(
-      id: json['_id'],
-      seller: json['seller'],
-      photos: List<String>.from(json['photos']),
-      category: json['category'],
-      model: json['model'],
-      price: (json['price'] as num).toDouble(),
-      year: json['year'],
-      description: json['description'],
-      sellerId: json['sellerId'],
-      storage: json['storage'],
-      screenCondition: json['screenCondition'],
-      batteryHealth: json['batteryHealth'],
-      cameraQuality: json['cameraQuality'],
-      hasCharger: json['hasCharger'],
-      extraAnswers: json['extraAnswers'] != null
-          ? Map<String, dynamic>.from(json['extraAnswers'])
-          : null,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : null,
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : null,
+      id: json["_id"],
+      sellerId: (() {
+        final s = json['sellerId'];
+        if (s == null) return '';
+        if (s is String) return s;
+        if (s is Map && s.containsKey('_id')) return s['_id'].toString();
+        return s.toString();
+      })(),
+      photos: (() {
+        final raw = json['photos'];
+        if (raw == null) return <String>[];
+        if (raw is List) return raw.map((e) => e?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+        // If backend returned a comma-separated string
+        if (raw is String && raw.trim().isNotEmpty) return raw.split(',').map((s) => s.trim()).toList();
+        return <String>[];
+      })(),
+      category: json["category"],
+      phoneModel: json["phoneModel"],
+      year: json["year"],
+      batteryHealth: json["batteryHealth"],
+      description: json["description"],
+      // deviceCondition removed
+      chargerAvailable: json["chargerAvailable"],
+      factoryUnlock: json["factoryUnlock"],
+      liquidDamage: json["liquidDamage"],
+      switchOn: json["switchOn"],
+      receiveCall: json["receiveCall"],
+      features1Condition: json["features1Condition"],
+      features2Condition: json["features2Condition"],
+      cameraCondition: json["cameraCondition"],
+      displayCondition: json["displayCondition"],
+      displayCracked: json["displayCracked"],
+      displayOriginal: json["displayOriginal"],
+      finalPrice: json["finalPrice"],
+      basePrice: json["basePrice"],
     );
   }
 
-
   ItemEntity toEntity() {
+    String resolveUrl(String path) {
+      if (path.isEmpty) return '';
+      if (path.startsWith('http')) return path;
+      // Remove the trailing '/api' from base URL if present so media paths map correctly.
+      final mediaBase = ApiEndpoints.baseUrl.replaceFirst('/api', '');
+      return mediaBase + (path.startsWith('/') ? path : '/$path');
+    }
+
+    final resolvedPhotos = photos.map((p) => resolveUrl(p)).where((s) => s.isNotEmpty).toList();
+
     return ItemEntity(
       itemId: id,
-      sellerId: seller,
-      photos: photos,
+      sellerId: sellerId,
+      photos: resolvedPhotos,
       category: category,
-      model: model,
-      price: price,
+      phoneModel: phoneModel,
       year: year,
-      description: description,
-      storage: storage,
-      screenCondition: screenCondition,
       batteryHealth: batteryHealth,
-      cameraQuality: cameraQuality,
-      hasCharger: hasCharger,
-      extraAnswers: extraAnswers,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
+      description: description,
+      // deviceCondition removed
+      chargerAvailable: chargerAvailable,
+      factoryUnlock: factoryUnlock,
+      liquidDamage: liquidDamage,
+      switchOn: switchOn,
+      receiveCall: receiveCall,
+      features1Condition: features1Condition,
+      features2Condition: features2Condition,
+      cameraCondition: cameraCondition,
+      displayCondition: displayCondition,
+      displayCracked: displayCracked,
+      displayOriginal: displayOriginal,
+      finalPrice: finalPrice,
+      basePrice: basePrice,
     );
   }
 
   factory ItemApiModel.fromEntity(ItemEntity entity) {
     return ItemApiModel(
       id: entity.itemId,
-      seller: entity.sellerId,
+      sellerId: entity.sellerId,
       photos: entity.photos,
       category: entity.category,
-      model: entity.model,
-      price: entity.price,
+      phoneModel: entity.phoneModel,
       year: entity.year,
-      description: entity.description,
-      storage: entity.storage,
-      screenCondition: entity.screenCondition,
       batteryHealth: entity.batteryHealth,
-      cameraQuality: entity.cameraQuality,
-      sellerId: entity.sellerId,
-      hasCharger: entity.hasCharger,
-      extraAnswers: entity.extraAnswers,
-      createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt,
+      description: entity.description,
+      // deviceCondition removed,
+      chargerAvailable: entity.chargerAvailable,
+      factoryUnlock: entity.factoryUnlock,
+      liquidDamage: entity.liquidDamage,
+      switchOn: entity.switchOn,
+      receiveCall: entity.receiveCall,
+      features1Condition: entity.features1Condition,
+      features2Condition: entity.features2Condition,
+      cameraCondition: entity.cameraCondition,
+      displayCondition: entity.displayCondition,
+      displayCracked: entity.displayCracked,
+      displayOriginal: entity.displayOriginal,
+      finalPrice: entity.finalPrice,
+      basePrice: entity.basePrice,
     );
   }
-
-  static List<ItemEntity> toEntityList(List<ItemApiModel> models) {
+    static List<ItemEntity> toEntityList(List<ItemApiModel> models) {
     return models.map((model) => model.toEntity()).toList();
   }
 }

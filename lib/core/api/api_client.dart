@@ -2,19 +2,20 @@ import 'package:dio/dio.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:recell_bazar/core/api/api_endpoints.dart';
+import 'package:recell_bazar/core/services/storage/token_service.dart';
 
 // Provider for ApiClient
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient();
+  return ApiClient(ref);
 });
 
 class ApiClient {
+  final Ref _ref; 
   late final Dio _dio;
 
-  ApiClient() {
+ ApiClient(this._ref) { // pass ref
     _dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.baseUrl,
@@ -27,8 +28,8 @@ class ApiClient {
       ),
     );
 
-    // Add interceptors
-    _dio.interceptors.add(_AuthInterceptor());
+    // Use ref in interceptor
+    _dio.interceptors.add(_AuthInterceptor(_ref));
 
     // Auto retry on network failures
     _dio.interceptors.add(
@@ -139,18 +140,15 @@ class ApiClient {
 
 // Auth Interceptor to add JWT token to requests
 class _AuthInterceptor extends Interceptor {
-  final _storage = const FlutterSecureStorage();
-  static const String _tokenKey = 'auth_token';
+
+  final Ref _ref;
+
+  _AuthInterceptor(this._ref);
 
   @override
-  void onRequest(
-    RequestOptions options,
-    RequestInterceptorHandler handler,
-  ) async {
+  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
     // Skip auth for public endpoints
     final publicEndpoints = [
-      // ApiEndpoints.batches,
-      // ApiEndpoints.categories,
       ApiEndpoints.login,
       ApiEndpoints.register,
     ];
@@ -164,9 +162,13 @@ class _AuthInterceptor extends Interceptor {
         options.path == ApiEndpoints.register;
 
     if (!isPublicGet && !isAuthEndpoint) {
-      final token = await _storage.read(key: _tokenKey);
-      if (token != null) {
+      // Get token fresh each request
+      final tokenService = _ref.read(tokenServiceProvider);
+      final token = await tokenService.getToken(); 
+      if (token != null && token.isNotEmpty) {
         options.headers['Authorization'] = 'Bearer $token';
+      } else {
+        debugPrint('ApiClient: No token found for ${options.path}');
       }
     }
 
@@ -174,12 +176,12 @@ class _AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
-    // Handle 401 Unauthorized - token expired
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     if (err.response?.statusCode == 401) {
-      // Clear token and redirect to login
-      _storage.delete(key: _tokenKey);
-      // You can add navigation logic here or use a callback
+      final tokenService = _ref.read(tokenServiceProvider);
+      await tokenService.removeToken(); // clear token
+      debugPrint('ApiClient: Unauthorized, token removed');
+      // optionally notify user or navigate to login
     }
     handler.next(err);
   }

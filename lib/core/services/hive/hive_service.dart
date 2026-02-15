@@ -217,13 +217,5 @@ Future<List<ItemHiveModel>> getItemsByCategory(String categoryId) async {
   return _itemBox.values.where((item) => item.category == categoryId).toList();
 }
 
-/// Get lost items (example: based on status)
-Future<List<ItemHiveModel>> getLostItems() async {
-  return _itemBox.values.where((item) => item.extraAnswers?['status'] == 'lost').toList();
-}
 
-/// Get found items
-Future<List<ItemHiveModel>> getFoundItems() async {
-  return _itemBox.values.where((item) => item.extraAnswers?['status'] == 'found').toList();
-}
 }

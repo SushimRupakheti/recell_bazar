@@ -10,6 +10,7 @@ import 'package:recell_bazar/features/auth/data/datasources/local/auth_local_dat
 import 'package:recell_bazar/features/auth/data/datasources/remote/auth_remote_datasource.dart';
 import 'package:recell_bazar/features/auth/data/models/auth_api_model.dart';
 import 'package:recell_bazar/features/auth/data/models/auth_hive_model.dart';
+import 'package:recell_bazar/core/services/storage/user_session_service.dart';
 import 'package:recell_bazar/features/auth/domain/entities/auth_entity.dart';
 import 'package:recell_bazar/features/auth/domain/repositories/auth_repository.dart';
 
@@ -19,25 +20,31 @@ final authRepositoryProvider = Provider<IAuthRepository>((ref) {
   final authDatasource = ref.read(authLocalDatasourceProvider);
   final authRemoteDatasource = ref.read(authRemoteDataSourceProvider);
   final networkInfo = ref.read(networkInfoProvider);
+  final userSession = ref.read(userSessionServiceProvider);
 
   return AuthRepository(
     authDatasource: authDatasource,
-    authRemoteDatasource: authRemoteDatasource,
-    networkInfo: networkInfo);
+    authRemoteDataSource: authRemoteDatasource,
+    networkInfo: networkInfo,
+    userSession: userSession,
+  );
 });
 
 class AuthRepository implements IAuthRepository {
   final IAuthLocalDataSource _authDataSource;
   final IAuthRemoteDataSource _authRemoteDataSource;
   final NetworkInfo _networkInfo;
+  final UserSessionServices _userSession;
 
   AuthRepository({
     required IAuthLocalDataSource authDatasource,
-    required IAuthRemoteDataSource authRemoteDatasource,
+    required IAuthRemoteDataSource authRemoteDataSource,
     required NetworkInfo networkInfo,
-  }) : _authDataSource = authDatasource,
-       _authRemoteDataSource = authRemoteDatasource,
-       _networkInfo = networkInfo;
+    required UserSessionServices userSession,
+  })  : _authDataSource = authDatasource,
+       _authRemoteDataSource = authRemoteDataSource,
+       _networkInfo = networkInfo,
+       _userSession = userSession;
 
    @override
   Future<Either<Failure, bool>> register(AuthEntity user) async {
@@ -45,7 +52,28 @@ class AuthRepository implements IAuthRepository {
       try {
         //remote ma ja
         final apiModel = AuthApiModel.fromEntity(user);
-        await _authRemoteDataSource.register(apiModel);
+        final registered = await _authRemoteDataSource.register(apiModel);
+
+        // If remote returned a registered user, persist locally with the remote id
+        try {
+          final entity = registered.toEntity();
+          final hiveModel = AuthHiveModel.fromEntity(entity);
+          await _authDataSource.register(hiveModel);
+
+          // Save session so app restarts keep the user logged in
+          await _userSession.saveUserSession(
+            userId: entity.authId ?? '',
+            email: entity.email,
+            firstName: entity.firstName,
+            lastName: entity.lastName,
+            contactNo: entity.contactNo,
+            address: entity.address,
+            profileImage: entity.profileImage,
+          );
+        } catch (_) {
+          // ignore local persistence errors
+        }
+
         return const Right(true);
       } on DioException catch (e) {
         return Left(
@@ -95,6 +123,15 @@ class AuthRepository implements IAuthRepository {
           return const Left(ApiFailure(message: "Invalid email or password"));
         }
 
+        // Persist remote user locally so `getCurrentUser` can fall back to Hive
+        try {
+          final entity = apiModel.toEntity();
+          final hiveModel = AuthHiveModel.fromEntity(entity);
+          await _authDataSource.register(hiveModel);
+        } catch (_) {
+          // ignore local persistence errors
+        }
+
         return Right(apiModel.toEntity());
       } on DioException catch (e) {
         return Left(
@@ -110,9 +147,11 @@ class AuthRepository implements IAuthRepository {
 
     // OFFLINE
     try {
-      final hiveModel = await _authDataSource.getUserByEmail(email);
+      // Use the local datasource `login` which already saves the session
+      // into SharedPreferences via `UserSessionServices`.
+      final hiveModel = await _authDataSource.login(email, password);
 
-      if (hiveModel != null && hiveModel.password == password) {
+      if (hiveModel != null) {
         return Right(hiveModel.toEntity());
       }
 
@@ -161,6 +200,18 @@ class AuthRepository implements IAuthRepository {
             await _authDataSource.register(hiveModel);
             return Right(entity);
           }
+          // If remote didn't return a user, try to find a local user by the
+          // saved email in SharedPreferences. This helps when the saved
+          // `authId` came from the remote server but local Hive used a
+          // different generated id (or vice-versa).
+          final savedEmail = _userSession.getUserEmail();
+          if (savedEmail != null) {
+            final localByEmail = await _authDataSource.getUserByEmail(savedEmail);
+            if (localByEmail != null) {
+              return Right(localByEmail.toEntity());
+            }
+          }
+
           return const Left(LocalDatabaseFailure(message: "No user logged in"));
         } catch (e) {
           return Left(LocalDatabaseFailure(message: e.toString()));

@@ -8,16 +8,16 @@ import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 import 'package:recell_bazar/features/item/domain/repositories/item_repository.dart';
 
 class SearchItemsParams extends Equatable {
-  final String? model;
+  final String? phoneModel;
   final String? category;
 
   const SearchItemsParams({
-    this.model,
+    this.phoneModel,
     this.category,
   });
 
   @override
-  List<Object?> get props => [model, category];
+  List<Object?> get props => [phoneModel, category];
 }
 
 
@@ -37,8 +37,8 @@ class SearchItemsUsecase
   @override
   Future<Either<Failure, List<ItemEntity>>> call(
       SearchItemsParams params) {
-    return _itemRepository.searchItems(
-      params.model ?? '',
+        return _itemRepository.searchItems(
+          params.phoneModel ?? '',
       params.category,
     );
   }

@@ -8,7 +8,7 @@ part of 'item_hive_model.dart';
 
 class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
   @override
-  final int typeId = 0;
+      // deviceCondition removed
 
   @override
   ItemHiveModel read(BinaryReader reader) {
@@ -22,29 +22,35 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       seller: fields[2] as String,
       photos: (fields[3] as List).cast<String>(),
       category: fields[4] as String,
-      model: fields[5] as String,
-      price: fields[6] as double,
-      year: fields[7] as int,
+      phoneModel: fields[5] as String,
+      year: fields[6] as int,
+      batteryHealth: fields[7] as int,
       description: fields[8] as String,
-      storage: fields[9] as String,
-      screenCondition: fields[10] as String,
-      batteryHealth: fields[11] as int,
-      cameraQuality: fields[12] as String,
-      hasCharger: fields[13] as bool,
-      extraAnswers: (fields[14] as Map?)?.cast<String, dynamic>(),
-      createdAt: fields[15] as DateTime?,
-      updatedAt: fields[16] as DateTime?, isSold: false,
+      chargerAvailable: fields[10] as bool,
+      factoryUnlock: fields[11] as bool,
+      liquidDamage: fields[12] as bool,
+      switchOn: fields[13] as bool,
+      receiveCall: fields[14] as bool,
+      features1Condition: fields[15] as bool,
+      features2Condition: fields[16] as bool,
+      cameraCondition: fields[17] as bool,
+      displayCondition: fields[18] as bool,
+      displayCracked: fields[19] as bool,
+      displayOriginal: fields[20] as bool,
+      createdAt: fields[21] as DateTime?,
+      updatedAt: fields[22] as DateTime?,
+      isSold: fields[23] as bool,
+      finalPrice: fields[24] as String,
+      basePrice: fields[25] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, ItemHiveModel obj) {
     writer
-      ..writeByte(17)
       ..writeByte(0)
       ..write(obj.itemId)
-      ..writeByte(1)
-      ..write(obj.sellerId)
+      // deviceCondition removed
       ..writeByte(2)
       ..write(obj.seller)
       ..writeByte(3)
@@ -52,29 +58,47 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       ..writeByte(4)
       ..write(obj.category)
       ..writeByte(5)
-      ..write(obj.model)
+      ..write(obj.phoneModel)
       ..writeByte(6)
-      ..write(obj.price)
-      ..writeByte(7)
       ..write(obj.year)
+      ..writeByte(7)
+      ..write(obj.batteryHealth)
       ..writeByte(8)
       ..write(obj.description)
+      // ..writeByte(9)
+      // ..write(obj.deviceCondition)
       ..writeByte(9)
-      ..write(obj.storage)
+      ..write(obj.chargerAvailable)
       ..writeByte(10)
-      ..write(obj.screenCondition)
+      ..write(obj.factoryUnlock)
       ..writeByte(11)
-      ..write(obj.batteryHealth)
+      ..write(obj.liquidDamage)
       ..writeByte(12)
-      ..write(obj.cameraQuality)
+      ..write(obj.switchOn)
       ..writeByte(13)
-      ..write(obj.hasCharger)
+      ..write(obj.receiveCall)
       ..writeByte(14)
-      ..write(obj.extraAnswers)
+      ..write(obj.features1Condition)
       ..writeByte(15)
-      ..write(obj.createdAt)
+      ..write(obj.features2Condition)
       ..writeByte(16)
-      ..write(obj.updatedAt);
+      ..write(obj.cameraCondition)
+      ..writeByte(17)
+      ..write(obj.displayCondition)
+      ..writeByte(18)
+      ..write(obj.displayCracked)
+      ..writeByte(19)
+      ..write(obj.displayOriginal)
+      ..writeByte(20)
+      ..write(obj.createdAt)
+      ..writeByte(21)
+      ..write(obj.updatedAt)
+      ..writeByte(22)
+      ..write(obj.isSold)
+      ..writeByte(23)
+      ..write(obj.finalPrice)
+      ..writeByte(24)
+      ..write(obj.basePrice);
   }
 
   @override
@@ -86,4 +110,8 @@ class ItemHiveModelAdapter extends TypeAdapter<ItemHiveModel> {
       other is ItemHiveModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
+          
+            @override
+            // TODO: implement typeId
+            int get typeId => throw UnimplementedError();
 }

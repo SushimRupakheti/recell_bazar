@@ -123,7 +123,7 @@ class ItemLocalDatasource implements IItemLocalDataSource {
 
   /// TODO: Implement search and related items functions
   @override
-  Future<List<ItemHiveModel>> searchItems(String model, {String? categoryId}) async {
+  Future<List<ItemHiveModel>> searchItems(String phoneModel, {String? categoryId}) async {
     // implement search logic here
     throw UnimplementedError();
   }

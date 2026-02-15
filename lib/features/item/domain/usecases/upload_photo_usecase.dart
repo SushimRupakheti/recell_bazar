@@ -24,4 +24,3 @@ class UploadPhotoUsecase implements UsecaseWithParams<String, File> {
   }
 }
 
-

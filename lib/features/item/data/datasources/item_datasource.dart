@@ -9,7 +9,7 @@ abstract interface class IItemLocalDataSource {
   Future<ItemHiveModel?> getItemById(String itemId);
   Future<List<ItemHiveModel>> getItemsByUser(String userId);
   Future<List<ItemHiveModel>> getItemsByCategory(String categoryId);
-  Future<List<ItemHiveModel>> searchItems(String model, {String? categoryId});
+  Future<List<ItemHiveModel>> searchItems(String phoneModel, {String? categoryId});
   Future<List<ItemHiveModel>> getRelatedItems(String itemId);
   Future<bool> createItem(ItemHiveModel item);
   Future<bool> updateItem(ItemHiveModel item);
@@ -38,7 +38,7 @@ abstract interface class IItemRemoteDataSource {
   Future<ItemApiModel> getItemById(String itemId);
   Future<List<ItemApiModel>> getItemsByUser(String userId);
   Future<List<ItemApiModel>> getItemsByCategory(String categoryId);
-  Future<List<ItemApiModel>> searchItems(String model, {String? categoryId});
+  Future<List<ItemApiModel>> searchItems(String phoneModel, {String? categoryId});
   Future<List<ItemApiModel>> getRelatedItems(String itemId);
 
   // Cart

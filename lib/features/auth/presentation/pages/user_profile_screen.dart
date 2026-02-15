@@ -179,7 +179,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                         onTap: () => _pickImage(user),
                         child: Container(
                           decoration: const BoxDecoration(
-                              shape: BoxShape.circle, color: Colors.teal),
+                              shape: BoxShape.circle, color: Color(0xFF0B7C7C)),
                           padding: const EdgeInsets.all(8),
                           child: const Icon(Icons.add, color: Colors.white),
                         ),

@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/auth/presentation/pages/login_screen.dart';
 import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
 import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
-import 'package:recell_bazar/widgets/profile_header.dart';
-import 'package:recell_bazar/widgets/stats_card.dart';
+import 'package:recell_bazar/features/auth/presentation/widgets/profile_header.dart';
+import 'package:recell_bazar/features/auth/presentation/widgets/stats_card.dart';
 
 
 class Profile extends ConsumerWidget {

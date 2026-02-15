@@ -18,11 +18,13 @@ class _CustomChoiceChipState extends State<CustomChoiceChip> {
   final List<String> deviceTypes = [
     "All",
     "New In",
-    "Iphone",
-    "Google",
+    "iPhone",
+    "Pixel",
     "Samsung",
     "Vivo",
-    "MI",
+    "Poco",
+    "Huawei",
+    "Oppo",
   ];
 
   int _selectedIndex = 0;

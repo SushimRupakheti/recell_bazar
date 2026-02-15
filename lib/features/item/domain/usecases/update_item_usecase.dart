@@ -1,47 +1,69 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:recell_bazar/core/error/failure.dart';
 import 'package:recell_bazar/core/usecase/app_usecase.dart';
-import 'package:recell_bazar/features/item/data/repositories/item_repository.dart';
+
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 import 'package:recell_bazar/features/item/domain/repositories/item_repository.dart';
+import 'package:recell_bazar/features/item/data/repositories/item_repository.dart';
 
+///  Update Item Params
 class UpdateItemParams extends Equatable {
   final String itemId;
 
-  // Mandatory fields
+  // Basic Fields
   final List<String>? photos;
   final String? category;
-  final String? model;
-  final double? price;
-  final String? sellerId;
-  final int? year;
-  final String? description;
-  final String? storage;
-  final String? screenCondition;
-  final int? batteryHealth;
-  final String? cameraQuality;
-  final bool? hasCharger;
+  final String? phoneModel;
 
-  // Extra dynamic questions
-  final Map<String, dynamic>? extraAnswers;
+  //price
+  final String? finalPrice;
+  final String? basePrice;
+
+  // TextField Inputs
+  final int? year;
+  final int? batteryHealth;
+  final String? description;
+
+
+  // Charger
+  final bool? chargerAvailable;
+
+  // Boolean Evaluation Questions
+  final bool? factoryUnlock;
+  final bool? liquidDamage;
+  final bool? switchOn;
+  final bool? receiveCall;
+  final bool? features1Condition;
+  final bool? features2Condition;
+  final bool? cameraCondition;
+  final bool? displayCondition;
+  final bool? displayCracked;
+  final bool? displayOriginal;
 
   const UpdateItemParams({
     required this.itemId,
     this.photos,
     this.category,
-    this.model,
-    this.price,
+    this.phoneModel,
     this.year,
-    this.description,
-    this.storage,
-    this.screenCondition,
+    this.finalPrice,
+    this.basePrice,
     this.batteryHealth,
-    this.cameraQuality,
-    this.hasCharger,
-    this.extraAnswers, 
-    this.sellerId,
+    this.description,
+    this.chargerAvailable,
+    this.factoryUnlock,
+    this.liquidDamage,
+    this.switchOn,
+    this.receiveCall,
+    this.features1Condition,
+    this.features2Condition,
+    this.cameraCondition,
+    this.displayCondition,
+    this.displayCracked,
+    this.displayOriginal,
   });
 
   @override
@@ -49,25 +71,33 @@ class UpdateItemParams extends Equatable {
         itemId,
         photos,
         category,
-        model,
-        price,
+        phoneModel,
         year,
-        description,
-        storage,
-        sellerId,
-        screenCondition,
+        finalPrice,
+        basePrice,
         batteryHealth,
-        cameraQuality,
-        hasCharger,
-        extraAnswers,
+        description,
+        chargerAvailable,
+        factoryUnlock,
+        liquidDamage,
+        switchOn,
+        receiveCall,
+        features1Condition,
+        features2Condition,
+        cameraCondition,
+        displayCondition,
+        displayCracked,
+        displayOriginal,
       ];
 }
 
+///  Provider for UpdateItemUsecase
 final updateItemUsecaseProvider = Provider<UpdateItemUsecase>((ref) {
   final itemRepository = ref.read(itemRepositoryProvider);
   return UpdateItemUsecase(itemRepository: itemRepository);
 });
 
+///  Update Item Usecase
 class UpdateItemUsecase implements UsecaseWithParams<bool, UpdateItemParams> {
   final IItemRepository _itemRepository;
 
@@ -78,19 +108,40 @@ class UpdateItemUsecase implements UsecaseWithParams<bool, UpdateItemParams> {
   Future<Either<Failure, bool>> call(UpdateItemParams params) {
     final itemEntity = ItemEntity(
       itemId: params.itemId,
+
+      // sellerId is not updated here, so keep empty for now
+      sellerId: "",
+
+      // Basic Fields
       photos: params.photos ?? [],
-      category: params.category ?? '',
-      model: params.model ?? '',
-      price: params.price ?? 0,
+      category: params.category ?? "",
+      phoneModel: params.phoneModel ?? "",
+
+      //price
+      finalPrice: params.finalPrice ?? "",
+      basePrice: params.basePrice ?? "",
+
+      // TextField Inputs
       year: params.year ?? 0,
-      description: params.description ?? '',
-      storage: params.storage ?? '',
-      screenCondition: params.screenCondition ?? '',
       batteryHealth: params.batteryHealth ?? 0,
-      cameraQuality: params.cameraQuality ?? '',
-      hasCharger: params.hasCharger ?? false,
-      extraAnswers: params.extraAnswers,
-      sellerId: '',
+      description: params.description ?? "",
+
+      // deviceCondition removed
+
+      // Charger
+      chargerAvailable: params.chargerAvailable ?? false,
+
+      // Boolean Evaluation Questions
+      factoryUnlock: params.factoryUnlock ?? false,
+      liquidDamage: params.liquidDamage ?? false,
+      switchOn: params.switchOn ?? false,
+      receiveCall: params.receiveCall ?? false,
+      features1Condition: params.features1Condition ?? false,
+      features2Condition: params.features2Condition ?? false,
+      cameraCondition: params.cameraCondition ?? false,
+      displayCondition: params.displayCondition ?? false,
+      displayCracked: params.displayCracked ?? false,
+      displayOriginal: params.displayOriginal ?? false,
     );
 
     return _itemRepository.updateItem(itemEntity);

@@ -1,3 +1,6 @@
+// flutter pub run build_runner build --delete-conflicting-outputs
+
+
 import 'package:hive/hive.dart';
 import 'package:recell_bazar/core/constants/hive_table_constant.dart';
 import 'package:uuid/uuid.dart';
@@ -23,43 +26,57 @@ class ItemHiveModel extends HiveObject {
   final String category;
 
   @HiveField(5)
-  final String model;
+  final String phoneModel;
 
   @HiveField(6)
-  final double price;
+  final int year;
 
   @HiveField(7)
-  final int year;
+  final int batteryHealth;
 
   @HiveField(8)
   final String description;
 
-  @HiveField(9)
-  final String storage;
 
   @HiveField(10)
-  final String screenCondition;
+  final bool chargerAvailable;
 
+  // Boolean evaluation fields
   @HiveField(11)
-  final int batteryHealth;
-
+  final bool factoryUnlock;
   @HiveField(12)
-  final String cameraQuality;
-
+  final bool liquidDamage;
   @HiveField(13)
-  final bool hasCharger;
-
+  final bool switchOn;
   @HiveField(14)
-  final Map<String, dynamic>? extraAnswers;
-
+  final bool receiveCall;
   @HiveField(15)
+  final bool features1Condition;
+  @HiveField(16)
+  final bool features2Condition;
+  @HiveField(17)
+  final bool cameraCondition;
+  @HiveField(18)
+  final bool displayCondition;
+  @HiveField(19)
+  final bool displayCracked;
+  @HiveField(20)
+  final bool displayOriginal;
+
+  @HiveField(21)
   final DateTime? createdAt;
 
-  @HiveField(16)
+  @HiveField(22)
   final DateTime? updatedAt;
 
-  @HiveField(17)
+  @HiveField(23)
   final bool isSold;
+
+  @HiveField(24)
+  final String finalPrice;
+
+  @HiveField(25)
+  final String basePrice;
 
   ItemHiveModel({
     String? itemId,
@@ -67,62 +84,85 @@ class ItemHiveModel extends HiveObject {
     this.seller = '',
     required this.photos,
     required this.category,
-    required this.model,
-    required this.price,
+    required this.phoneModel,
     required this.year,
-    required this.description,
-    required this.storage,
-    required this.screenCondition,
+    required this.finalPrice,
+    required this.basePrice,
     required this.batteryHealth,
-    required this.cameraQuality,
-    required this.hasCharger,
-    this.extraAnswers,
-    required this.isSold,
+    required this.description,
+    required this.chargerAvailable,
+    required this.factoryUnlock,
+    required this.liquidDamage,
+    required this.switchOn,
+    required this.receiveCall,
+    required this.features1Condition,
+    required this.features2Condition,
+    required this.cameraCondition,
+    required this.displayCondition,
+    required this.displayCracked,
+    required this.displayOriginal,
     this.createdAt,
     this.updatedAt,
+    this.isSold = false,
   }) : itemId = itemId ?? const Uuid().v4();
 
-    ItemHiveModel copyWith({
-        String? itemId,
-        String? sellerId,
-        String? seller,
-        List<String>? photos,
-        String? category,
-        String? model,
-        double? price,
-        int? year,
-        String? description,
-        String? storage,
-        String? screenCondition,
-        int? batteryHealth,
-        String? cameraQuality,
-        bool? hasCharger,
-        Map<String, dynamic>? extraAnswers,
-        bool isSold = false,
-        DateTime? createdAt,
-        DateTime? updatedAt,
-      }){
-        return ItemHiveModel(
-          itemId: itemId ?? this.itemId,
-          sellerId: sellerId ?? this.sellerId,
-          seller: seller ?? this.seller,
-          photos: photos ?? this.photos,
-          category: category ?? this.category,
-          model: model ?? this.model,
-          price: price ?? this.price,
-          year: year ?? this.year,
-          description: description ?? this.description,
-          storage: storage ?? this.storage,
-          screenCondition: screenCondition ?? this.screenCondition,
-          batteryHealth: batteryHealth ?? this.batteryHealth,
-          cameraQuality: cameraQuality ?? this.cameraQuality,
-          hasCharger: hasCharger ?? this.hasCharger,
-          extraAnswers: extraAnswers ?? this.extraAnswers,
-          isSold: isSold,
-          createdAt: createdAt ?? this.createdAt,
-          updatedAt: updatedAt ?? this.updatedAt,
-        );
-      }
+  ItemHiveModel copyWith({
+    String? itemId,
+    String? sellerId,
+    String? seller,
+    List<String>? photos,
+    String? category,
+    String? phoneModel,
+    int? year,
+    String? finalPrice,
+    String? basePrice,
+    int? batteryHealth,
+    String? description,
+    bool? chargerAvailable,
+    bool? factoryUnlock,
+    bool? liquidDamage,
+    bool? switchOn,
+    bool? receiveCall,
+    bool? features1Condition,
+    bool? features2Condition,
+    bool? cameraCondition,
+    bool? displayCondition,
+    bool? displayCracked,
+    bool? displayOriginal,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    bool? isSold,
+  }) {
+    return ItemHiveModel(
+      itemId: itemId ?? this.itemId,
+      sellerId: sellerId ?? this.sellerId,
+      seller: seller ?? this.seller,
+      photos: photos ?? this.photos,
+      category: category ?? this.category,
+      phoneModel: phoneModel ?? this.phoneModel,
+      year: year ?? this.year,
+      finalPrice: finalPrice ?? this.finalPrice,
+      basePrice: basePrice ?? this.basePrice,
+      batteryHealth: batteryHealth ?? this.batteryHealth,
+      description: description ?? this.description,
+      // deviceCondition removed
+      chargerAvailable: chargerAvailable ?? this.chargerAvailable,
+      factoryUnlock: factoryUnlock ?? this.factoryUnlock,
+      liquidDamage: liquidDamage ?? this.liquidDamage,
+      switchOn: switchOn ?? this.switchOn,
+      receiveCall: receiveCall ?? this.receiveCall,
+      features1Condition: features1Condition ?? this.features1Condition,
+      features2Condition: features2Condition ?? this.features2Condition,
+      cameraCondition: cameraCondition ?? this.cameraCondition,
+      displayCondition: displayCondition ?? this.displayCondition,
+      displayCracked: displayCracked ?? this.displayCracked,
+      displayOriginal: displayOriginal ?? this.displayOriginal,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      isSold: isSold ?? this.isSold,
+    );
+  }
+
   // Convert Hive model to Entity
   ItemEntity toEntity() {
     return ItemEntity(
@@ -130,18 +170,26 @@ class ItemHiveModel extends HiveObject {
       sellerId: sellerId,
       photos: photos,
       category: category,
-      model: model,
-      price: price,
+      phoneModel: phoneModel,
       year: year,
-      description: description,
-      storage: storage,
-      screenCondition: screenCondition,
+      finalPrice: finalPrice,
+      basePrice: basePrice,
       batteryHealth: batteryHealth,
-      cameraQuality: cameraQuality,
-      hasCharger: hasCharger,
-      extraAnswers: extraAnswers,
+      description: description,
+      chargerAvailable: chargerAvailable,
+      factoryUnlock: factoryUnlock,
+      liquidDamage: liquidDamage,
+      switchOn: switchOn,
+      receiveCall: receiveCall,
+      features1Condition: features1Condition,
+      features2Condition: features2Condition,
+      cameraCondition: cameraCondition,
+      displayCondition: displayCondition,
+      displayCracked: displayCracked,
+      displayOriginal: displayOriginal,
       createdAt: createdAt,
       updatedAt: updatedAt,
+      isSold: isSold,
     );
   }
 
@@ -150,21 +198,29 @@ class ItemHiveModel extends HiveObject {
     return ItemHiveModel(
       itemId: entity.itemId,
       sellerId: entity.sellerId,
-      seller: '', // optional, can be filled from entity if you add seller name
+      seller: '',
       photos: entity.photos,
       category: entity.category,
-      model: entity.model,
-      price: entity.price,
+      phoneModel: entity.phoneModel,
       year: entity.year,
-      description: entity.description,
-      storage: entity.storage,
-      screenCondition: entity.screenCondition,
       batteryHealth: entity.batteryHealth,
-      cameraQuality: entity.cameraQuality,
-      hasCharger: entity.hasCharger,
-      extraAnswers: entity.extraAnswers,
+      description: entity.description,
+      finalPrice: entity.finalPrice,
+      basePrice: entity.basePrice,
+      chargerAvailable: entity.chargerAvailable,
+      factoryUnlock: entity.factoryUnlock,
+      liquidDamage: entity.liquidDamage,
+      switchOn: entity.switchOn,
+      receiveCall: entity.receiveCall,
+      features1Condition: entity.features1Condition,
+      features2Condition: entity.features2Condition,
+      cameraCondition: entity.cameraCondition,
+      displayCondition: entity.displayCondition,
+      displayCracked: entity.displayCracked,
+      displayOriginal: entity.displayOriginal,
       createdAt: entity.createdAt,
-      updatedAt: entity.updatedAt, isSold: false,
+      updatedAt: entity.updatedAt,
+      isSold: entity.isSold,
     );
   }
 

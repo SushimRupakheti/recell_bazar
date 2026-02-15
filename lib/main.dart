@@ -10,7 +10,6 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   // Ensure Hive is initialized and boxes are open before starting the app to avoid races
   await HiveService().init();
-
   final sharedPrefs = await SharedPreferences.getInstance();
 
   

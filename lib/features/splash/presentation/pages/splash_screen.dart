@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/core/services/storage/user_session_service.dart';
 import 'package:recell_bazar/features/auth/domain/usecases/get_current_user.dart';
-import 'package:dartz/dartz.dart';
-import 'package:recell_bazar/screens/dashboard.dart';
-import 'package:recell_bazar/screens/onboarding_screen.dart';
+import 'package:recell_bazar/features/item/presentation/pages/dashboard.dart';
+import 'package:recell_bazar/features/onboarding/presentation/pages/onboarding_screen.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

@@ -3,8 +3,9 @@ class ApiEndpoints {
 
   // Base URL - change this for production
   // static const String baseUrl = 'http://localhost:5050/api/v1';
+  // static const String baseUrl = 'http://192.168.1.45:5050/api/v1';
   static const String baseUrl = 'http://10.0.2.2:5050/api';
-
+ 
 
   //static const String baseUrl = 'http://localhost:3000/api/v1';ip halna pardaina?
   // For Android Emulator use: 'http://10.0.2.2:3000/api/v1'
@@ -33,7 +34,7 @@ class ApiEndpoints {
   static const String itemUploadVideo = '/items/upload-video';
   static String itemsByCategory(String categoryId) => '/items/category/$categoryId';
   static String itemsByUser(String userId) => '/items/user/$userId';
-  static String searchItems(String model, {String? categoryId}) =>'/items/search?model=$model${categoryId != null ? '&category=$categoryId' : ''}';
+  static String searchItems(String phoneModel, {String? categoryId}) =>'/items/search?model=$phoneModel${categoryId != null ? '&category=$categoryId' : ''}';
 
   // User endpoints
   static String uploadProfilePicture(String userId) => '/users/$userId/profile-picture';

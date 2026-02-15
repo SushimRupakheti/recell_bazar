@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/core/error/failure.dart';
 import 'package:recell_bazar/core/services/connectivity/network_info.dart';
@@ -98,18 +99,18 @@ class ItemRepository implements IItemRepository {
   }
 
   @override
-  Future<Either<Failure, List<ItemEntity>>> searchItems(
-      String model, String? categoryId) async {
+    Future<Either<Failure, List<ItemEntity>>> searchItems(
+      String phoneModel, String? categoryId) async {
     if (await _networkInfo.isConnected) {
       try {
         final allItems = await _remoteDataSource.getAllItems();
         final filtered = allItems
-            .where((item) =>
-                item.model.toLowerCase().contains(model.toLowerCase()) &&
-                (categoryId == null ||
-                    item.category.toLowerCase() ==
-                        categoryId.toLowerCase()))
-            .toList();
+          .where((item) =>
+            item.phoneModel.toLowerCase().contains(phoneModel.toLowerCase()) &&
+            (categoryId == null ||
+              item.category.toLowerCase() ==
+                categoryId.toLowerCase()))
+          .toList();
         return Right(ItemApiModel.toEntityList(filtered));
       } catch (e) {
         return Left(ApiFailure(message: e.toString()));
@@ -118,12 +119,12 @@ class ItemRepository implements IItemRepository {
       try {
         final allItems = await _localDataSource.getAllItems();
         final filtered = allItems
-            .where((item) =>
-                item.model.toLowerCase().contains(model.toLowerCase()) &&
-                (categoryId == null ||
-                    item.category.toLowerCase() ==
-                        categoryId.toLowerCase()))
-            .toList();
+          .where((item) =>
+            item.phoneModel.toLowerCase().contains(phoneModel.toLowerCase()) &&
+            (categoryId == null ||
+              item.category.toLowerCase() ==
+                categoryId.toLowerCase()))
+          .toList();
         return Right(ItemHiveModel.toEntityList(filtered));
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
@@ -169,10 +170,16 @@ class ItemRepository implements IItemRepository {
       String sellerId) async {
     if (await _networkInfo.isConnected) {
       try {
-        final models = await _remoteDataSource.getAllItems();
-        final filtered = models
-            .where((i) => i.sellerId.toLowerCase() == sellerId.toLowerCase())
-            .toList();
+        debugPrint('ItemRepository.getItemsBySeller: requesting remote items for sellerId=$sellerId');
+        final models = await _remoteDataSource.getItemsByUser(sellerId);
+
+        final normRequested = sellerId.trim().toLowerCase();
+        final filtered = models.where((m) {
+          final sid = (m.sellerId).trim().toLowerCase();
+          return sid == normRequested;
+        }).toList();
+
+        debugPrint('ItemRepository.getItemsBySeller: remote fetched=${models.length}, filtered=${filtered.length}');
         return Right(ItemApiModel.toEntityList(filtered));
       } catch (e) {
         return Left(ApiFailure(message: e.toString()));
@@ -180,9 +187,14 @@ class ItemRepository implements IItemRepository {
     } else {
       try {
         final models = await _localDataSource.getAllItems();
-        final filtered = models
-            .where((i) => i.sellerId.toLowerCase() == sellerId.toLowerCase())
-            .toList();
+        debugPrint('ItemRepository.getItemsBySeller (local): requested sellerId=$sellerId, localCount=${models.length}');
+        final normRequested = sellerId.trim().toLowerCase();
+        final filtered = models.where((m) {
+          final sid = (m.sellerId ).trim().toLowerCase();
+          final sellerField = (m.seller ).trim().toLowerCase();
+          return sid == normRequested || sellerField == normRequested;
+        }).toList();
+        debugPrint('ItemRepository.getItemsBySeller (local): filtered=${filtered.length}');
         return Right(ItemHiveModel.toEntityList(filtered));
       } catch (e) {
         return Left(LocalDatabaseFailure(message: e.toString()));
