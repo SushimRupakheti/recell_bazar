@@ -3,13 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 import 'package:recell_bazar/core/providers/cart_provider.dart';
 import 'package:recell_bazar/core/services/storage/user_session_service.dart';
-import 'package:dio/dio.dart';
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:uuid/uuid.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter/services.dart';
+import 'package:recell_bazar/features/payment/presentation/providers/payment_provider.dart';
+import 'package:recell_bazar/features/payment/domain/entities/payment_request.dart';
 
 class SingleItemScreen extends ConsumerStatefulWidget {
   final ItemEntity item;
@@ -134,13 +130,18 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF0B7C7C)),
                         onPressed: () async {
+                          final enteredEmail = emailCtrl.text.trim();
+                          if (enteredEmail.isEmpty) {
+                            ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Please enter an email address')));
+                            return;
+                          }
                           await _submitBooking(
                             location: locationCtrl.text,
                             date: dateCtrl.text,
                             time: timeCtrl.text,
                             fullName: fullNameCtrl.text,
                             number: numberCtrl.text,
-                            email: emailCtrl.text,
+                            email: enteredEmail,
                             phoneModel: phoneModelCtrl.text,
                             price: int.tryParse(priceCtrl.text.replaceAll(RegExp(r'[^0-9]'), '')) ?? priceInt,
                           );
@@ -172,154 +173,34 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
     required String phoneModel,
     required int price,
   }) async {
-    final dio = Dio();
     final id = 'BK-${DateTime.now().millisecondsSinceEpoch}-${Uuid().v4().substring(0, 6)}';
 
-    final body = {
-      'amount': price,
-      'productName': widget.item.phoneModel,
-      'productId': widget.item.itemId ?? '',
-      'buyerName': fullName,
-      'buyerEmail': email,
-      'buyerPhone': number,
-      'orderId': id,
-      'fullName': fullName,
-      'phoneNo': number,
-      'phoneModel': phoneModel,
-      'sellerId': widget.item.sellerId,
-      'price': price,
-      'location': location,
-      'date': date,
-      'time': time,
-      'oid': id,
-      'refId': id,
-      'metadata': {'notes': 'App booking'},
-      'flow': 'payment_intent', // ask backend to create PaymentIntent for in-app payment
-    };
+    final request = PaymentRequest(
+      amount: price,
+      productName: widget.item.phoneModel,
+      productId: widget.item.itemId ?? '',
+      buyerName: fullName,
+      buyerEmail: email,
+      buyerPhone: number,
+      orderId: id,
+      fullName: fullName,
+      phoneNo: number,
+      phoneModel: phoneModel,
+      sellerId: widget.item.sellerId,
+      price: price,
+      location: location,
+      date: date,
+      time: time,
+      oid: id,
+      refId: id,
+    );
 
-    try {
-      String backendHost() {
-        // Web runs on same host
-        if (kIsWeb) return 'http://localhost:5050';
-        try {
-          if (Platform.isAndroid) return 'http://10.0.2.2:5050'; // Android emulator -> host machine
-          if (Platform.isIOS) return 'http://localhost:5050'; // iOS simulator accesses localhost
-        } catch (_) {}
-        // Default (physical device) - you should replace with your machine LAN IP if needed
-        return 'http://localhost:5050';
-      }
-
-      final uri = Uri.parse('${backendHost()}/api/payments/stripe/checkout');
-      final resp = await dio.postUri(uri, data: body);
-      if (resp.statusCode == 200 || resp.statusCode == 201) {
-        final data = resp.data;
-        // Common backend responses:
-        // - { url: 'https://checkout.stripe.com/...' }
-        // - { clientSecret: 'pi_..._secret_...', publishableKey: 'pk_live_...' }
-
-        // If backend returned a redirect URL, open it in the browser
-        if (data is Map && data['url'] != null) {
-          final url = Uri.parse(data['url'].toString());
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url, mode: LaunchMode.externalApplication);
-          } else {
-            if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Unable to open payment URL.')));
-          }
-          return;
-        }
-
-        // If backend returned a PaymentIntent client secret, open native Payment Sheet
-        String? clientSecret;
-        String? publishableKey;
-        if (data is Map) {
-          clientSecret = data['clientSecret'] ?? data['client_secret'] ?? (data['paymentIntent'] is Map ? data['paymentIntent']['client_secret'] : null);
-          publishableKey = data['publishableKey'] ?? data['publishable_key'];
-        }
-
-        if (publishableKey != null && publishableKey.isNotEmpty) {
-          Stripe.publishableKey = publishableKey;
-          try {
-            await Stripe.instance.applySettings();
-          } catch (_) {}
-        }
-
-        if (clientSecret != null && clientSecret.isNotEmpty) {
-          try {
-            await Stripe.instance.initPaymentSheet(
-              paymentSheetParameters: SetupPaymentSheetParameters(
-                paymentIntentClientSecret: clientSecret,
-                merchantDisplayName: 'Recell Bazar',
-                style: ThemeMode.light,
-              ),
-            );
-            await Stripe.instance.presentPaymentSheet();
-            if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Payment completed.')));
-          } on StripeException catch (se) {
-            if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Stripe error: ${se.error.localizedMessage}')));
-          } catch (e) {
-            if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment failed: $e')));
-          }
-          return;
-        }
-
-        // Fallback: show success message and copy server response to clipboard for debugging
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Booking created — no payment UI returned by server.')));
-          try {
-            await Clipboard.setData(ClipboardData(text: data.toString()));
-          } catch (_) {}
-        }
-      } else {
-        final serverMsg = resp.data is Map ? (resp.data['error'] ?? resp.data['message'] ?? resp.data).toString() : resp.data.toString();
-        if (serverMsg.toLowerCase().contains('stripe_secret') || serverMsg.toLowerCase().contains('invalid api key') || serverMsg.toLowerCase().contains('server misconfigured')) {
-          await _showStripeConfigDialog(serverMsg);
-        } else {
-          if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Payment init failed: ${resp.statusCode}')));
-        }
-      }
-    } catch (e) {
-      final msg = e.toString().toLowerCase();
-      if (msg.contains('invalid api key') || msg.contains('stripe')) {
-        await _showStripeConfigDialog(e.toString());
-      } else {
-        if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
-    }
+    await ref.read(paymentControllerProvider).initiatePayment(context, request);
   }
 
   Future<void> _showStripeConfigDialog(String details) async {
-    if (!mounted) return;
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Stripe Configuration Error'),
-        content: SingleChildScrollView(
-          child: ListBody(children: [
-            const Text('Server reported a Stripe configuration issue.'),
-            const SizedBox(height: 8),
-            Text(details, style: TextStyle(color: Colors.red.shade700)),
-            const SizedBox(height: 12),
-            const Text('Fix steps:'),
-            const Text('1) Ensure your server has STRIPE_SECRET_KEY set to sk_test_...'),
-            const Text('2) Optionally set STRIPE_PUBLISHABLE_KEY to pk_test_...'),
-            const SizedBox(height: 8),
-            const Text('You can copy these example commands to set env vars on your backend machine.'),
-          ]),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final example = "export STRIPE_SECRET_KEY=sk_test_xxx\nexport STRIPE_PUBLISHABLE_KEY=pk_test_xxx";
-              await Clipboard.setData(ClipboardData(text: example));
-              Navigator.of(ctx).pop();
-              if (mounted) ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Example env commands copied to clipboard')));
-            },
-            child: const Text('Copy Example'),
-          ),
-          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Close')),
-        ],
-      ),
-    );
+    // Configuration dialog moved to payment provider. No-op kept for compatibility.
+    return;
   }
 
   @override
