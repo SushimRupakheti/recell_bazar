@@ -15,7 +15,7 @@ void main() async{
   
   // Initialize Stripe SDK - replace with your publishable key or keep empty and set at runtime
   try {
-    Stripe.publishableKey = const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY', defaultValue: 'pk_test_TYooMQauvdEDq54NiTphI7jx_KEY');
+    Stripe.publishableKey = const String.fromEnvironment('STRIPE_PUBLISHABLE_KEY', defaultValue: 'pk_test_51T173FI8viDoC0Q2S4IRHUVLqo4iH1wv1D2C2eL5vHHaekY9GJp1EaXsN1DS9sxAyXV36qQhy94WBXMUCyXgHXVr00sP5SNs4N');
     Stripe.merchantIdentifier = 'merchant.recell_bazar';
     await Stripe.instance.applySettings();
   } catch (_) {}
