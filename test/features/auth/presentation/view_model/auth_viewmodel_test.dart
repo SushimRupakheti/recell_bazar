@@ -239,8 +239,18 @@ void main() {
         (_) async => Left(Failure(message: "No User Found")),
       );
 
+      // Ensure logout usecase is stubbed because viewModel awaits it on failure
+      when(() => mockLogoutUsecase()).thenAnswer((_) async => const Right(true));
+
       // Call Function
       await container.read(authViewModelProvider.notifier).getCurrentUser();
+
+      // allow async failure handler (which awaits logout) to complete
+      var attempts = 0;
+      while (container.read(authViewModelProvider).status == AuthStatus.loading && attempts < 50) {
+        await Future.delayed(const Duration(milliseconds: 10));
+        attempts++;
+      }
 
       // Actual
       final state = container.read(authViewModelProvider);
