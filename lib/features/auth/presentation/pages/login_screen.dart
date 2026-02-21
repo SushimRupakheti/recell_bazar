@@ -6,6 +6,9 @@ import 'package:recell_bazar/core/widgets/my_button.dart';
 import 'package:recell_bazar/core/widgets/mytextfeild.dart';
 import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
 import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
+import 'package:recell_bazar/sensors/fingerprint_login.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+// fingerprint handled from Profile screen
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -22,6 +25,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _secureStorage = const FlutterSecureStorage();
+  // fingerprint handled from Profile screen
 
   @override
 void initState() {
@@ -36,6 +41,30 @@ void initState() {
           password: passwordController.text.trim(),
         );
   }
+
+  Future<void> _loginWithSavedCredentials() async {
+    final has = await fingerprintAuth.canAuthenticate();
+    if (!has) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Biometrics not available')));
+      return;
+    }
+
+    final ok = await fingerprintAuth.authenticate(reason: 'Authenticate to login');
+    if (!ok) return;
+
+    final savedEmail = await _secureStorage.read(key: 'saved_email');
+    final savedPassword = await _secureStorage.read(key: 'saved_password');
+    if (savedEmail == null || savedPassword == null) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No saved credentials. Register fingerprint from Profile.')));
+      return;
+    }
+
+    await ref.read(authViewModelProvider.notifier).login(email: savedEmail, password: savedPassword);
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +91,7 @@ void initState() {
     // ⏳ Small delay so user sees the snackbar
     Future.delayed(const Duration(milliseconds: 300), () {
       if (!context.mounted) return;
+            // credentials saving moved to Profile screen
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -161,6 +191,15 @@ void initState() {
                 onPressed: authState.status == AuthStatus.loading ? () {} : () => loginUser(),
 
                 ),
+
+                const SizedBox(height: 12),
+                TextButton.icon(
+                  onPressed: () => _loginWithSavedCredentials(),
+                  icon: const Icon(Icons.fingerprint, color: Color(0xFF0B7C7C)),
+                  label: const Text('Login with fingerprint', style: TextStyle(color: Color(0xFF0B7C7C))),
+                ),
+
+                // Fingerprint registration moved to Profile screen
 
                 TextButton(
                   onPressed: () {
