@@ -11,10 +11,11 @@ import 'package:recell_bazar/features/item/domain/usecases/upload_photo_usecase.
 import 'package:recell_bazar/features/item/domain/usecases/upload_video_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/search_item_usecase.dart';
 import 'package:recell_bazar/features/item/domain/usecases/get_related_items_usecase.dart';
+import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
 // import 'package:recell_bazar/features/item/domain/usecases/mark_item_as_sold_usecase.dart';
-import 'package:recell_bazar/features/item/domain/usecases/add_to_cart_usecase.dart';
-import 'package:recell_bazar/features/item/domain/usecases/remove_from_cart_usecase.dart';
-import 'package:recell_bazar/features/item/domain/usecases/get_cart_items_usecase.dart';
+import 'package:recell_bazar/features/cart/domain/usecases/add_to_cart_usecase.dart';
+import 'package:recell_bazar/features/cart/domain/usecases/remove_from_cart_usecase.dart';
+import 'package:recell_bazar/features/cart/domain/usecases/get_cart_items_usecase.dart';
 import 'package:recell_bazar/features/item/presentation/state/item_state.dart';
 
 
@@ -171,7 +172,13 @@ Future<void> createItem({
     ),
     (success) {
       state = state.copyWith(status: ItemStatus.created);
-      getAllItems();
+        // Refresh cached lists so UI that depends on seller-specific providers
+        // (e.g. sellerItemsProvider used by SellScreen and stats card) reflect
+        // the newly created item immediately.
+        getAllItems();
+        try {
+          ref.refresh(sellerItemsProvider(sellerId));
+        } catch (_) {}
     },
   );
 }

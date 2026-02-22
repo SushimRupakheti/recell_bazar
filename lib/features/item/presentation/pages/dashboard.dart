@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
 import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
-import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/cart.dart';
+import 'package:recell_bazar/features/cart/presentation/pages/cart.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/home.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/profile.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/sell.dart';
@@ -46,7 +46,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
 
     final List<Widget> _screens = [
       const Home(),
-      const Cart(),
+      const CartPage(),
       SellScreen(sellerId: sellerId),
       const Profile(),
     ];

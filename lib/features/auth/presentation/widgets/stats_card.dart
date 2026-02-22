@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
+import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
 import 'package:recell_bazar/features/item/presentation/state/item_state.dart';
 import 'package:recell_bazar/features/item/presentation/view_model/item_viewmodel.dart';
-import 'package:recell_bazar/core/providers/cart_provider.dart';
+import 'package:recell_bazar/features/cart/presentation/providers/cart_provider.dart';
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 
 class StatsCard extends ConsumerStatefulWidget {
@@ -51,10 +52,14 @@ class _StatsCardState extends ConsumerState<StatsCard> {
         ? 0
         : itemState.items.where((ItemEntity i) => i.sellerId == authId && i.isSold).length;
 
-    // Listed items: count of items posted by current user
-    final listedCount = authId == null
-      ? 0
-      : itemState.items.where((ItemEntity i) => i.sellerId == authId).length;
+        // Listed items: use the same sellerItemsProvider as SellScreen so the
+        // count matches what the seller screen displays (handles remote/local
+        // sources and filtering).
+        final listedCount = (() {
+          if (authId == null) return 0;
+          final sellerItemsAsync = ref.watch(sellerItemsProvider(authId));
+          return sellerItemsAsync.maybeWhen(data: (items) => items.length, orElse: () => 0);
+        })();
 
     final cartCount = cart.length;
 

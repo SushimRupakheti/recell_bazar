@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
-import 'package:recell_bazar/core/providers/cart_provider.dart';
+import 'package:recell_bazar/features/cart/presentation/providers/cart_provider.dart';
 import 'package:recell_bazar/core/services/storage/user_session_service.dart';
 import 'package:uuid/uuid.dart';
 import 'package:recell_bazar/features/payment/presentation/providers/payment_provider.dart';

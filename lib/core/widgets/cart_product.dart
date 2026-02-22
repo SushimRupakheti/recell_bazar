@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:recell_bazar/core/providers/cart_provider.dart';
+import 'package:recell_bazar/features/cart/presentation/providers/cart_provider.dart';
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/single_item_screen.dart';
 
