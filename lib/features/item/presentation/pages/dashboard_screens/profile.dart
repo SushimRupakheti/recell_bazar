@@ -125,8 +125,7 @@ class _ProfileState extends ConsumerState<Profile> {
                   if (!_fingerprintEnabled)
                     ListTile(
                       leading: const Icon(Icons.fingerprint, color: Color(0xFF0B7C7C)),
-                      title: const Text('Register fingerprint for this account'),
-                      subtitle: const Text('Register biometric for quick login on this device'),
+                      title: const Text('Register fingerprint'),
                       trailing: ElevatedButton(
                         onPressed: () async {
                           // ask for password to verify and save
