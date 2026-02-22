@@ -180,7 +180,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
       productName: widget.item.phoneModel,
       productId: widget.item.itemId ?? '',
       buyerName: fullName,
-      buyerEmail: email,
+        customerEmail: email,
       buyerPhone: number,
       orderId: id,
       fullName: fullName,

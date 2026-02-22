@@ -3,7 +3,7 @@ class PaymentRequest {
   final String productName;
   final String productId;
   final String buyerName;
-  final String buyerEmail;
+  final String customerEmail;
   final String buyerPhone;
   final String orderId;
   final String fullName;
@@ -24,7 +24,7 @@ class PaymentRequest {
     required this.productName,
     required this.productId,
     required this.buyerName,
-    required this.buyerEmail,
+    required this.customerEmail,
     required this.buyerPhone,
     required this.orderId,
     required this.fullName,
@@ -47,7 +47,9 @@ class PaymentRequest {
       'productName': productName,
       'productId': productId,
       'buyerName': buyerName,
-      'buyerEmail': buyerEmail,
+      // provide both variants to accommodate backend naming differences
+      'CustomerEmail': customerEmail.trim(),
+      'customerEmail': customerEmail.trim(),
       'buyerPhone': buyerPhone,
       'orderId': orderId,
       'fullName': fullName,
