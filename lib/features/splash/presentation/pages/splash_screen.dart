@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/core/services/storage/user_session_service.dart';
 import 'package:recell_bazar/features/auth/domain/usecases/get_current_user.dart';
+import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard.dart';
 import 'package:recell_bazar/features/onboarding/presentation/pages/onboarding_screen.dart';
 
@@ -50,6 +51,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
           address: user.address,
           profileImage: user.profileImage,
         );
+
+        // Ensure AuthViewModel is populated with the current user so downstream
+        // widgets (Dashboard -> SellScreen) can read the auth state immediately.
+        try {
+          await ref.read(authViewModelProvider.notifier).getCurrentUser();
+        } catch (_) {}
 
         Navigator.pushReplacement(
           context,
