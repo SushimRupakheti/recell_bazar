@@ -62,6 +62,6 @@ class FingerprintAuth {
     } catch (_) {}
   }
 }
-
+//should
 // Shared instance you can import and use across the app
 final FingerprintAuth fingerprintAuth = FingerprintAuth();
