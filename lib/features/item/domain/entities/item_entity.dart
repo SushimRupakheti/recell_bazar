@@ -37,6 +37,7 @@ class ItemEntity extends Equatable {
 
   // Extra Info
   final bool isSold;
+  final String? status; // 'pending' | 'approved' | 'declined'
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
@@ -71,6 +72,7 @@ class ItemEntity extends Equatable {
     this.createdAt,
     this.updatedAt,
     this.isSold = false,
+    this.status,
   });
 
 
@@ -103,6 +105,8 @@ class ItemEntity extends Equatable {
     bool? displayCondition,
     bool? displayCracked,
     bool? displayOriginal,
+
+    String? status,
 
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -141,6 +145,7 @@ class ItemEntity extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isSold: isSold ?? this.isSold,
+      status: status ?? this.status,
     );
   }
 
@@ -178,5 +183,6 @@ class ItemEntity extends Equatable {
         createdAt,
         updatedAt,
         isSold,
+        status,
       ];
 }

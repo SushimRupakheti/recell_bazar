@@ -209,6 +209,9 @@ class _HomeState extends ConsumerState<Home> {
                       });
                   }
 
+                  // Only show approved items in the dashboard
+                  displayedItems = displayedItems.where((it) => (it.status ?? 'pending').toLowerCase() == 'approved').toList();
+
                   return GridView.builder(
                     padding: const EdgeInsets.all(16),
                     gridDelegate:
