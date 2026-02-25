@@ -27,12 +27,16 @@ double get rating {
   @override
   Widget build(BuildContext context) {
     // Status badge mapping
-    final status = (item.status ?? 'pending').toLowerCase();
+      // Status badge mapping. If item.isSold is true, override status to 'sold'.
+      final status = item.isSold ? 'sold' : (item.status ?? 'pending').toLowerCase();
     Color statusColor;
     switch (status) {
       case 'approved':
         statusColor = Colors.green.shade700;
         break;
+        case 'sold':
+          statusColor = Colors.blueGrey.shade700;
+          break;
       case 'rejected':
         statusColor = Colors.red.shade700;
         break;

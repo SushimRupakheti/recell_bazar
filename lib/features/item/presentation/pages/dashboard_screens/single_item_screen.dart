@@ -5,6 +5,7 @@ import 'package:recell_bazar/features/cart/presentation/providers/cart_provider.
 import 'package:recell_bazar/core/services/storage/user_session_service.dart';
 import 'package:uuid/uuid.dart';
 import 'package:recell_bazar/features/payment/presentation/providers/payment_provider.dart';
+import 'package:recell_bazar/features/item/domain/usecases/get_item_by_id_usecase.dart';
 import 'package:recell_bazar/features/payment/domain/entities/payment_request.dart';
 
 class SingleItemScreen extends ConsumerStatefulWidget {
@@ -20,10 +21,17 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
   final PageController _pageController = PageController();
   int _activeIndex = 0;
 
+  late ItemEntity _currentItem;
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _currentItem = widget.item;
   }
 
   void _showBookingSheet() {
@@ -35,7 +43,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
     final defaultPhone = userSession.getUserPhoneNumber() ?? '';
     final defaultAddress = userSession.getUserAddress() ?? '';
 
-    final priceInt = int.tryParse(widget.item.finalPrice.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
+    final priceInt = int.tryParse(_currentItem.finalPrice.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
 
     final locationCtrl = TextEditingController(text: defaultAddress);
     final dateCtrl = TextEditingController(text: DateTime.now().toIso8601String().split('T').first);
@@ -196,6 +204,30 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
     );
 
     await ref.read(paymentControllerProvider).initiatePayment(context, request);
+
+    // After payment flow completes, re-fetch item detail from server to confirm sold status.
+    Future.delayed(const Duration(seconds: 2), () async {
+      final id = widget.item.itemId;
+      if (id == null || id.isEmpty) return;
+      final getItemUsecase = ref.read(getItemByIdUsecaseProvider);
+      final result = await getItemUsecase(GetItemByIdParams(itemId: id));
+      result.fold((failure) {
+        // ignore: avoid_print
+        print('Failed to refresh item: ${failure.message}');
+      }, (fresh) {
+        setState(() {
+          _currentItem = fresh;
+        });
+
+        if (_currentItem.isSold || (_currentItem.status ?? '').toLowerCase() == 'sold') {
+          showDialog<void>(context: context, builder: (ctx) => AlertDialog(
+            title: const Text('Item sold'),
+            content: const Text('This item has been marked sold by the server after payment. We\'re updating the UI.'),
+            actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('OK'))],
+          ));
+        }
+      });
+    });
   }
 
   Future<void> _showStripeConfigDialog(String details) async {
@@ -205,7 +237,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final photos = widget.item.photos;
+    final photos = _currentItem.photos;
     final hasPhotos = photos.isNotEmpty;
 
     // You can replace these with real fields from ItemEntity if you have them
@@ -305,7 +337,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        widget.item.phoneModel.isNotEmpty ? widget.item.phoneModel : "Item",
+                        _currentItem.phoneModel.isNotEmpty ? _currentItem.phoneModel : "Item",
                         style: const TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
@@ -314,7 +346,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      "NPR${widget.item.finalPrice}",
+                      "NPR${_currentItem.finalPrice}",
                       style: const TextStyle(
                         color: Color(0xFF0B7C7C),
                         fontSize: 18,
@@ -415,8 +447,8 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      widget.item.description.isNotEmpty
-                          ? widget.item.description
+                      _currentItem.description.isNotEmpty
+                          ? _currentItem.description
                           : "No description available.",
                       style: TextStyle(color: Colors.grey.shade800, height: 1.35),
                     ),
@@ -430,7 +462,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      widget.item.year.toString(),
+                      _currentItem.year.toString(),
                       style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ],
@@ -467,7 +499,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       elevation: 0,
                     ),
-                    onPressed: () => _showBookingSheet(),
+                    onPressed: (_currentItem.isSold || (_currentItem.status ?? '').toLowerCase() == 'sold') ? null : () => _showBookingSheet(),
                     child: const Text(
                       "Book Now",
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white),
@@ -483,9 +515,9 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                       side: BorderSide(color: Colors.grey.shade300),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
-                    onPressed: () {
+                    onPressed: (_currentItem.isSold || (_currentItem.status ?? '').toLowerCase() == 'sold') ? null : () {
                       // add to cart via provider
-                      ref.read(cartProvider.notifier).addItem(widget.item);
+                      ref.read(cartProvider.notifier).addItem(_currentItem);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Added to cart')),
                       );
