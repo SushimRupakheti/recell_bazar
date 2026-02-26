@@ -7,6 +7,9 @@ import 'package:uuid/uuid.dart';
 import 'package:recell_bazar/features/payment/presentation/providers/payment_provider.dart';
 import 'package:recell_bazar/features/item/domain/usecases/get_item_by_id_usecase.dart';
 import 'package:recell_bazar/features/payment/domain/entities/payment_request.dart';
+import 'package:recell_bazar/core/api/api_client.dart';
+import 'package:recell_bazar/core/api/api_endpoints.dart';
+import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
 
 class SingleItemScreen extends ConsumerStatefulWidget {
   final ItemEntity item;
@@ -300,6 +303,89 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                     ),
 
                     // removed top-right bag icon per request
+
+                    // 3-dot menu (only for the item owner)
+                    if (ref.read(userSessionServiceProvider).getUserId() == _currentItem.sellerId)
+                      Positioned(
+                        right: 10,
+                        top: 10,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.85),
+                            shape: BoxShape.circle,
+                          ),
+                          child: PopupMenuButton<String>(
+                            icon: const Icon(Icons.more_vert, color: Colors.black87),
+                            padding: EdgeInsets.zero,
+                            onSelected: (value) async {
+                              if (value == 'delete') {
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (ctx) => AlertDialog(
+                                    title: const Text('Delete Item'),
+                                    content: Text('Are you sure you want to delete "${_currentItem.phoneModel}"?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.of(ctx).pop(false),
+                                        child: const Text('Cancel'),
+                                      ),
+                                      ElevatedButton(
+                                        style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                        onPressed: () => Navigator.of(ctx).pop(true),
+                                        child: const Text('Delete', style: TextStyle(color: Colors.white)),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirmed != true) return;
+                                final id = _currentItem.itemId;
+                                if (id == null || id.isEmpty) return;
+
+                                try {
+                                  final apiClient = ref.read(apiClientProvider);
+                                  final response = await apiClient.delete(ApiEndpoints.itemById(id));
+
+                                  if (response.data['success'] == true) {
+                                    if (mounted) {
+                                      // Refresh the seller items list
+                                      ref.invalidate(sellerItemsProvider(_currentItem.sellerId));
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Item deleted successfully')),
+                                      );
+                                      Navigator.of(context).pop(); // Go back after deletion
+                                    }
+                                  } else {
+                                    if (mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Failed to delete item')),
+                                      );
+                                    }
+                                  }
+                                } catch (e) {
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Error: $e')),
+                                    );
+                                  }
+                                }
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.delete, color: Colors.red, size: 20),
+                                    SizedBox(width: 8),
+                                    Text('Delete', style: TextStyle(color: Colors.red)),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
