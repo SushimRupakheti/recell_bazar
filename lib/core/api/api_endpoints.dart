@@ -40,6 +40,7 @@ class ApiEndpoints {
   // User endpoints
   static String uploadProfilePicture(String userId) => '/users/$userId/profile-picture';
   static String userById(String id) => '/users/$id';
+  static String updateUser(String id) => '/users/update/$id';
 
 }
 // import 'dart:io';

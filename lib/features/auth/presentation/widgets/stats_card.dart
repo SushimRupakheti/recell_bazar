@@ -47,10 +47,15 @@ class _StatsCardState extends ConsumerState<StatsCard> {
       }
     }
 
-    // Sold items count: items sold by current user
-    final soldCount = authId == null
-        ? 0
-        : itemState.items.where((ItemEntity i) => i.sellerId == authId && i.isSold).length;
+    // Sold items count: items listed by current user whose status is 'sold'
+    final soldCount = (() {
+      if (authId == null) return 0;
+      final sellerItemsAsync = ref.watch(sellerItemsProvider(authId));
+      return sellerItemsAsync.maybeWhen(
+        data: (items) => items.where((i) => i.status?.toLowerCase() == 'sold').length,
+        orElse: () => 0,
+      );
+    })();
 
         // Listed items: use the same sellerItemsProvider as SellScreen so the
         // count matches what the seller screen displays (handles remote/local
