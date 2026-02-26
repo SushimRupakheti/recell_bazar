@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Topbar extends StatelessWidget {
-  const Topbar({super.key});
+  final ValueChanged<String>? onSearch;
+
+  const Topbar({super.key, this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -12,6 +14,7 @@ class Topbar extends StatelessWidget {
                   Flexible(
                     flex: 2,
                     child: TextField(
+                      onChanged: onSearch,
                       decoration: InputDecoration(
                         hintText: 'Search..',
                         prefixIcon: Icon(Icons.search),

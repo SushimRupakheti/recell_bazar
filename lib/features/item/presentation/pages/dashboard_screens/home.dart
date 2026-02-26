@@ -25,6 +25,7 @@ class _HomeState extends ConsumerState<Home> {
   bool isLoading = true;
   String? errorMessage;
   String _selectedFilter = 'All';
+  String _searchQuery = '';
 
   final _gap = const SizedBox(height: 12);
 
@@ -82,7 +83,11 @@ class _HomeState extends ConsumerState<Home> {
           children: [
 
             /// Top Bar
-            const Topbar(),
+            Topbar(
+              onSearch: (query) {
+                setState(() => _searchQuery = query.trim());
+              },
+            ),
 
             _gap,
 
@@ -211,6 +216,16 @@ class _HomeState extends ConsumerState<Home> {
 
                   // Only show approved items in the dashboard
                   displayedItems = displayedItems.where((it) => (it.status ?? 'pending').toLowerCase() == 'approved').toList();
+
+                  // Apply search query filter by model and category
+                  if (_searchQuery.isNotEmpty) {
+                    final q = _searchQuery.toLowerCase();
+                    displayedItems = displayedItems.where((it) {
+                      final model = it.phoneModel.toLowerCase();
+                      final cat = it.category.toLowerCase();
+                      return model.contains(q) || cat.contains(q);
+                    }).toList();
+                  }
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(16),
