@@ -82,10 +82,6 @@ class _ProfileHeaderState extends ConsumerState<ProfileHeader> {
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'Show Profile',
-                  style: TextStyle(color: Colors.grey),
-                ),
               ],
             ),
           ),

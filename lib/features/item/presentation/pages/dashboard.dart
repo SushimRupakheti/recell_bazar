@@ -24,6 +24,10 @@ class _DashboardState extends ConsumerState<Dashboard> {
   // We'll register the listener in `build` below.
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final unselectedIconColor =
+        isDark ? (Theme.of(context).bottomNavigationBarTheme.unselectedItemColor ?? Colors.white70) : null;
+
     // listen to auth changes and refresh/invalidate seller cache when needed
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       final prevId = previous?.user?.authId ?? '';
@@ -87,11 +91,12 @@ class _DashboardState extends ConsumerState<Dashboard> {
             }
           }
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Image(
-              image: AssetImage('assets/icons/home.png'),
+              image: const AssetImage('assets/icons/home.png'),
               height: 35,
+              color: unselectedIconColor,
             ),
             activeIcon: Image(
               image: AssetImage('assets/icons/home_selected.png'),
@@ -101,8 +106,9 @@ class _DashboardState extends ConsumerState<Dashboard> {
           ),
           BottomNavigationBarItem(
             icon: Image(
-              image: AssetImage('assets/icons/cart.png'),
+              image: const AssetImage('assets/icons/cart.png'),
               height: 35,
+              color: unselectedIconColor,
             ),
             activeIcon: Image(
               image: AssetImage('assets/icons/cart_selected.png'),
@@ -112,8 +118,9 @@ class _DashboardState extends ConsumerState<Dashboard> {
           ),
           BottomNavigationBarItem(
             icon: Image(
-              image: AssetImage('assets/icons/sell.png'),
+              image: const AssetImage('assets/icons/sell.png'),
               height: 35,
+              color: unselectedIconColor,
             ),
             activeIcon: Image(
               image: AssetImage('assets/icons/sell_selected.png'),
@@ -123,8 +130,9 @@ class _DashboardState extends ConsumerState<Dashboard> {
           ),
           BottomNavigationBarItem(
             icon: Image(
-              image: AssetImage('assets/icons/profile.png'),
+              image: const AssetImage('assets/icons/profile.png'),
               height: 35,
+              color: unselectedIconColor,
             ),
             activeIcon: Image(
               image: AssetImage('assets/icons/profile_selected.png'),

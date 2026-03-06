@@ -32,17 +32,21 @@ class ProductCard extends StatelessWidget {
     final rating = calculateRating();
     final sold = (item.isSold || (item.status ?? '').toLowerCase() == 'sold');
 
+    final colorScheme = Theme.of(context).colorScheme;
+    final shadowColor = Theme.of(context).shadowColor;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: sold ? null : onTap,
       child: Opacity(
         opacity: sold ? 0.6 : 1.0,
         child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? colorScheme.surface : Colors.white,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: shadowColor.withOpacity(isDark ? 0.18 : 0.05),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
@@ -67,7 +71,9 @@ class ProductCard extends StatelessWidget {
                             width: double.infinity,
                             fit: BoxFit.cover,
                           )
-                        : Container(color: Colors.grey[200]),
+                        : Container(
+                            color: colorScheme.onSurface.withOpacity(0.08),
+                          ),
                   ),
 
                   // Favorite Button (Optional - You can connect later)
@@ -76,10 +82,15 @@ class ProductCard extends StatelessWidget {
                     right: 8,
                     child: GestureDetector(
                       onTap: onFavoriteTap,
-                      child: const CircleAvatar(
+                      child: CircleAvatar(
                         radius: 16,
-                        backgroundColor: Colors.white,
-                        child: Icon(Icons.favorite_border, size: 18),
+                        backgroundColor:
+                            isDark ? colorScheme.surface : Colors.white,
+                        child: Icon(
+                          Icons.favorite_border,
+                          size: 18,
+                          color: colorScheme.onSurface,
+                        ),
                       ),
                     ),
                   ),
@@ -106,9 +117,9 @@ class ProductCard extends StatelessWidget {
                   // Brand / Category
                   Text(
                     item.category,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 11,
-                      color: Colors.grey,
+                      color: colorScheme.onSurface.withOpacity(0.65),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -152,9 +163,9 @@ class ProductCard extends StatelessWidget {
                       const Spacer(),
                       Text(
                         '${item.year}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
-                          color: Colors.grey,
+                          color: colorScheme.onSurface.withOpacity(0.65),
                         ),
                       ),
                     ],

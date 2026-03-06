@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recell_bazar/features/splash/presentation/pages/splash_screen.dart';
 import 'package:recell_bazar/app/theme/theme_data.dart';
+import 'package:recell_bazar/app/theme/theme_mode_controller.dart';
 import 'package:recell_bazar/sensors/light_sensor.dart';
 
 class App extends StatefulWidget {
@@ -26,15 +27,26 @@ class _AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: lightSensorController.isDarkMode,
-      builder: (context, isDark, _) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: getApplicationTheme(isDarkMode: false), // light
-          darkTheme: getApplicationTheme(isDarkMode: true), // dark
-          themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-          home: SplashScreen(),
+    return ValueListenableBuilder<AppThemePreference>(
+      valueListenable: appThemeController.preference,
+      builder: (context, pref, _) {
+        return ValueListenableBuilder<bool>(
+          valueListenable: lightSensorController.isDarkMode,
+          builder: (context, isDark, _) {
+            final themeMode = switch (pref) {
+              AppThemePreference.auto => isDark ? ThemeMode.dark : ThemeMode.light,
+              AppThemePreference.dark => ThemeMode.dark,
+              AppThemePreference.light => ThemeMode.light,
+            };
+
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              theme: getApplicationTheme(isDarkMode: false), // light
+              darkTheme: getApplicationTheme(isDarkMode: true), // dark
+              themeMode: themeMode,
+              home: SplashScreen(),
+            );
+          },
         );
       },
     );

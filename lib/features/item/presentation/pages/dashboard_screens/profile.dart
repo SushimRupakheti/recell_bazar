@@ -10,6 +10,7 @@ import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmode
 import 'package:recell_bazar/features/auth/presentation/widgets/profile_header.dart';
 import 'package:recell_bazar/features/auth/presentation/widgets/stats_card.dart';
 import 'package:recell_bazar/features/notification/presentation/pages/notifications_screen.dart';
+import 'package:recell_bazar/app/theme/theme_mode_controller.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
@@ -68,6 +69,8 @@ class _ProfileState extends ConsumerState<Profile> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen<AuthState>(authViewModelProvider, (prev, next) {
       if (next.status == AuthStatus.unauthenticated) {
@@ -94,6 +97,74 @@ class _ProfileState extends ConsumerState<Profile> {
             const StatsCard(),
             const SizedBox(height: 24),
 
+            // Theme
+            const Text(
+              'Theme',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? colorScheme.surface : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+                border: isDark
+                    ? Border.all(
+                        color: Theme.of(context).dividerColor.withOpacity(0.35),
+                      )
+                    : null,
+              ),
+              child: ValueListenableBuilder<AppThemePreference>(
+                valueListenable: appThemeController.preference,
+                builder: (context, pref, _) {
+                  final autoEnabled = pref == AppThemePreference.auto;
+                  final effectiveDark = Theme.of(context).brightness == Brightness.dark;
+                  final manualDark = pref == AppThemePreference.dark;
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SwitchListTile(
+                        value: autoEnabled,
+                        activeColor: colorScheme.primary,
+                        title: const Text('Auto'),
+                        subtitle: const Text('Automatically switches theme'),
+                        onChanged: (v) {
+                          if (v) {
+                            appThemeController.setPreference(AppThemePreference.auto);
+                            return;
+                          }
+
+                          appThemeController.setPreference(
+                            effectiveDark
+                                ? AppThemePreference.dark
+                                : AppThemePreference.light,
+                          );
+                        },
+                      ),
+                      Divider(height: 1, color: Theme.of(context).dividerColor),
+                      SwitchListTile(
+                        value: autoEnabled ? effectiveDark : manualDark,
+                        activeColor: colorScheme.primary,
+                        title: const Text('Dark mode'),
+                        subtitle: autoEnabled
+                            ? const Text('Turn off Auto to change')
+                            : const Text('Toggle between Dark and Light'),
+                        onChanged: autoEnabled
+                            ? null
+                            : (v) {
+                                appThemeController.setPreference(
+                                  v
+                                      ? AppThemePreference.dark
+                                      : AppThemePreference.light,
+                                );
+                              },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+
             // Account
             const Text(
               "Account",
@@ -102,8 +173,13 @@ class _ProfileState extends ConsumerState<Profile> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: isDark ? colorScheme.surface : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
+                border: isDark
+                    ? Border.all(
+                        color: Theme.of(context).dividerColor.withOpacity(0.35),
+                      )
+                    : null,
               ),
               child: Column(
                 children: [
@@ -214,8 +290,13 @@ class _ProfileState extends ConsumerState<Profile> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: isDark ? colorScheme.surface : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
+                border: isDark
+                    ? Border.all(
+                        color: Theme.of(context).dividerColor.withOpacity(0.35),
+                      )
+                    : null,
               ),
               child: const Column(
                 children: [

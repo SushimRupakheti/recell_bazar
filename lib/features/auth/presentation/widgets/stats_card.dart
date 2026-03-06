@@ -31,6 +31,9 @@ class _StatsCardState extends ConsumerState<StatsCard> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final authState = ref.watch(authViewModelProvider);
     final itemState = ref.watch(itemViewModelProvider);
     final cartState = ref.watch(cartViewModelProvider);
@@ -70,8 +73,13 @@ class _StatsCardState extends ConsumerState<StatsCard> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
-        color: Colors.grey.shade100,
+        color: isDark ? colorScheme.surface : Colors.grey.shade100,
         borderRadius: BorderRadius.circular(12),
+        border: isDark
+            ? Border.all(
+                color: Theme.of(context).dividerColor.withOpacity(0.35),
+              )
+            : null,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -93,17 +101,24 @@ class _StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         CircleAvatar(
-          backgroundColor: Color(0xFF0B7C7C),
+          backgroundColor: colorScheme.primary,
           child: Text(
             value,
-            style: const TextStyle(color: Colors.white),
+            style: TextStyle(color: colorScheme.onPrimary),
           ),
         ),
         const SizedBox(height: 8),
-        Text(label),
+        Text(
+          label,
+          style: TextStyle(
+            color: colorScheme.onSurface.withOpacity(0.80),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }

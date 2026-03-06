@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 ThemeData getApplicationTheme({required bool isDarkMode}) {
+  final baseTextTheme =
+      isDarkMode ? ThemeData.dark().textTheme : ThemeData.light().textTheme;
+
   return ThemeData(
     scaffoldBackgroundColor: isDarkMode ? const Color(0xFF0A0F12) : Colors.white,
     fontFamily: 'Montserrat-Regular',
@@ -37,7 +40,7 @@ ThemeData getApplicationTheme({required bool isDarkMode}) {
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
       backgroundColor: isDarkMode ? const Color(0xFF0E1314) : Colors.white,
       selectedItemColor: isDarkMode ? const Color(0xFF26A69A) : const Color(0xFF0B7C7C),
-      unselectedItemColor: isDarkMode ? Colors.grey[500] : Colors.grey,
+      unselectedItemColor: isDarkMode ? Colors.white70 : Colors.grey,
       type: BottomNavigationBarType.fixed,
       elevation: 10,
       selectedLabelStyle: const TextStyle(
@@ -51,20 +54,69 @@ ThemeData getApplicationTheme({required bool isDarkMode}) {
     // Cards, surfaces
     cardColor: isDarkMode ? const Color(0xFF111416) : Colors.white,
 
-    // Text (use modern names)
-    textTheme: TextTheme(
-      bodyLarge: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-      bodyMedium: TextStyle(color: isDarkMode ? Colors.grey[300] : Colors.black87),
-      titleLarge: TextStyle(color: isDarkMode ? Colors.white : Colors.black, fontFamily: 'Montserrat-Bold'),
-    ),
+    // Text
+    // Use a complete base TextTheme so styles like titleMedium/labelLarge
+    // don't fall back to low-contrast defaults in dark mode.
+    textTheme: baseTextTheme
+        .apply(
+          bodyColor: isDarkMode ? Colors.white : Colors.black,
+          displayColor: isDarkMode ? Colors.white : Colors.black,
+          fontFamily: 'Montserrat-Regular',
+        )
+        .copyWith(
+          bodyMedium: baseTextTheme.bodyMedium?.copyWith(
+            color: isDarkMode ? Colors.white.withOpacity(0.86) : Colors.black87,
+          ),
+          titleLarge: baseTextTheme.titleLarge?.copyWith(
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontFamily: 'Montserrat-Bold',
+            fontWeight: FontWeight.w800,
+          ),
+          titleMedium: baseTextTheme.titleMedium?.copyWith(
+            color: isDarkMode ? Colors.white : Colors.black,
+            fontFamily: 'Montserrat-Bold',
+            fontWeight: FontWeight.w700,
+          ),
+        ),
 
     // Inputs
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: isDarkMode ? const Color(0xFF0E1314) : Colors.white,
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
-      hintStyle: TextStyle(color: isDarkMode ? Colors.grey[400] : Colors.grey[600]),
-    ),
+    inputDecorationTheme: isDarkMode
+        ? InputDecorationTheme(
+            filled: true,
+            fillColor: const Color(0xFF111416),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(
+                color: Colors.white12,
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(
+                color: Color(0xFF26A69A),
+                width: 1.4,
+              ),
+            ),
+            hintStyle: TextStyle(color: Colors.white.withOpacity(0.65)),
+            labelStyle: TextStyle(color: Colors.white.withOpacity(0.80)),
+          )
+        : InputDecorationTheme(
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
+            ),
+            hintStyle: TextStyle(color: Colors.grey[600]),
+          ),
 
     // Buttons
     elevatedButtonTheme: ElevatedButtonThemeData(

@@ -151,94 +151,122 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
 
     final result = await showDialog<bool>(
       context: context,
-      builder: (ctx) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Update Profile",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 24),
-                TextField(
-                  controller: firstNameController,
-                  decoration: const InputDecoration(
-                    labelText: "First Name",
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        final colorScheme = Theme.of(ctx).colorScheme;
+
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    "Update Profile",
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
-                ),
-                const SizedBox(height: 18),
-                TextField(
-                  controller: lastNameController,
-                  decoration: const InputDecoration(
-                    labelText: "Last Name",
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                TextField(
-                  readOnly: true,
-                  controller: TextEditingController(text: user.email),
-                  decoration: const InputDecoration(
-                    labelText: "Email (cannot be changed)",
-                    border: OutlineInputBorder(),
-                    filled: true,
-                    fillColor: Color(0xFFE0E0E0),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                TextField(
-                  controller: contactNoController,
-                  decoration: const InputDecoration(
-                    labelText: "Contact No",
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  ),
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 18),
-                TextField(
-                  controller: addressController,
-                  decoration: const InputDecoration(
-                    labelText: "Address",
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  ),
-                ),
-                const SizedBox(height: 28),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(ctx).pop(false),
-                      child: const Text("Cancel", style: TextStyle(fontSize: 16)),
+                  const SizedBox(height: 24),
+                  TextField(
+                    controller: firstNameController,
+                    decoration: const InputDecoration(
+                      labelText: "First Name",
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     ),
-                    const SizedBox(width: 12),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  const SizedBox(height: 18),
+                  TextField(
+                    controller: lastNameController,
+                    decoration: const InputDecoration(
+                      labelText: "Last Name",
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  TextField(
+                    readOnly: true,
+                    controller: TextEditingController(text: user.email),
+                    decoration: InputDecoration(
+                      labelText: "Email (cannot be changed)",
+                      border: const OutlineInputBorder(),
+                      filled: true,
+                      fillColor: isDark
+                          ? colorScheme.surface
+                          : const Color(0xFFE0E0E0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
                       ),
-                      onPressed: () => Navigator.of(ctx).pop(true),
-                      child: const Text("Save", style: TextStyle(color: Colors.white, fontSize: 16)),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  const SizedBox(height: 18),
+                  TextField(
+                    controller: contactNoController,
+                    decoration: const InputDecoration(
+                      labelText: "Contact No",
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                    ),
+                    keyboardType: TextInputType.phone,
+                  ),
+                  const SizedBox(height: 18),
+                  TextField(
+                    controller: addressController,
+                    decoration: const InputDecoration(
+                      labelText: "Address",
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                        child:
+                            const Text("Cancel", style: TextStyle(fontSize: 16)),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: colorScheme.primary,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 28,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        onPressed: () => Navigator.of(ctx).pop(true),
+                        child: Text(
+                          "Save",
+                          style: TextStyle(
+                            color: colorScheme.onPrimary,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
 
     if (result != true) return;

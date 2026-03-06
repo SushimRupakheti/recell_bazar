@@ -53,6 +53,7 @@ class ApiEndpoints {
   static String markNotificationAsRead(String id) => '/notifications/$id/read';
 
 }
+
 // import 'dart:io';
 // import 'package:flutter/foundation.dart';
 
