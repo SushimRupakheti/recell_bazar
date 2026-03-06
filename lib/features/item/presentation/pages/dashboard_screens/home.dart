@@ -12,6 +12,8 @@ import 'package:recell_bazar/features/item/domain/usecases/get_items_by_category
 import 'package:recell_bazar/core/widgets/offer_card.dart';
 import 'package:recell_bazar/core/widgets/product_card.dart';
 import 'package:recell_bazar/core/widgets/topbar.dart';
+import 'package:recell_bazar/features/notification/presentation/pages/notifications_screen.dart';
+import 'package:recell_bazar/features/notification/presentation/view_model/notification_viewmodel.dart';
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -51,6 +53,12 @@ class _HomeState extends ConsumerState<Home> {
   void initState() {
     super.initState();
     Future.microtask(loadItems);
+
+    // Fetch notifications once so the bell can show an unread indicator.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(notificationViewModelProvider.notifier).fetchNotifications();
+    });
   }
 
   Future<void> loadItems() async {
@@ -76,6 +84,9 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final notificationState = ref.watch(notificationViewModelProvider);
+    final hasUnread = notificationState.notifications.any((n) => !n.isRead);
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -86,6 +97,19 @@ class _HomeState extends ConsumerState<Home> {
             Topbar(
               onSearch: (query) {
                 setState(() => _searchQuery = query.trim());
+              },
+              showUnreadDot: hasUnread,
+              onNotificationsTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const NotificationsScreen(),
+                  ),
+                ).then((_) {
+                  // Refresh from server when returning, so the dot stays in sync.
+                  if (!mounted) return;
+                  ref.read(notificationViewModelProvider.notifier).fetchNotifications();
+                });
               },
             ),
 

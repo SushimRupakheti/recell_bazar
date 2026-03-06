@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
+import 'package:recell_bazar/features/cart/presentation/view_model/cart_viewmodel.dart';
 import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
 import 'package:recell_bazar/features/item/presentation/state/item_state.dart';
 import 'package:recell_bazar/features/item/presentation/view_model/item_viewmodel.dart';
-import 'package:recell_bazar/features/cart/presentation/providers/cart_provider.dart';
-import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
 
 class StatsCard extends ConsumerStatefulWidget {
   const StatsCard({super.key});
@@ -22,9 +21,9 @@ class _StatsCardState extends ConsumerState<StatsCard> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authState = ref.read(authViewModelProvider);
       final authId = authState.user?.authId;
-      // Load cart items
-      ref.read(itemViewModelProvider.notifier).getCartItems();
-      if (authId != null) {
+      // Load cart and user items when logged in
+      if (authId != null && authId.isNotEmpty) {
+        ref.read(cartViewModelProvider.notifier).fetchCart();
         ref.read(itemViewModelProvider.notifier).getItemsByUser(authId);
       }
     });
@@ -34,7 +33,7 @@ class _StatsCardState extends ConsumerState<StatsCard> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
     final itemState = ref.watch(itemViewModelProvider);
-    final cart = ref.watch(cartProvider);
+    final cartState = ref.watch(cartViewModelProvider);
 
     final authId = authState.user?.authId;
 
@@ -66,7 +65,7 @@ class _StatsCardState extends ConsumerState<StatsCard> {
           return sellerItemsAsync.maybeWhen(data: (items) => items.length, orElse: () => 0);
         })();
 
-    final cartCount = cart.length;
+    final cartCount = cartState.cart?.items.length ?? 0;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),

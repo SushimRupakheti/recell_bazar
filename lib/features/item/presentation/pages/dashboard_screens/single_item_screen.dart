@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recell_bazar/core/error/failure.dart';
+import 'package:recell_bazar/features/auth/presentation/pages/login_screen.dart';
 import 'package:recell_bazar/features/item/domain/entities/item_entity.dart';
-import 'package:recell_bazar/features/cart/presentation/providers/cart_provider.dart';
+import 'package:recell_bazar/features/cart/presentation/view_model/cart_viewmodel.dart';
 import 'package:recell_bazar/core/services/storage/user_session_service.dart';
 import 'package:uuid/uuid.dart';
 import 'package:recell_bazar/features/payment/presentation/providers/payment_provider.dart';
@@ -602,11 +604,60 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     ),
                     onPressed: (_currentItem.isSold || (_currentItem.status ?? '').toLowerCase() == 'sold') ? null : () {
-                      // add to cart via provider
-                      ref.read(cartProvider.notifier).addItem(_currentItem);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Added to cart')),
-                      );
+                      final productId = _currentItem.itemId;
+                      if (productId == null || productId.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Invalid product id')),
+                        );
+                        return;
+                      }
+
+                      () async {
+                        final failure = await ref
+                            .read(cartViewModelProvider.notifier)
+                            .addToCart(productId);
+
+                        if (!context.mounted) return;
+
+                        if (failure == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Added to cart')),
+                          );
+                          return;
+                        }
+
+                        String message = failure.message;
+                        if (failure is ApiFailure) {
+                          switch (failure.statusCode) {
+                            case 401:
+                              message = 'Unauthorized';
+                              break;
+                            case 409:
+                              message = 'Already in cart';
+                              break;
+                            case 400:
+                            case 403:
+                            case 404:
+                              // Show backend message as-is
+                              message = failure.message;
+                              break;
+                          }
+                        }
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(message),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+
+                        if (failure is ApiFailure && failure.statusCode == 401) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                          );
+                        }
+                      }();
                     },
                     child: const Text('Add to Cart', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
                   ),

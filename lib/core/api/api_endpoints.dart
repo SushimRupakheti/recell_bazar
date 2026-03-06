@@ -37,10 +37,20 @@ class ApiEndpoints {
   static String itemsByUser(String userId) => '/items/user/$userId';
   static String searchItems(String phoneModel, {String? categoryId}) =>'/items/search?model=$phoneModel${categoryId != null ? '&category=$categoryId' : ''}';
 
+  // cart endpoints
+  static const String cart = '/cart';
+  static const String cartAdd = '/cart/add';
+  static String cartRemove(String cartItemId) => '/cart/remove/$cartItemId';
+
   // User endpoints
   static String uploadProfilePicture(String userId) => '/users/$userId/profile-picture';
   static String userById(String id) => '/users/$id';
   static String updateUser(String id) => '/users/update/$id';
+
+  // notification endpoints
+  static const String notifications = '/notifications';
+  static String notificationById(String id) => '/notifications/$id';
+  static String markNotificationAsRead(String id) => '/notifications/$id/read';
 
 }
 // import 'dart:io';
