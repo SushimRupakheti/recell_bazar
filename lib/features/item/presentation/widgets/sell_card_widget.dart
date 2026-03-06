@@ -26,6 +26,24 @@ double get rating {
 
   @override
   Widget build(BuildContext context) {
+    // Status badge mapping
+      // Status badge mapping. If item.isSold is true, override status to 'sold'.
+      final status = item.isSold ? 'sold' : (item.status ?? 'pending').toLowerCase();
+    Color statusColor;
+    switch (status) {
+      case 'approved':
+        statusColor = Colors.green.shade700;
+        break;
+        case 'sold':
+          statusColor = Colors.blueGrey.shade700;
+          break;
+      case 'rejected':
+        statusColor = Colors.red.shade700;
+        break;
+      default:
+        statusColor = const Color.fromARGB(255, 255, 230, 0); // pending or unknown
+    }
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -37,6 +55,7 @@ double get rating {
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // ✅ Image
             ClipRRect(
@@ -109,13 +128,28 @@ double get rating {
               ),
             ),
 
-            // ✅ Price
-            Text(
-              "NPR ${item.finalPrice}",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+            // ✅ Price + status badge above it
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Transform.translate(
+                  offset: const Offset(0, -6), // nudge badge slightly up
+                  child: Container(
+                    decoration: BoxDecoration(color: statusColor, borderRadius: BorderRadius.circular(8)),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    child: Text(status.toUpperCase(), style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700)),
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  "NPR ${item.finalPrice}",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

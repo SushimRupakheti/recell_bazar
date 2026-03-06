@@ -30,10 +30,13 @@ class ProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rating = calculateRating();
+    final sold = (item.isSold || (item.status ?? '').toLowerCase() == 'sold');
 
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
+      onTap: sold ? null : onTap,
+      child: Opacity(
+        opacity: sold ? 0.6 : 1.0,
+        child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -80,6 +83,16 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (sold)
+                    Positioned(
+                      left: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(color: Colors.blueGrey.shade700, borderRadius: BorderRadius.circular(8)),
+                        child: const Text('SOLD', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12)),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -152,6 +165,8 @@ class ProductCard extends StatelessWidget {
           ],
         ),
       ),
+    )
+
     );
   }
 }

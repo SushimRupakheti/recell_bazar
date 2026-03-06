@@ -9,6 +9,7 @@ import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
 import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
 import 'package:recell_bazar/features/auth/presentation/widgets/profile_header.dart';
 import 'package:recell_bazar/features/auth/presentation/widgets/stats_card.dart';
+import 'package:recell_bazar/features/notification/presentation/pages/notifications_screen.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
@@ -111,10 +112,18 @@ class _ProfileState extends ConsumerState<Profile> {
                     title: Text("Security"),
                     trailing: Icon(Icons.chevron_right),
                   ),
-                  const ListTile(
-                    leading: Icon(Icons.notifications, color: Color(0xFF0B7C7C)),
-                    title: Text("Notifications"),
-                    trailing: Icon(Icons.chevron_right),
+                  ListTile(
+                    leading: const Icon(Icons.notifications, color: Color(0xFF0B7C7C)),
+                    title: const Text("Notifications"),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
                   ),
                   const ListTile(
                     leading: Icon(Icons.lock, color: Color(0xFF0B7C7C)),

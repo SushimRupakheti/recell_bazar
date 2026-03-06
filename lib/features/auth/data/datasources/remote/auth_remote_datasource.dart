@@ -137,4 +137,22 @@ Future<AuthApiModel?> uploadProfilePicture(String authId, File imageFile) async 
   }
 }
 
+@override
+Future<AuthApiModel?> updateUser(String authId, Map<String, dynamic> data) async {
+  try {
+    final response = await _apiClient.put(
+      ApiEndpoints.updateUser(authId),
+      data: data,
+    );
+
+    if (response.data['success'] == true) {
+      final resData = response.data['data'] as Map<String, dynamic>;
+      return AuthApiModel.fromJson(resData);
+    }
+    return null;
+  } catch (e) {
+    rethrow;
+  }
+}
+
 }

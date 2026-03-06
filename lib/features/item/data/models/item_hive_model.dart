@@ -78,6 +78,9 @@ class ItemHiveModel extends HiveObject {
   @HiveField(25)
   final String basePrice;
 
+  @HiveField(26)
+  final String? status;
+
   ItemHiveModel({
     String? itemId,
     required this.sellerId,
@@ -104,6 +107,7 @@ class ItemHiveModel extends HiveObject {
     this.createdAt,
     this.updatedAt,
     this.isSold = false,
+    this.status,
   }) : itemId = itemId ?? const Uuid().v4();
 
   ItemHiveModel copyWith({
@@ -132,6 +136,7 @@ class ItemHiveModel extends HiveObject {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isSold,
+    String? status,
   }) {
     return ItemHiveModel(
       itemId: itemId ?? this.itemId,
@@ -160,6 +165,7 @@ class ItemHiveModel extends HiveObject {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isSold: isSold ?? this.isSold,
+      status: status ?? this.status,
     );
   }
 
@@ -190,6 +196,7 @@ class ItemHiveModel extends HiveObject {
       createdAt: createdAt,
       updatedAt: updatedAt,
       isSold: isSold,
+      status: status,
     );
   }
 
@@ -221,6 +228,7 @@ class ItemHiveModel extends HiveObject {
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
       isSold: entity.isSold,
+      status: entity.status,
     );
   }
 

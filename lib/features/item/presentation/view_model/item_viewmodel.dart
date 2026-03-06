@@ -13,9 +13,6 @@ import 'package:recell_bazar/features/item/domain/usecases/search_item_usecase.d
 import 'package:recell_bazar/features/item/domain/usecases/get_related_items_usecase.dart';
 import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
 // import 'package:recell_bazar/features/item/domain/usecases/mark_item_as_sold_usecase.dart';
-import 'package:recell_bazar/features/cart/domain/usecases/add_to_cart_usecase.dart';
-import 'package:recell_bazar/features/cart/domain/usecases/remove_from_cart_usecase.dart';
-import 'package:recell_bazar/features/cart/domain/usecases/get_cart_items_usecase.dart';
 import 'package:recell_bazar/features/item/presentation/state/item_state.dart';
 
 
@@ -36,9 +33,6 @@ class ItemViewModel extends Notifier<ItemState> {
   late final GetItemsByCategoryUsecase _getItemsByCategoryUsecase;
   late final GetRelatedItemsUsecase _getRelatedItemsUsecase;
   // late final MarkItemAsSoldUsecase _markItemAsSoldUsecase;
-  late final AddToCartUsecase _addToCartUsecase;
-  late final RemoveFromCartUsecase _removeFromCartUsecase;
-  late final GetCartItemsUsecase _getCartItemsUsecase;
 
   @override
   ItemState build() {
@@ -54,9 +48,6 @@ class ItemViewModel extends Notifier<ItemState> {
     _getItemsByCategoryUsecase = ref.read(getItemsByCategoryUsecaseProvider);
     _getRelatedItemsUsecase = ref.read(getRelatedItemsUsecaseProvider);
     // _markItemAsSoldUsecase = ref.read(markItemAsSoldUsecaseProvider);
-    _addToCartUsecase = ref.read(addToCartUsecaseProvider);
-    _removeFromCartUsecase = ref.read(removeFromCartUsecaseProvider);
-    _getCartItemsUsecase = ref.read(getCartItemsUsecaseProvider);
 
     return const ItemState();
   }
@@ -414,53 +405,6 @@ Future<void> updateItem({
 //     },
 //   );
 // }
-
-  // ---------------- CART ----------------
-
-  Future<void> addToCart(String itemId) async {
-    state = state.copyWith(status: ItemStatus.loading);
-
-    final result = await _addToCartUsecase(itemId);
-
-    result.fold(
-      (failure) => state = state.copyWith(
-        status: ItemStatus.error,
-        errorMessage: failure.message,
-      ),
-      (success) => getCartItems(),
-    );
-  }
-
-  Future<void> removeFromCart(String itemId) async {
-    state = state.copyWith(status: ItemStatus.loading);
-
-    final result = await _removeFromCartUsecase(itemId);
-
-    result.fold(
-      (failure) => state = state.copyWith(
-        status: ItemStatus.error,
-        errorMessage: failure.message,
-      ),
-      (success) => getCartItems(),
-    );
-  }
-
-  Future<void> getCartItems() async {
-    state = state.copyWith(status: ItemStatus.loading);
-
-    final result = await _getCartItemsUsecase();
-
-    result.fold(
-      (failure) => state = state.copyWith(
-        status: ItemStatus.error,
-        errorMessage: failure.message,
-      ),
-      (items) => state = state.copyWith(
-        status: ItemStatus.loaded,
-        cartItems: items,
-      ),
-    );
-  }
 
   // ---------------- UTILS ----------------
 
