@@ -3,6 +3,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode, debugPrint;
 import '../../domain/entities/payment_request.dart';
 import '../models/payment_model.dart';
+import 'package:recell_bazar/core/api/api_endpoints.dart';
 
 class PaymentRemoteDataSource {
   final Dio _dio;
@@ -10,12 +11,9 @@ class PaymentRemoteDataSource {
   PaymentRemoteDataSource({Dio? dio}) : _dio = dio ?? Dio();
 
   String backendHost() {
-    if (kIsWeb) return 'http://localhost:5050';
-    try {
-      if (Platform.isAndroid) return 'http://10.0.2.2:5050';
-      if (Platform.isIOS) return 'http://localhost:5050';
-    } catch (_) {}
-    return 'http://localhost:5050';
+    // Use ApiEndpoints.baseUrl, strip trailing '/api' for correct host
+    final url = ApiEndpoints.baseUrl;
+    return url.endsWith('/api') ? url.substring(0, url.length - 4) : url;
   }
 
   Future<Map<String, dynamic>> createCheckout(PaymentRequest request) async {

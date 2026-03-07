@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:recell_bazar/sensors/fingerprint_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:recell_bazar/app/app.dart';
 
 import 'package:recell_bazar/features/auth/presentation/pages/login_screen.dart';
 import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
@@ -30,23 +31,36 @@ class _ProfileState extends ConsumerState<Profile> {
   }
 
   Future<void> _loadFingerprintState() async {
-    final savedEmail = await _secureStorage.read(key: 'saved_email');
+    final auth = ref.read(authViewModelProvider);
+    final userId = auth.user?.authId;
+    if (userId == null) {
+      setState(() => _fingerprintEnabled = false);
+      return;
+    }
+    final savedEmail = await _secureStorage.read(key: 'fingerprint_email_$userId');
     setState(() => _fingerprintEnabled = savedEmail != null);
   }
 
   Future<void> _toggleFingerprint(bool value) async {
+    final auth = ref.read(authViewModelProvider);
+    final userId = auth.user?.authId;
+    if (userId == null) {
+      setState(() => _fingerprintEnabled = false);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No logged in user')));
+      return;
+    }
     if (!value) {
       // turning off: remove stored credentials
-      await _secureStorage.delete(key: 'saved_email');
-      await _secureStorage.delete(key: 'saved_password');
+      await _secureStorage.delete(key: 'fingerprint_email_$userId');
+      await _secureStorage.delete(key: 'fingerprint_password_$userId');
       setState(() => _fingerprintEnabled = false);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fingerprint login disabled')));
       return;
     }
 
     // enabling requires saved credentials (user must opt-in from login screen)
-    final savedEmail = await _secureStorage.read(key: 'saved_email');
-    final savedPassword = await _secureStorage.read(key: 'saved_password');
+    final savedEmail = await _secureStorage.read(key: 'fingerprint_email_$userId');
+    final savedPassword = await _secureStorage.read(key: 'fingerprint_password_$userId');
     if (savedEmail == null || savedPassword == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No saved credentials. Go to Login and enable fingerprint there.')));
       return;
@@ -183,10 +197,23 @@ class _ProfileState extends ConsumerState<Profile> {
               ),
               child: Column(
                 children: [
-                  const ListTile(
-                    leading: Icon(Icons.security, color: Color(0xFF0B7C7C)),
-                    title: Text("Security"),
-                    trailing: Icon(Icons.chevron_right),
+                  ListTile(
+                    leading: const Icon(Icons.language, color: Color(0xFF0B7C7C)),
+                    title: const Text("Language"),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("EN", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Switch(
+                          value: Localizations.localeOf(context).languageCode == 'ne',
+                          onChanged: (isNepali) {
+                            final newLocale = isNepali ? const Locale('ne') : const Locale('en');
+                            App.setLocale(context, newLocale);
+                          },
+                        ),
+                        Text("ने", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.notifications, color: Color(0xFF0B7C7C)),
@@ -252,8 +279,13 @@ class _ProfileState extends ConsumerState<Profile> {
                           final did = await fingerprintAuth.authenticate(reason: 'Authenticate to register fingerprint');
                           if (!did) return;
 
-                          await _secureStorage.write(key: 'saved_email', value: email);
-                          await _secureStorage.write(key: 'saved_password', value: pw);
+                          final userId = auth.user?.authId;
+                          if (userId == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No logged in user')));
+                            return;
+                          }
+                          await _secureStorage.write(key: 'fingerprint_email_$userId', value: email);
+                          await _secureStorage.write(key: 'fingerprint_password_$userId', value: pw);
                           setState(() => _fingerprintEnabled = true);
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fingerprint registered for this account')));
                         },
@@ -264,12 +296,19 @@ class _ProfileState extends ConsumerState<Profile> {
                     ListTile(
                       leading: const Icon(Icons.fingerprint, color: Color(0xFF0B7C7C)),
                       title: const Text('Fingerprint registered'),
-                      subtitle: const Text('You can login using fingerprint on this device'),
+                      subtitle: const Text('Login using fingerprint'),
                       trailing: ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         onPressed: () async {
-                          await _secureStorage.delete(key: 'saved_email');
-                          await _secureStorage.delete(key: 'saved_password');
+                          final auth = ref.read(authViewModelProvider);
+                          final userId = auth.user?.authId;
+                          if (userId == null) {
+                            setState(() => _fingerprintEnabled = false);
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No logged in user')));
+                            return;
+                          }
+                          await _secureStorage.delete(key: 'fingerprint_email_$userId');
+                          await _secureStorage.delete(key: 'fingerprint_password_$userId');
                           setState(() => _fingerprintEnabled = false);
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fingerprint unregistered')));
                         },

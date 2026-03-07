@@ -425,10 +425,11 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
 
     // You can replace these with real fields from ItemEntity if you have them
     final rating = 4.5;
-    final storageText = "256 GB";
 
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 120),
@@ -446,7 +447,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                       height: 260,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: isDark ? colorScheme.surface : Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: ClipRRect(
@@ -635,7 +636,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Text(
                   "Iphone",
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                  style: TextStyle(color: isDark ? colorScheme.onSurface.withOpacity(0.7) : Colors.grey.shade600, fontSize: 13),
                 ),
               ),
 
@@ -652,17 +653,18 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                         _currentItem.phoneModel.isNotEmpty
                             ? _currentItem.phoneModel
                             : "Item",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.w800,
+                          color: colorScheme.onBackground,
                         ),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Text(
                       "NPR${_currentItem.finalPrice}",
-                      style: const TextStyle(
-                        color: Color(0xFF0B7C7C),
+                      style: TextStyle(
+                        color: colorScheme.primary,
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                       ),
@@ -678,20 +680,14 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    const Icon(Icons.star, size: 16),
+                    Icon(Icons.star, size: 16, color: colorScheme.secondary),
                     const SizedBox(width: 4),
                     Text(
                       rating.toStringAsFixed(1),
-                      style: const TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(fontWeight: FontWeight.w600, color: colorScheme.onBackground),
                     ),
                     const SizedBox(width: 10),
-                    Text(
-                      storageText,
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -799,20 +795,10 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
       ),
 
       // ===== BOTTOM BAR BUTTONS =====
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 14,
-              offset: const Offset(0, -4),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
-        child: SafeArea(
-          top: false,
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -826,14 +812,12 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                   ),
                   decoration: BoxDecoration(
                     color: Color.alphaBlend(
-                      Theme.of(context).colorScheme.primary.withOpacity(0.10),
-                      Theme.of(context).colorScheme.surface,
+                      colorScheme.primary.withOpacity(0.10),
+                      colorScheme.surface,
                     ),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primary.withOpacity(0.25),
+                      color: colorScheme.primary.withOpacity(0.25),
                     ),
                   ),
                   child: Row(
@@ -841,7 +825,7 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                       Icon(
                         Icons.info_outline_rounded,
                         size: 18,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: colorScheme.primary,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -850,126 +834,129 @@ class _SingleItemScreenState extends ConsumerState<SingleItemScreen> {
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w700,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: colorScheme.primary,
                           ),
                         ),
                       ),
                     ],
                   ),
                 ),
-              SizedBox(
-                height: 56,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0B7C7C),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          elevation: 0,
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: colorScheme.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
                         ),
-                        onPressed: disablePurchaseActions
-                            ? null
-                            : () => _showBookingSheet(),
-                        child: const Text(
-                          "Book Now",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                          ),
+                        elevation: 4,
+                        foregroundColor: colorScheme.onPrimary,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shadowColor: colorScheme.primary.withOpacity(0.25),
+                      ),
+                      onPressed: disablePurchaseActions
+                          ? null
+                          : () => _showBookingSheet(),
+                      child: Text(
+                        "Book Now",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: colorScheme.onPrimary,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    SizedBox(
-                      width: 140,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          side: BorderSide(color: Colors.grey.shade300),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: isDark ? colorScheme.surface : colorScheme.background,
+                        side: BorderSide(color: colorScheme.primary, width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
                         ),
-                        onPressed: disablePurchaseActions
-                            ? null
-                            : () {
-                                final productId = _currentItem.itemId;
-                                if (productId == null || productId.isEmpty) {
+                        foregroundColor: colorScheme.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shadowColor: colorScheme.primary.withOpacity(0.15),
+                      ),
+                      onPressed: disablePurchaseActions
+                          ? null
+                          : () {
+                              final productId = _currentItem.itemId;
+                              if (productId == null || productId.isEmpty) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Invalid product id'),
+                                  ),
+                                );
+                                return;
+                              }
+
+                              () async {
+                                final failure = await ref
+                                    .read(cartViewModelProvider.notifier)
+                                    .addToCart(productId);
+
+                                if (!context.mounted) return;
+
+                                if (failure == null) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Invalid product id'),
+                                      content: Text('Added to cart'),
                                     ),
                                   );
                                   return;
                                 }
 
-                                () async {
-                                  final failure = await ref
-                                      .read(cartViewModelProvider.notifier)
-                                      .addToCart(productId);
-
-                                  if (!context.mounted) return;
-
-                                  if (failure == null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Added to cart'),
-                                      ),
-                                    );
-                                    return;
+                                String message = failure.message;
+                                if (failure is ApiFailure) {
+                                  switch (failure.statusCode) {
+                                    case 401:
+                                      message = 'Unauthorized';
+                                      break;
+                                    case 409:
+                                      message = 'Already in cart';
+                                      break;
+                                    case 400:
+                                    case 403:
+                                    case 404:
+                                      // Show backend message as-is
+                                      message = failure.message;
+                                      break;
                                   }
+                                }
 
-                                  String message = failure.message;
-                                  if (failure is ApiFailure) {
-                                    switch (failure.statusCode) {
-                                      case 401:
-                                        message = 'Unauthorized';
-                                        break;
-                                      case 409:
-                                        message = 'Already in cart';
-                                        break;
-                                      case 400:
-                                      case 403:
-                                      case 404:
-                                        // Show backend message as-is
-                                        message = failure.message;
-                                        break;
-                                    }
-                                  }
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(message),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(message),
-                                      backgroundColor: Colors.red,
+                                if (failure is ApiFailure &&
+                                    failure.statusCode == 401) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const LoginScreen(),
                                     ),
                                   );
-
-                                  if (failure is ApiFailure &&
-                                      failure.statusCode == 401) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => const LoginScreen(),
-                                      ),
-                                    );
-                                  }
-                                }();
-                              },
-                        child: const Text(
-                          'Add to Cart',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                          ),
+                                }
+                              }();
+                            },
+                      child: Text(
+                        'Add to Cart',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.primary,
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1047,18 +1034,20 @@ class _ConditionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: isDark ? colorScheme.outline.withOpacity(0.2) : Colors.grey.shade200),
       ),
       child: Row(
         children: [
           Container(
-            height: 44,
-            width: 44,
+            height: 74,
+            width: 54,
             decoration: BoxDecoration(
               color: bg,
               borderRadius: BorderRadius.circular(12),
@@ -1074,7 +1063,7 @@ class _ConditionTile extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    color: Colors.grey.shade700,
+                    color: isDark ? colorScheme.onSurface.withOpacity(0.8) : Colors.grey.shade700,
                     fontWeight: FontWeight.w600,
                     fontSize: 12.5,
                   ),
@@ -1082,9 +1071,10 @@ class _ConditionTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 13.5,
+                    color: colorScheme.onBackground,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),

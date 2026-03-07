@@ -1,0 +1,23 @@
+{
+  "login": "Login",
+  "signup": "Sign Up",
+  "email": "Email",
+  "password": "Password",
+  "welcome": "Welcome",
+  "search": "Search",
+  "sellPhone": "Sell Phone",
+  "buyPhone": "Buy Phone",
+  "price": "Price",
+  "condition": "Condition",
+  "submit": "Submit",
+  "cancel": "Cancel",
+  "profile": "Profile",
+  "logout": "Logout",
+  "editProfile": "Edit Profile",
+  "addListing": "Add Listing",
+  "description": "Description",
+  "location": "Location",
+  "filter": "Filter",
+  "sort": "Sort",
+  "messageSeller": "Message Seller"
+}
