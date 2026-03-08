@@ -191,7 +191,7 @@ class _ThirdSellingScreenState extends ConsumerState<ThirdSellingScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 30),
+                const SizedBox(width: 24),
                 ElevatedButton(
                   onPressed: isFormValid
                       ? () {

@@ -8,6 +8,7 @@ import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/sell.dart';
 import 'package:recell_bazar/features/auth/presentation/providers/current_user_provider.dart';
 import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({super.key});
@@ -24,6 +25,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
   // We'll register the listener in `build` below.
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final unselectedIconColor =
         isDark ? (Theme.of(context).bottomNavigationBarTheme.unselectedItemColor ?? Colors.white70) : null;
@@ -102,7 +104,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               image: AssetImage('assets/icons/home_selected.png'),
               height: 35,
             ),
-            label: 'Home',
+            label: l10n.home,
           ),
           BottomNavigationBarItem(
             icon: Image(
@@ -114,7 +116,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               image: AssetImage('assets/icons/cart_selected.png'),
               height: 35,
             ),
-            label: 'Cart',
+            label: l10n.cart,
           ),
           BottomNavigationBarItem(
             icon: Image(
@@ -126,7 +128,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               image: AssetImage('assets/icons/sell_selected.png'),
               height: 35,
             ),
-            label: 'Sell',
+            label: l10n.sell,
           ),
           BottomNavigationBarItem(
             icon: Image(
@@ -138,7 +140,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               image: AssetImage('assets/icons/profile_selected.png'),
               height: 35,
             ),
-            label: 'Profile',
+            label: l10n.profile,
           ),
         ],
       ),

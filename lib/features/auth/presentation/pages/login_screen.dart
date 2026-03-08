@@ -8,6 +8,7 @@ import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
 import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmodel.dart';
 import 'package:recell_bazar/sensors/fingerprint_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 // fingerprint handled from Profile screen
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -68,6 +69,7 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final authState = ref.watch(authViewModelProvider);
 
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
@@ -81,8 +83,8 @@ void initState() {
       }   else if (next.status == AuthStatus.authenticated) {
     // ✅ Success SnackBar
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Login successful"),
+      SnackBar(
+        content: Text(l10n.loginSuccessful),
         backgroundColor: Colors.green,
         duration: Duration(seconds: 2),
       ),
@@ -120,7 +122,7 @@ void initState() {
                 const SizedBox(height: 30),
 
                 Text(
-                  'Login',
+                  l10n.login,
                   style: TextStyle(
                     fontSize: isTablet ? 36 : 45,
                     color: const Color(0xFF0B7C7C),
@@ -139,17 +141,17 @@ void initState() {
                         MyTextField(
                           controller: emailController,
                           isFocused: isEmailFocused,
-                          label: "Email",
-                          hint: "Enter your email",
+                          label: l10n.email,
+                          hint: l10n.enterYourEmail,
                           prefixIcon: Icons.mail,
                           keyboardType: TextInputType.emailAddress,
                           validator: (v) {
                             final tv = v!.trim();
-                            if (tv.isEmpty) return "Email is required";
+                            if (tv.isEmpty) return l10n.emailRequired;
                             if (!RegExp(
                                     r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                                 .hasMatch(tv)) {
-                              return "Enter valid email";
+                              return l10n.enterValidEmail;
                             }
                             return null;
                           },
@@ -162,15 +164,15 @@ void initState() {
                         MyTextField(
                           controller: passwordController,
                           isFocused: isPasswordFocused,
-                          label: "Password",
-                          hint: "Enter your password",
+                          label: l10n.password,
+                          hint: l10n.enterYourPassword,
                           prefixIcon: Icons.lock,
                           obscureText: true,
                           validator: (v) {
                             final tv = v!.trim();
-                            if (tv.isEmpty) return "Password is required";
+                            if (tv.isEmpty) return l10n.passwordRequired;
                             if (tv.length < 6) {
-                              return "Minimum 6 characters";
+                              return l10n.min6Characters;
                             }
                             return null;
                           },
@@ -186,8 +188,8 @@ void initState() {
 
                 MyButton(
                   text: authState.status == AuthStatus.loading
-                      ? "Logging in..."
-                      : "Login",
+                      ? l10n.loggingIn
+                      : l10n.login,
                 onPressed: authState.status == AuthStatus.loading ? () {} : () => loginUser(),
 
                 ),
@@ -196,7 +198,7 @@ void initState() {
                 TextButton.icon(
                   onPressed: () => _loginWithSavedCredentials(),
                   icon: const Icon(Icons.fingerprint, color: Color(0xFF0B7C7C)),
-                  label: const Text('Login with fingerprint', style: TextStyle(color: Color(0xFF0B7C7C))),
+                  label: Text(l10n.loginWithFingerprint, style: const TextStyle(color: Color(0xFF0B7C7C))),
                 ),
 
                 // Fingerprint registration moved to Profile screen
@@ -210,7 +212,7 @@ void initState() {
                       ),
                     );
                   },
-                  child: const Text("Don't have an Account..?"),
+                  child: Text(l10n.dontHaveAccount),
                 ),
               ],
             ),

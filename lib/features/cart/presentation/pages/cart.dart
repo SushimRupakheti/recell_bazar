@@ -4,6 +4,7 @@ import 'package:recell_bazar/core/api/api_endpoints.dart';
 import 'package:recell_bazar/features/cart/domain/entities/cart_models.dart';
 import 'package:recell_bazar/features/cart/presentation/state/cart_state.dart';
 import 'package:recell_bazar/features/cart/presentation/view_model/cart_viewmodel.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});
@@ -35,6 +36,7 @@ class _CartPageState extends ConsumerState<CartPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final cartState = ref.watch(cartViewModelProvider);
     final cart = cartState.cart;
     final items = cart?.items ?? const <CartItem>[];
@@ -45,7 +47,7 @@ class _CartPageState extends ConsumerState<CartPage> {
     final shadowColor = Theme.of(context).shadowColor;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Cart'), centerTitle: true),
+      appBar: AppBar(title: Text(l10n.cart), centerTitle: true),
       body: SafeArea(
         child: Builder(
           builder: (context) {

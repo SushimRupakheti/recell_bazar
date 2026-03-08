@@ -292,18 +292,18 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 60, vertical: 16),
+                        horizontal: 48, vertical: 14),
                   ),
                   child: const Text(
                     'Cancel',
                     style: TextStyle(
                       color: Color(0xFF0B7C7C),
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                      fontSize: 15,
                     ),
                   ),
                 ),
-                const SizedBox(width: 20),
+                const SizedBox(width: 12),
                 ElevatedButton(
                   onPressed: (!isFormValid ||
                           itemState.status == ItemStatus.loading)
@@ -372,14 +372,14 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 60, vertical: 16),
+                        horizontal: 48, vertical: 14),
                   ),
                   child: itemState.status == ItemStatus.loading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
                           'Submit',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                              fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                 ),
               ],

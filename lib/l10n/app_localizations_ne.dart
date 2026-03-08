@@ -1,4 +1,4 @@
-// ignore: unused_import
+﻿// ignore: unused_import
 import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
@@ -27,6 +27,21 @@ class AppLocalizationsNe extends AppLocalizations {
   String get search => 'खोज्नुहोस्';
 
   @override
+  String get searchHint => 'खोज्नुहोस्...';
+
+  @override
+  String get discover => 'डिस्कभर';
+
+  @override
+  String get home => 'होम';
+
+  @override
+  String get cart => 'कार्ट';
+
+  @override
+  String get sell => 'बेच्नुहोस्';
+
+  @override
   String get sellPhone => 'फोन बेच्नुहोस्';
 
   @override
@@ -46,6 +61,18 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get profile => 'प्रोफाइल';
+
+  @override
+  String get notifications => 'सूचनाहरू';
+
+  @override
+  String get language => 'भाषा';
+
+  @override
+  String get myListings => 'मेरा सूचीहरू';
+
+  @override
+  String get noItemsFound => 'कुनै वस्तु फेला परेन';
 
   @override
   String get logout => 'लगआउट';
@@ -70,4 +97,34 @@ class AppLocalizationsNe extends AppLocalizations {
 
   @override
   String get messageSeller => 'बेच्ने व्यक्तिलाई सन्देश';
+
+  @override
+  String get enterYourEmail => 'आफ्नो इमेल लेख्नुहोस्';
+
+  @override
+  String get enterYourPassword => 'आफ्नो पासवर्ड लेख्नुहोस्';
+
+  @override
+  String get emailRequired => 'इमेल आवश्यक छ';
+
+  @override
+  String get passwordRequired => 'पासवर्ड आवश्यक छ';
+
+  @override
+  String get enterValidEmail => 'मान्य इमेल लेख्नुहोस्';
+
+  @override
+  String get min6Characters => 'कम्तीमा ६ अक्षर चाहिन्छ';
+
+  @override
+  String get loggingIn => 'लगइन हुँदैछ...';
+
+  @override
+  String get loginSuccessful => 'लगइन सफल भयो';
+
+  @override
+  String get loginWithFingerprint => 'फिंगरप्रिन्टबाट लगइन';
+
+  @override
+  String get dontHaveAccount => 'खाता छैन?';
 }

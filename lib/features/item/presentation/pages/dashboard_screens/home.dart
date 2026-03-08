@@ -14,6 +14,7 @@ import 'package:recell_bazar/core/widgets/product_card.dart';
 import 'package:recell_bazar/core/widgets/topbar.dart';
 import 'package:recell_bazar/features/notification/presentation/pages/notifications_screen.dart';
 import 'package:recell_bazar/features/notification/presentation/view_model/notification_viewmodel.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class Home extends ConsumerStatefulWidget {
   const Home({super.key});
@@ -84,6 +85,7 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final notificationState = ref.watch(notificationViewModelProvider);
     final hasUnread = notificationState.notifications.any((n) => !n.isRead);
 
@@ -180,10 +182,10 @@ class _HomeState extends ConsumerState<Home> {
               ),
 
             /// Title
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(left: 16),
               child: Text(
-                "Discover",
+                l10n.discover,
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -205,7 +207,7 @@ class _HomeState extends ConsumerState<Home> {
                   }
 
                   if (items.isEmpty) {
-                    return const Center(child: Text("No Items Found"));
+                    return Center(child: Text(l10n.noItemsFound));
                   }
 
                   // compute displayed items based on selected filter
@@ -251,54 +253,83 @@ class _HomeState extends ConsumerState<Home> {
                     }).toList();
                   }
 
-                  return GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 12,
-                      mainAxisSpacing: 12,
-                      childAspectRatio: 0.68,
-                    ),
-                    itemCount: displayedItems.length,
-                    itemBuilder: (context, index) {
-                      return ProductCard(
-                        item: displayedItems[index],
-                        onTap: () async {
-                          final getItemUsecase = ref.read(getItemByIdUsecaseProvider);
-                          final id = displayedItems[index].itemId;
-                          if (id == null || id.isEmpty) {
-                            // fallback: push with the item we already have
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => SingleItemScreen(item: displayedItems[index]),
-                              ),
-                            );
-                            return;
-                          }
+return LayoutBuilder(
+  builder: (context, constraints) {
+    final width = constraints.maxWidth;
 
-                          final result = await getItemUsecase(GetItemByIdParams(itemId: id));
-                          result.fold(
-                            (failure) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Failed to load item: ${failure.message}')),
-                              );
-                            },
-                            (item) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => SingleItemScreen(item: item),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        onFavoriteTap: () {},
-                      );
-                    },
-                  );
+    int crossAxisCount;
+    double childAspectRatio;
+
+    if (width >= 1100) {
+      crossAxisCount = 5;
+      childAspectRatio = 0.78;
+    } else if (width >= 850) {
+      crossAxisCount = 4;
+      childAspectRatio = 0.76;
+    } else if (width >= 600) {
+      crossAxisCount = 3;
+      childAspectRatio = 0.72;
+    } else {
+      crossAxisCount = 2;
+      childAspectRatio = 0.68;
+    }
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: childAspectRatio,
+      ),
+      itemCount: displayedItems.length,
+      itemBuilder: (context, index) {
+        return ProductCard(
+          item: displayedItems[index],
+          onTap: () async {
+            final getItemUsecase = ref.read(getItemByIdUsecaseProvider);
+            final id = displayedItems[index].itemId;
+
+            if (id == null || id.isEmpty) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => SingleItemScreen(item: displayedItems[index]),
+                ),
+              );
+              return;
+            }
+
+            final result = await getItemUsecase(
+              GetItemByIdParams(itemId: id),
+            );
+
+            result.fold(
+              (failure) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'Failed to load item: ${failure.message}',
+                    ),
+                  ),
+                );
+              },
+              (item) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => SingleItemScreen(item: item),
+                  ),
+                );
+              },
+            );
+          },
+          onFavoriteTap: () {},
+        );
+      },
+    );
+  },
+);
                 },
               ),
             ),

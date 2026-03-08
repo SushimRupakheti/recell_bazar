@@ -5,6 +5,7 @@ import 'package:recell_bazar/features/item/presentation/providers/seller_item_pr
 import 'package:recell_bazar/features/item/presentation/widgets/sell_card_widget.dart';
 import 'package:recell_bazar/features/item/domain/usecases/get_item_by_id_usecase.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/single_item_screen.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class SellScreen extends ConsumerWidget {
   final String sellerId;
@@ -16,11 +17,12 @@ class SellScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final itemsAsync = ref.watch(sellerItemsProvider(sellerId));
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('My Listings'), centerTitle: true),
+      appBar: AppBar(title: Text(l10n.myListings), centerTitle: true),
       body: SafeArea(
         child: itemsAsync.when(
           loading: () => Center(

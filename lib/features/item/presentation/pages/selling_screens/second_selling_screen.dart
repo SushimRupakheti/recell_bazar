@@ -203,7 +203,7 @@ class _SecondSellingScreenState extends State<SecondSellingScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 30),
+                const SizedBox(width: 24),
                 ElevatedButton(
                   onPressed: isFormValid
                       ? () {

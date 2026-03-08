@@ -238,7 +238,7 @@ class PhoneBrandSelectionScreen extends ConsumerWidget {
                         fontSize: 16),
                   ),
                 ),
-                const SizedBox(width: 30),
+                const SizedBox(width: 24),
                 ElevatedButton(
                   onPressed: phoneData.category.isNotEmpty &&
                           phoneData.phoneModel.isNotEmpty &&

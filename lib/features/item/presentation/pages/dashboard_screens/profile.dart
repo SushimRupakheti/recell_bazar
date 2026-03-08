@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:recell_bazar/sensors/fingerprint_login.dart';
@@ -12,6 +12,7 @@ import 'package:recell_bazar/features/auth/presentation/widgets/profile_header.d
 import 'package:recell_bazar/features/auth/presentation/widgets/stats_card.dart';
 import 'package:recell_bazar/features/notification/presentation/pages/notifications_screen.dart';
 import 'package:recell_bazar/app/theme/theme_mode_controller.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
@@ -83,6 +84,7 @@ class _ProfileState extends ConsumerState<Profile> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -98,7 +100,7 @@ class _ProfileState extends ConsumerState<Profile> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: Text(l10n.profile),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -199,7 +201,7 @@ class _ProfileState extends ConsumerState<Profile> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.language, color: Color(0xFF0B7C7C)),
-                    title: const Text("Language"),
+                    title: Text(l10n.language),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -217,7 +219,7 @@ class _ProfileState extends ConsumerState<Profile> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.notifications, color: Color(0xFF0B7C7C)),
-                    title: const Text("Notifications"),
+                    title: Text(l10n.notifications),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.push(
@@ -363,7 +365,7 @@ class _ProfileState extends ConsumerState<Profile> {
                 label: Text(
                   authState.status == AuthStatus.loading
                       ? "Logging out..."
-                      : "Log out",
+                      : l10n.logout,
                   style: const TextStyle(color: Colors.red),
                 ),
                 onPressed: authState.status == AuthStatus.loading
@@ -381,3 +383,5 @@ class _ProfileState extends ConsumerState<Profile> {
     );
   }
 }
+
+

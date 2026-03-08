@@ -27,6 +27,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get search => 'Search';
 
   @override
+  String get searchHint => 'Search...';
+
+  @override
+  String get discover => 'Discover';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get cart => 'Cart';
+
+  @override
+  String get sell => 'Sell';
+
+  @override
   String get sellPhone => 'Sell Phone';
 
   @override
@@ -46,6 +61,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile => 'Profile';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get myListings => 'My Listings';
+
+  @override
+  String get noItemsFound => 'No Items Found';
 
   @override
   String get logout => 'Logout';
@@ -70,4 +97,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get messageSeller => 'Message Seller';
+
+  @override
+  String get enterYourEmail => 'Enter your email';
+
+  @override
+  String get enterYourPassword => 'Enter your password';
+
+  @override
+  String get emailRequired => 'Email is required';
+
+  @override
+  String get passwordRequired => 'Password is required';
+
+  @override
+  String get enterValidEmail => 'Enter valid email';
+
+  @override
+  String get min6Characters => 'Minimum 6 characters';
+
+  @override
+  String get loggingIn => 'Logging in...';
+
+  @override
+  String get loginSuccessful => 'Login successful';
+
+  @override
+  String get loginWithFingerprint => 'Login with fingerprint';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account?';
 }
