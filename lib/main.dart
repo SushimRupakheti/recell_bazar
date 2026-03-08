@@ -51,6 +51,7 @@ void main() async {
 
   // ✅ MUST be before any API call / Dio client creation
   await ApiEndpoints.init();
+  debugPrint('BASE URL => ${ApiEndpoints.baseUrl}');
 
   // Hive init
   await HiveService().init();

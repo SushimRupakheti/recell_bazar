@@ -115,7 +115,6 @@
 
   //     }
 
-
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -128,17 +127,22 @@ class ApiEndpoints {
 
   static const int _port = int.fromEnvironment('API_PORT', defaultValue: 5050);
 
-  // Your PC LAN IP (used on physical device). Override with:
+  // Default LAN IP for your physical device testing
+  static const String _defaultLanHost = '192.168.1.24';
+
+  // Optional override:
   // flutter run --dart-define=API_LAN_HOST=192.168.xx.xx
-  static const String _lanHost =
-      String.fromEnvironment('API_LAN_HOST', defaultValue: '192.168.31.161');
+  static const String _lanHostFromEnv =
+      String.fromEnvironment('API_LAN_HOST', defaultValue: '');
 
   // Full override (highest priority):
   // flutter run --dart-define=API_BASE_URL=http://192.168.31.161:5050/api
   static const String _baseUrlOverride =
       String.fromEnvironment('API_BASE_URL', defaultValue: '');
 
-  // NOTE: no `late` -> no LateInitializationError
+  static String get _lanHost =>
+      _lanHostFromEnv.isNotEmpty ? _lanHostFromEnv : _defaultLanHost;
+
   static String baseUrl =
       _baseUrlOverride.isNotEmpty ? _baseUrlOverride : _startupBaseUrl();
 
@@ -148,10 +152,19 @@ class ApiEndpoints {
   static bool get initialized => _initialized;
 
   static String _startupBaseUrl() {
-    // Safe fallback BEFORE init() runs:
-    if (kIsWeb) return 'http://$_lanHost:$_port/api';
-    if (Platform.isAndroid) return 'http://10.0.2.2:$_port/api'; // emulator default
-    if (Platform.isIOS) return 'http://localhost:$_port/api'; // iOS simulator default
+    if (kIsWeb) {
+      return 'http://$_lanHost:$_port/api';
+    }
+
+    if (Platform.isAndroid) {
+      // Safe startup fallback before init()
+      return 'http://10.0.2.2:$_port/api';
+    }
+
+    if (Platform.isIOS) {
+      return 'http://localhost:$_port/api';
+    }
+
     return 'http://localhost:$_port/api';
   }
 
@@ -161,6 +174,9 @@ class ApiEndpoints {
     if (_baseUrlOverride.isNotEmpty) {
       baseUrl = _baseUrlOverride;
       _initialized = true;
+      if (kDebugMode) {
+        debugPrint('[ApiEndpoints] Using override base URL -> $baseUrl');
+      }
       return;
     }
 
@@ -169,8 +185,16 @@ class ApiEndpoints {
     if (!kIsWeb && Platform.isAndroid) {
       final android = await deviceInfo.androidInfo;
       isPhysicalDevice = android.isPhysicalDevice ?? true;
+
       final host = isPhysicalDevice ? _lanHost : '10.0.2.2';
       baseUrl = 'http://$host:$_port/api';
+
+      if (kDebugMode) {
+        debugPrint(
+          '[ApiEndpoints] Android ${isPhysicalDevice ? "physical" : "emulator"} -> $baseUrl',
+        );
+      }
+
       _initialized = true;
       return;
     }
@@ -178,23 +202,48 @@ class ApiEndpoints {
     if (!kIsWeb && Platform.isIOS) {
       final ios = await deviceInfo.iosInfo;
       isPhysicalDevice = ios.isPhysicalDevice ?? true;
+
       final host = isPhysicalDevice ? _lanHost : 'localhost';
       baseUrl = 'http://$host:$_port/api';
+
+      if (kDebugMode) {
+        debugPrint(
+          '[ApiEndpoints] iOS ${isPhysicalDevice ? "physical" : "simulator"} -> $baseUrl',
+        );
+      }
+
       _initialized = true;
       return;
     }
 
-    // Desktop/fallback
+    if (kIsWeb) {
+      baseUrl = 'http://$_lanHost:$_port/api';
+      isPhysicalDevice = true;
+
+      if (kDebugMode) {
+        debugPrint('[ApiEndpoints] Web -> $baseUrl');
+      }
+
+      _initialized = true;
+      return;
+    }
+
     baseUrl = 'http://localhost:$_port/api';
     isPhysicalDevice = true;
+
+    if (kDebugMode) {
+      debugPrint('[ApiEndpoints] Desktop/fallback -> $baseUrl');
+    }
+
     _initialized = true;
   }
 
-  // ============ User Endpoints ============
+  // ================= AUTH ENDPOINTS =================
   static const String auth = '/auth';
   static const String register = '/auth/register';
   static const String login = '/auth/login';
 
+  // ================= ITEM ENDPOINTS =================
   static const String items = '/items';
   static String itemById(String id) => '/items/$id';
   static String markAsSold(String id) => '/items/$id/mark-sold';
@@ -205,15 +254,20 @@ class ApiEndpoints {
   static String searchItems(String phoneModel, {String? categoryId}) =>
       '/items/search?model=$phoneModel${categoryId != null ? '&category=$categoryId' : ''}';
 
+  // ================= CART ENDPOINTS =================
   static const String cart = '/cart';
   static const String cartAdd = '/cart/add';
   static String cartRemove(String cartItemId) => '/cart/remove/$cartItemId';
 
-  static String uploadProfilePicture(String userId) => '/users/$userId/profile-picture';
+  // ================= USER ENDPOINTS =================
+  static String uploadProfilePicture(String userId) =>
+      '/users/$userId/profile-picture';
   static String userById(String id) => '/users/$id';
   static String updateUser(String id) => '/users/update/$id';
 
+  // ================= NOTIFICATION ENDPOINTS =================
   static const String notifications = '/notifications';
   static String notificationById(String id) => '/notifications/$id';
-  static String markNotificationAsRead(String id) => '/notifications/$id/read';
+  static String markNotificationAsRead(String id) =>
+      '/notifications/$id/read';
 }
