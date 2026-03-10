@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class Topbar extends StatelessWidget {
   final ValueChanged<String>? onSearch;
@@ -14,6 +15,9 @@ class Topbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final searchHintLabel = l10n?.searchHint ?? 'Search';
+    final notificationsLabel = l10n?.notifications ?? 'Notifications';
     return  Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(
@@ -23,7 +27,7 @@ class Topbar extends StatelessWidget {
                     child: TextField(
                       onChanged: onSearch,
                       decoration: InputDecoration(
-                        hintText: 'Search..',
+                        hintText: searchHintLabel,
                         prefixIcon: Icon(Icons.search),
                         border: OutlineInputBorder(),
                       ),
@@ -61,7 +65,7 @@ class Topbar extends StatelessWidget {
                           ),
                       ],
                     ),
-                    tooltip: 'Notifications',
+                    tooltip: notificationsLabel,
                   ),
                 ],
               ),

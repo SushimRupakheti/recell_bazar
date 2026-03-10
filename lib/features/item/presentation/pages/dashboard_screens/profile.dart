@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:recell_bazar/sensors/fingerprint_login.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:recell_bazar/app/app.dart';
 
 import 'package:recell_bazar/features/auth/presentation/pages/login_screen.dart';
 import 'package:recell_bazar/features/auth/presentation/state/auth_state.dart';
@@ -10,6 +11,8 @@ import 'package:recell_bazar/features/auth/presentation/view_model/auth_viewmode
 import 'package:recell_bazar/features/auth/presentation/widgets/profile_header.dart';
 import 'package:recell_bazar/features/auth/presentation/widgets/stats_card.dart';
 import 'package:recell_bazar/features/notification/presentation/pages/notifications_screen.dart';
+import 'package:recell_bazar/app/theme/theme_mode_controller.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
@@ -29,23 +32,36 @@ class _ProfileState extends ConsumerState<Profile> {
   }
 
   Future<void> _loadFingerprintState() async {
-    final savedEmail = await _secureStorage.read(key: 'saved_email');
+    final auth = ref.read(authViewModelProvider);
+    final userId = auth.user?.authId;
+    if (userId == null) {
+      setState(() => _fingerprintEnabled = false);
+      return;
+    }
+    final savedEmail = await _secureStorage.read(key: 'fingerprint_email_$userId');
     setState(() => _fingerprintEnabled = savedEmail != null);
   }
 
   Future<void> _toggleFingerprint(bool value) async {
+    final auth = ref.read(authViewModelProvider);
+    final userId = auth.user?.authId;
+    if (userId == null) {
+      setState(() => _fingerprintEnabled = false);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No logged in user')));
+      return;
+    }
     if (!value) {
       // turning off: remove stored credentials
-      await _secureStorage.delete(key: 'saved_email');
-      await _secureStorage.delete(key: 'saved_password');
+      await _secureStorage.delete(key: 'fingerprint_email_$userId');
+      await _secureStorage.delete(key: 'fingerprint_password_$userId');
       setState(() => _fingerprintEnabled = false);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fingerprint login disabled')));
       return;
     }
 
     // enabling requires saved credentials (user must opt-in from login screen)
-    final savedEmail = await _secureStorage.read(key: 'saved_email');
-    final savedPassword = await _secureStorage.read(key: 'saved_password');
+    final savedEmail = await _secureStorage.read(key: 'fingerprint_email_$userId');
+    final savedPassword = await _secureStorage.read(key: 'fingerprint_password_$userId');
     if (savedEmail == null || savedPassword == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No saved credentials. Go to Login and enable fingerprint there.')));
       return;
@@ -68,6 +84,13 @@ class _ProfileState extends ConsumerState<Profile> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
+    final l10n = AppLocalizations.of(context);
+    final profileLabel = l10n?.profile ?? 'Profile';
+    final languageLabel = l10n?.language ?? 'Language';
+    final notificationsLabel = l10n?.notifications ?? 'Notifications';
+    final logoutLabel = l10n?.logout ?? 'Logout';
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     ref.listen<AuthState>(authViewModelProvider, (prev, next) {
       if (next.status == AuthStatus.unauthenticated) {
@@ -81,7 +104,7 @@ class _ProfileState extends ConsumerState<Profile> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Profile"),
+        title: Text(profileLabel),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -94,6 +117,74 @@ class _ProfileState extends ConsumerState<Profile> {
             const StatsCard(),
             const SizedBox(height: 24),
 
+            // Theme
+            const Text(
+              'Theme',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                color: isDark ? colorScheme.surface : Colors.grey.shade100,
+                borderRadius: BorderRadius.circular(12),
+                border: isDark
+                    ? Border.all(
+                        color: Theme.of(context).dividerColor.withOpacity(0.35),
+                      )
+                    : null,
+              ),
+              child: ValueListenableBuilder<AppThemePreference>(
+                valueListenable: appThemeController.preference,
+                builder: (context, pref, _) {
+                  final autoEnabled = pref == AppThemePreference.auto;
+                  final effectiveDark = Theme.of(context).brightness == Brightness.dark;
+                  final manualDark = pref == AppThemePreference.dark;
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SwitchListTile(
+                        value: autoEnabled,
+                        activeColor: colorScheme.primary,
+                        title: const Text('Auto'),
+                        subtitle: const Text('Automatically switches theme'),
+                        onChanged: (v) {
+                          if (v) {
+                            appThemeController.setPreference(AppThemePreference.auto);
+                            return;
+                          }
+
+                          appThemeController.setPreference(
+                            effectiveDark
+                                ? AppThemePreference.dark
+                                : AppThemePreference.light,
+                          );
+                        },
+                      ),
+                      Divider(height: 1, color: Theme.of(context).dividerColor),
+                      SwitchListTile(
+                        value: autoEnabled ? effectiveDark : manualDark,
+                        activeColor: colorScheme.primary,
+                        title: const Text('Dark mode'),
+                        subtitle: autoEnabled
+                            ? const Text('Turn off Auto to change')
+                            : const Text('Toggle between Dark and Light'),
+                        onChanged: autoEnabled
+                            ? null
+                            : (v) {
+                                appThemeController.setPreference(
+                                  v
+                                      ? AppThemePreference.dark
+                                      : AppThemePreference.light,
+                                );
+                              },
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+
             // Account
             const Text(
               "Account",
@@ -102,19 +193,37 @@ class _ProfileState extends ConsumerState<Profile> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: isDark ? colorScheme.surface : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
+                border: isDark
+                    ? Border.all(
+                        color: Theme.of(context).dividerColor.withOpacity(0.35),
+                      )
+                    : null,
               ),
               child: Column(
                 children: [
-                  const ListTile(
-                    leading: Icon(Icons.security, color: Color(0xFF0B7C7C)),
-                    title: Text("Security"),
-                    trailing: Icon(Icons.chevron_right),
+                  ListTile(
+                    leading: const Icon(Icons.language, color: Color(0xFF0B7C7C)),
+                    title: Text(languageLabel),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("EN", style: TextStyle(fontWeight: FontWeight.bold)),
+                        Switch(
+                          value: Localizations.localeOf(context).languageCode == 'ne',
+                          onChanged: (isNepali) {
+                            final newLocale = isNepali ? const Locale('ne') : const Locale('en');
+                            App.setLocale(context, newLocale);
+                          },
+                        ),
+                        Text("ने", style: TextStyle(fontWeight: FontWeight.bold)),
+                      ],
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.notifications, color: Color(0xFF0B7C7C)),
-                    title: const Text("Notifications"),
+                    title: Text(notificationsLabel),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.push(
@@ -176,8 +285,13 @@ class _ProfileState extends ConsumerState<Profile> {
                           final did = await fingerprintAuth.authenticate(reason: 'Authenticate to register fingerprint');
                           if (!did) return;
 
-                          await _secureStorage.write(key: 'saved_email', value: email);
-                          await _secureStorage.write(key: 'saved_password', value: pw);
+                          final userId = auth.user?.authId;
+                          if (userId == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No logged in user')));
+                            return;
+                          }
+                          await _secureStorage.write(key: 'fingerprint_email_$userId', value: email);
+                          await _secureStorage.write(key: 'fingerprint_password_$userId', value: pw);
                           setState(() => _fingerprintEnabled = true);
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fingerprint registered for this account')));
                         },
@@ -188,12 +302,19 @@ class _ProfileState extends ConsumerState<Profile> {
                     ListTile(
                       leading: const Icon(Icons.fingerprint, color: Color(0xFF0B7C7C)),
                       title: const Text('Fingerprint registered'),
-                      subtitle: const Text('You can login using fingerprint on this device'),
+                      subtitle: const Text('Login using fingerprint'),
                       trailing: ElevatedButton(
                         style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         onPressed: () async {
-                          await _secureStorage.delete(key: 'saved_email');
-                          await _secureStorage.delete(key: 'saved_password');
+                          final auth = ref.read(authViewModelProvider);
+                          final userId = auth.user?.authId;
+                          if (userId == null) {
+                            setState(() => _fingerprintEnabled = false);
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No logged in user')));
+                            return;
+                          }
+                          await _secureStorage.delete(key: 'fingerprint_email_$userId');
+                          await _secureStorage.delete(key: 'fingerprint_password_$userId');
                           setState(() => _fingerprintEnabled = false);
                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fingerprint unregistered')));
                         },
@@ -214,8 +335,13 @@ class _ProfileState extends ConsumerState<Profile> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: isDark ? colorScheme.surface : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(12),
+                border: isDark
+                    ? Border.all(
+                        color: Theme.of(context).dividerColor.withOpacity(0.35),
+                      )
+                    : null,
               ),
               child: const Column(
                 children: [
@@ -243,7 +369,7 @@ class _ProfileState extends ConsumerState<Profile> {
                 label: Text(
                   authState.status == AuthStatus.loading
                       ? "Logging out..."
-                      : "Log out",
+                      : logoutLabel,
                   style: const TextStyle(color: Colors.red),
                 ),
                 onPressed: authState.status == AuthStatus.loading
@@ -261,3 +387,5 @@ class _ProfileState extends ConsumerState<Profile> {
     );
   }
 }
+
+

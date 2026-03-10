@@ -8,6 +8,7 @@ import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/sell.dart';
 import 'package:recell_bazar/features/auth/presentation/providers/current_user_provider.dart';
 import 'package:recell_bazar/features/item/presentation/providers/seller_item_provider.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class Dashboard extends ConsumerStatefulWidget {
   const Dashboard({super.key});
@@ -24,6 +25,15 @@ class _DashboardState extends ConsumerState<Dashboard> {
   // We'll register the listener in `build` below.
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final homeLabel = l10n?.home ?? 'Home';
+    final cartLabel = l10n?.cart ?? 'Cart';
+    final sellLabel = l10n?.sell ?? 'Sell';
+    final profileLabel = l10n?.profile ?? 'Profile';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final unselectedIconColor =
+        isDark ? (Theme.of(context).bottomNavigationBarTheme.unselectedItemColor ?? Colors.white70) : null;
+
     // listen to auth changes and refresh/invalidate seller cache when needed
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       final prevId = previous?.user?.authId ?? '';
@@ -87,50 +97,54 @@ class _DashboardState extends ConsumerState<Dashboard> {
             }
           }
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
             icon: Image(
-              image: AssetImage('assets/icons/home.png'),
+              image: const AssetImage('assets/icons/home.png'),
               height: 35,
+              color: unselectedIconColor,
             ),
             activeIcon: Image(
               image: AssetImage('assets/icons/home_selected.png'),
               height: 35,
             ),
-            label: 'Home',
+            label: homeLabel,
           ),
           BottomNavigationBarItem(
             icon: Image(
-              image: AssetImage('assets/icons/cart.png'),
+              image: const AssetImage('assets/icons/cart.png'),
               height: 35,
+              color: unselectedIconColor,
             ),
             activeIcon: Image(
               image: AssetImage('assets/icons/cart_selected.png'),
               height: 35,
             ),
-            label: 'Cart',
+            label: cartLabel,
           ),
           BottomNavigationBarItem(
             icon: Image(
-              image: AssetImage('assets/icons/sell.png'),
+              image: const AssetImage('assets/icons/sell.png'),
               height: 35,
+              color: unselectedIconColor,
             ),
             activeIcon: Image(
               image: AssetImage('assets/icons/sell_selected.png'),
               height: 35,
             ),
-            label: 'Sell',
+            label: sellLabel,
           ),
           BottomNavigationBarItem(
             icon: Image(
-              image: AssetImage('assets/icons/profile.png'),
+              image: const AssetImage('assets/icons/profile.png'),
               height: 35,
+              color: unselectedIconColor,
             ),
             activeIcon: Image(
               image: AssetImage('assets/icons/profile_selected.png'),
               height: 35,
             ),
-            label: 'Profile',
+            label: profileLabel,
           ),
         ],
       ),

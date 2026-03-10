@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:recell_bazar/features/item/presentation/pages/selling_screens/phone_brand_selection_screen.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class SellingInfoScreen extends StatelessWidget {
   const SellingInfoScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: const Color(0xFFFFF5F5),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         selectedItemColor: const Color(0xFF0C7C8C),
         unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_bag), label: "Cart"),
-          BottomNavigationBarItem(icon: Icon(Icons.upload), label: "Sell"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.home), label: l10n.home),
+          BottomNavigationBarItem(icon: const Icon(Icons.shopping_bag), label: l10n.cart),
+          BottomNavigationBarItem(icon: const Icon(Icons.upload), label: l10n.sell),
+          BottomNavigationBarItem(icon: const Icon(Icons.person), label: l10n.profile),
         ],
       ),
       body: SafeArea(

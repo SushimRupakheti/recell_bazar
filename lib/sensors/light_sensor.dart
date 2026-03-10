@@ -19,8 +19,17 @@ class LightSensorController {
   final ValueNotifier<double> smoothedLux = ValueNotifier(0.0);
   bool useSmoothing = true;
   double _ema = 0.0;
+  bool _emaInitialized = false;
   double smoothingAlpha = 0.2; // 0..1, higher = more responsive
-  int darkThreshold = 50; // lux threshold to decide dark mode
+
+  // Use hysteresis to avoid flickering around one threshold.
+  // Theme turns dark below darkThreshold and turns light above lightThreshold.
+  int darkThreshold = 15;
+  int lightThreshold = 70;
+
+  // Require a few consistent readings before changing mode.
+  int requiredStableReadings = 3;
+  int _stableReadings = 0;
 
   /// Start listening to light sensor
   Future<void> startListening() async {
@@ -37,6 +46,12 @@ class LightSensorController {
 
         _subscription = LightSensor.luxStream().listen((lux) {
           luxValue.value = lux;
+
+          if (!_emaInitialized) {
+            _ema = lux.toDouble();
+            _emaInitialized = true;
+          }
+
           // smoothing
           if (useSmoothing) {
             _ema = smoothingAlpha * lux + (1 - smoothingAlpha) * _ema;
@@ -45,9 +60,26 @@ class LightSensorController {
             smoothedLux.value = lux.toDouble();
             _ema = lux.toDouble();
           }
-          // Determine dark mode using smoothed value
-          isDarkMode.value = smoothedLux.value < darkThreshold;
-          debugPrint('LightSensor.lux -> $lux  smoothed=${smoothedLux.value.toStringAsFixed(1)} dark=${isDarkMode.value}');
+
+          final currentDark = isDarkMode.value;
+          final targetDark = currentDark
+              ? smoothedLux.value < lightThreshold
+              : smoothedLux.value <= darkThreshold;
+
+          if (targetDark != currentDark) {
+            _stableReadings++;
+            if (_stableReadings >= requiredStableReadings) {
+              isDarkMode.value = targetDark;
+              _stableReadings = 0;
+            }
+          } else {
+            _stableReadings = 0;
+          }
+
+          debugPrint(
+            'LightSensor.lux=$lux smoothed=${smoothedLux.value.toStringAsFixed(1)} '
+            'dark=${isDarkMode.value} targetDark=$targetDark stable=$_stableReadings',
+          );
         }, onError: (e, st) {
           error.value = e?.toString();
           debugPrint('LightSensor stream error: $e\n$st');
@@ -66,6 +98,9 @@ class LightSensorController {
   void stopListening() {
     _subscription?.cancel();
     _subscription = null;
+    _ema = 0.0;
+    _emaInitialized = false;
+    _stableReadings = 0;
   }
 }
 

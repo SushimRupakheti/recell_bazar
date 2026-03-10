@@ -5,6 +5,7 @@ import 'package:recell_bazar/features/item/presentation/providers/seller_item_pr
 import 'package:recell_bazar/features/item/presentation/widgets/sell_card_widget.dart';
 import 'package:recell_bazar/features/item/domain/usecases/get_item_by_id_usecase.dart';
 import 'package:recell_bazar/features/item/presentation/pages/dashboard_screens/single_item_screen.dart';
+import 'package:recell_bazar/l10n/app_localizations.dart';
 
 class SellScreen extends ConsumerWidget {
   final String sellerId;
@@ -16,100 +17,164 @@ class SellScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
+    final myListingsLabel = l10n?.myListings ?? 'My Listings';
     final itemsAsync = ref.watch(sellerItemsProvider(sellerId));
-
-    // Debug: log requested sellerId
-    debugPrint('SellScreen: requested sellerId=$sellerId');
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text("My Listings"),
-      // ),
-      body: itemsAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
+      appBar: AppBar(title: Text(myListingsLabel), centerTitle: true),
+      body: SafeArea(
+        child: itemsAsync.when(
+          loading: () => Center(
+            child: CircularProgressIndicator(color: colorScheme.primary),
+          ),
+          error: (e, _) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.error_outline_rounded,
+                    color: colorScheme.error,
+                    size: 38,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Failed to load your listings',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '$e',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.65),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () => ref.refresh(
+                      sellerItemsProvider(sellerId).future,
+                    ),
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          data: (items) {
+            if (items.isEmpty) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  await ref.refresh(sellerItemsProvider(sellerId).future);
+                },
+                child: ListView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 120),
+                  children: [
+                    const SizedBox(height: 140),
+                    Icon(
+                      Icons.inventory_2_outlined,
+                      size: 52,
+                      color: colorScheme.onSurface.withOpacity(0.55),
+                    ),
+                    const SizedBox(height: 14),
+                    Text(
+                      'No items posted yet',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'Tap + to create your first listing.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.65),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
 
-        error: (e, _) => Center(
-          child: Text("Error: $e"),
-        ),
-
-        data: (items) {
-          // Defensive filter: ensure only items with matching sellerId are shown
-          final filtered = items.where((i) => i.sellerId.toLowerCase() == sellerId.toLowerCase()).toList();
-
-          debugPrint('SellScreen: fetched ${items.length} items, filtered to ${filtered.length} for sellerId=$sellerId');
-          for (var it in filtered) debugPrint('  item ${it.itemId} sellerId=${it.sellerId}');
-
-          if (filtered.isEmpty) {
             return RefreshIndicator(
               onRefresh: () async {
                 await ref.refresh(sellerItemsProvider(sellerId).future);
               },
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 200),
-                  Center(child: Text("No items posted yet")),
-                ],
-              ),
-            );
-          }
+              child: ListView.separated(
+                padding: const EdgeInsets.only(top: 8, bottom: 120),
+                itemCount: items.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 2),
+                itemBuilder: (context, index) {
+                  final item = items[index];
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              await ref.refresh(sellerItemsProvider(sellerId).future);
-            },
-            child: ListView.builder(
-              itemCount: filtered.length,
-              itemBuilder: (context, index) {
-                final item = filtered[index];
-
-                return SellCard(
-                  item: item,
-                  onTap: () async {
-                    final getItemUsecase = ref.read(getItemByIdUsecaseProvider);
-                    final id = item.itemId;
-                    if (id == null || id.isEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => SingleItemScreen(item: item)),
+                  return SellCard(
+                    item: item,
+                    onTap: () async {
+                      final getItemUsecase = ref.read(
+                        getItemByIdUsecaseProvider,
                       );
-                      return;
-                    }
-
-                    final result = await getItemUsecase(GetItemByIdParams(itemId: id));
-                    result.fold(
-                      (failure) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to load item: ${failure.message}')),
-                        );
-                      },
-                      (freshItem) {
+                      final id = item.itemId;
+                      if (id == null || id.isEmpty) {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => SingleItemScreen(item: freshItem)),
+                          MaterialPageRoute(
+                            builder: (_) => SingleItemScreen(item: item),
+                          ),
                         );
-                      },
-                    );
-                  },
-                );
-              },
-            ),
-          );
-        },
+                        return;
+                      }
+
+                      final result =
+                          await getItemUsecase(GetItemByIdParams(itemId: id));
+                      result.fold(
+                        (failure) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Failed to load item: ${failure.message}',
+                              ),
+                            ),
+                          );
+                        },
+                        (freshItem) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  SingleItemScreen(item: freshItem),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
 
       // Floating Add Button (Like Screenshot)
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-                                    Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PhoneBrandSelectionScreen(),
-                            ),
-                          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PhoneBrandSelectionScreen(),
+            ),
+          );
         },
         child: const Icon(Icons.add, color: Colors.white),
-        backgroundColor: Color(0xFF0B7C7C),
+        backgroundColor: colorScheme.primary,
       ),
     );
   }

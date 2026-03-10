@@ -13,13 +13,20 @@ class OfferCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(
+          color: isDark
+              ? Theme.of(context).dividerColor.withOpacity(0.35)
+              : Colors.grey.shade300,
+        ),
       ),
       child: Row(
         children: [
@@ -30,23 +37,26 @@ class OfferCard extends StatelessWidget {
                 Text(
                   offer.tag,
                   style: TextStyle(
-                    color: Colors.grey.shade600,
+                    color: colorScheme.onSurface.withOpacity(0.65),
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   offer.discount,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF0B7C7C),
+                    color: colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   offer.title,
-                  style: const TextStyle(fontSize: 14),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: colorScheme.onSurface.withOpacity(0.92),
+                  ),
                 ),
                 const SizedBox(height: 12),
 
@@ -54,7 +64,7 @@ class OfferCard extends StatelessWidget {
                   children: List.generate(3, (index) {
                     return Padding(
                       padding: const EdgeInsets.only(right: 6),
-                      child: _indicator(isActive: index == activeIndex),
+                      child: _indicator(context, isActive: index == activeIndex),
                     );
                   }),
                 ),
@@ -76,12 +86,21 @@ class OfferCard extends StatelessWidget {
     );
   }
 
-  Widget _indicator({required bool isActive}) {
+  Widget _indicator(BuildContext context, {required bool isActive}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       height: 2,
       width: 24,
       decoration: BoxDecoration(
-        color: isActive ? Colors.black : Colors.grey.shade300,
+        color: isActive
+            ? (isDark
+                ? colorScheme.onSurface.withOpacity(0.95)
+                : Colors.black)
+            : (isDark
+                ? colorScheme.onSurface.withOpacity(0.20)
+                : Colors.grey.shade300),
         borderRadius: BorderRadius.circular(4),
       ),
     );

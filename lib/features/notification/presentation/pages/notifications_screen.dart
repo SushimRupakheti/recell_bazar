@@ -10,7 +10,8 @@ class NotificationsScreen extends ConsumerStatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  ConsumerState<NotificationsScreen> createState() => _NotificationsScreenState();
+  ConsumerState<NotificationsScreen> createState() =>
+      _NotificationsScreenState();
 }
 
 class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
@@ -29,10 +30,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     return mediaBase + (path.startsWith('/') ? path : '/$path');
   }
 
-  String _formatCreatedAt(DateTime value) {
-    final d = value.toLocal();
-    String two(int n) => n.toString().padLeft(2, '0');
-    return '${d.year}-${two(d.month)}-${two(d.day)} ${two(d.hour)}:${two(d.minute)}';
+  String _formatCreatedAt(BuildContext context, DateTime value) {
+    return TimeOfDay.fromDateTime(value.toLocal()).format(context);
   }
 
   @override
@@ -46,18 +45,12 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       if (next.status == NotificationStatus.unauthorized) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
       );
     });
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notifications'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Notifications'), centerTitle: true),
       body: SafeArea(
         child: Builder(
           builder: (context) {
@@ -75,11 +68,15 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     children: [
                       const Text(
                         'Unauthorized',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        notificationState.errorMessage ?? 'Your session has expired. Please login again.',
+                        notificationState.errorMessage ??
+                            'Your session has expired. Please login again.',
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
@@ -87,7 +84,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                         onPressed: () {
                           Navigator.pushAndRemoveUntil(
                             context,
-                            MaterialPageRoute(builder: (_) => const LoginScreen()),
+                            MaterialPageRoute(
+                              builder: (_) => const LoginScreen(),
+                            ),
                             (_) => false,
                           );
                         },
@@ -106,7 +105,10 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(notificationState.errorMessage ?? 'Failed to load notifications'),
+                      Text(
+                        notificationState.errorMessage ??
+                            'Failed to load notifications',
+                      ),
                       const SizedBox(height: 12),
                       ElevatedButton(
                         onPressed: () => ref
@@ -160,7 +162,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 class _NotificationTile extends StatelessWidget {
   final NotificationEntity notification;
   final String Function(String path) resolveMediaUrl;
-  final String Function(DateTime value) formatCreatedAt;
+  final String Function(BuildContext context, DateTime value) formatCreatedAt;
   final VoidCallback onTap;
   final VoidCallback onDelete;
 
@@ -181,115 +183,239 @@ class _NotificationTile extends StatelessWidget {
         ? resolveMediaUrl(item.photos.first)
         : '';
 
+    final colorScheme = Theme.of(context).colorScheme;
+    final primary = colorScheme.primary;
+    final surface = colorScheme.surface;
+
+    Color blend(Color foreground, Color background) {
+      return Color.alphaBlend(foreground, background);
+    }
+
+    final backgroundStart = blend(
+      primary.withOpacity(unread ? 0.18 : 0.12),
+      surface,
+    );
+    final backgroundEnd = blend(
+      primary.withOpacity(unread ? 0.10 : 0.06),
+      surface,
+    );
+
+    final borderColor = primary.withOpacity(unread ? 0.45 : 0.18);
+    final timeText = formatCreatedAt(context, notification.createdAt);
+    final messageText = notification.message.trim();
+    final itemText = item?.phoneModel.trim() ?? '';
+
+    final radius = BorderRadius.circular(28);
+    final shadowColor = Theme.of(context).shadowColor;
+
+    final baseDescriptionStyle = TextStyle(
+      fontSize: 14,
+      color: colorScheme.onSurface.withOpacity(0.78),
+    );
+    final accentDescriptionStyle = baseDescriptionStyle.copyWith(
+      color: primary,
+      fontWeight: FontWeight.w600,
+    );
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(12),
+        borderRadius: radius,
+        child: Ink(
           decoration: BoxDecoration(
-            color: Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: unread ? const Color(0xFF0B7C7C) : Colors.transparent,
-              width: unread ? 1 : 0,
+            borderRadius: radius,
+            border: Border.all(color: borderColor, width: unread ? 1.2 : 1),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [backgroundStart, backgroundEnd],
             ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (photo.isNotEmpty)
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    photo,
-                    width: 56,
-                    height: 56,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      width: 56,
-                      height: 56,
-                      color: Colors.grey.shade300,
-                    ),
-                  ),
-                )
-              else
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            notification.title,
-                            style: TextStyle(
-                              fontWeight: unread ? FontWeight.bold : FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: onDelete,
-                          icon: const Icon(Icons.delete_outline),
-                          color: Colors.red,
-                          tooltip: 'Delete',
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      notification.message,
-                      style: const TextStyle(fontSize: 14),
-                    ),
-                    const SizedBox(height: 8),
-                    if (item != null)
-                      Text(
-                        item.phoneModel,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: Color(0xFF0B7C7C),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        if (unread)
-                          Container(
-                            width: 8,
-                            height: 8,
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF0B7C7C),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        if (unread) const SizedBox(width: 6),
-                        Text(
-                          formatCreatedAt(notification.createdAt),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+            boxShadow: [
+              BoxShadow(
+                color: shadowColor.withOpacity(0.06),
+                blurRadius: 12,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: SizedBox(
+                        width: 52,
+                        height: 52,
+                        child: photo.isNotEmpty
+                            ? Image.network(
+                                photo,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) =>
+                                    _NotificationAvatarFallback(
+                                      backgroundColor: blend(
+                                        primary.withOpacity(0.10),
+                                        surface,
+                                      ),
+                                      iconColor: primary,
+                                    ),
+                              )
+                            : _NotificationAvatarFallback(
+                                backgroundColor: blend(
+                                  primary.withOpacity(0.10),
+                                  surface,
+                                ),
+                                iconColor: primary,
+                              ),
+                      ),
+                    ),
+                    if (unread)
+                      Positioned(
+                        top: -2,
+                        right: -2,
+                        child: Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: primary,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: surface, width: 2),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              notification.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: unread
+                                    ? FontWeight.w700
+                                    : FontWeight.w600,
+                                fontSize: 16,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 32,
+                            height: 32,
+                            child: PopupMenuButton<String>(
+                              padding: EdgeInsets.zero,
+                              tooltip: 'More',
+                              onSelected: (value) {
+                                if (value == 'delete') {
+                                  onDelete();
+                                }
+                              },
+                              itemBuilder: (context) {
+                                return [
+                                  PopupMenuItem<String>(
+                                    value: 'delete',
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.delete_outline_rounded,
+                                          color: colorScheme.error,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Text('Delete'),
+                                      ],
+                                    ),
+                                  ),
+                                ];
+                              },
+                              icon: Icon(
+                                Icons.more_vert_rounded,
+                                size: 20,
+                                color: colorScheme.onSurface.withOpacity(0.55),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text.rich(
+                        TextSpan(
+                          text: messageText.isNotEmpty
+                              ? messageText
+                              : (itemText.isNotEmpty ? itemText : ''),
+                          style: baseDescriptionStyle,
+                          children: [
+                            if (messageText.isNotEmpty && itemText.isNotEmpty)
+                              TextSpan(
+                                text: ' • ',
+                                style: baseDescriptionStyle,
+                              ),
+                            if (messageText.isNotEmpty && itemText.isNotEmpty)
+                              TextSpan(
+                                text: itemText,
+                                style: accentDescriptionStyle,
+                              ),
+                          ],
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          timeText,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme.onSurface.withOpacity(0.60),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NotificationAvatarFallback extends StatelessWidget {
+  final Color backgroundColor;
+  final Color iconColor;
+
+  const _NotificationAvatarFallback({
+    required this.backgroundColor,
+    required this.iconColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.notifications_rounded,
+          color: iconColor.withOpacity(0.9),
+          size: 26,
         ),
       ),
     );

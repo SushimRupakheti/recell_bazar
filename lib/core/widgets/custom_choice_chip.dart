@@ -31,6 +31,9 @@ class _CustomChoiceChipState extends State<CustomChoiceChip> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -51,21 +54,26 @@ class _CustomChoiceChipState extends State<CustomChoiceChip> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: isSelected ? Colors.white : Colors.black,
+                  color: isSelected
+                      ? colorScheme.onPrimary
+                      : colorScheme.onSurface,
                 ),
               ),
 
               selected: isSelected,
-              selectedColor: Color(0xFF0B7C7C),
+                selectedColor: colorScheme.primary,
 
-              backgroundColor: Colors.grey.shade100,
+                backgroundColor:
+                  isDark ? colorScheme.surface : Colors.grey.shade100,
 
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
                 side: BorderSide(
                   color: isSelected
-                      ? Color(0xFF0B7C7C)
-                      : Colors.grey.shade300,
+                      ? colorScheme.primary
+                      : (isDark
+                          ? colorScheme.onSurface.withOpacity(0.18)
+                          : Colors.grey.shade300),
                   width: 1,
                 ),
               ),
