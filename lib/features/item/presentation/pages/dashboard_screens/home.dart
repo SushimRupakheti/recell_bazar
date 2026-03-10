@@ -85,15 +85,16 @@ class _HomeState extends ConsumerState<Home> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    final discoverLabel = l10n?.discover ?? 'Discover';
+    final noItemsFoundLabel = l10n?.noItemsFound ?? 'No items found';
     final notificationState = ref.watch(notificationViewModelProvider);
     final hasUnread = notificationState.notifications.any((n) => !n.isRead);
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
 
             /// Top Bar
             Topbar(
@@ -185,7 +186,7 @@ class _HomeState extends ConsumerState<Home> {
             Padding(
               padding: EdgeInsets.only(left: 16),
               child: Text(
-                l10n.discover,
+                discoverLabel,
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -207,7 +208,7 @@ class _HomeState extends ConsumerState<Home> {
                   }
 
                   if (items.isEmpty) {
-                    return Center(child: Text(l10n.noItemsFound));
+                    return Center(child: Text(noItemsFoundLabel));
                   }
 
                   // compute displayed items based on selected filter
@@ -334,7 +335,6 @@ return LayoutBuilder(
               ),
             ),
           ],
-        ),
       ),
     );
   }

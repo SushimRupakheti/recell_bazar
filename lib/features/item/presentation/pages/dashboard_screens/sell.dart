@@ -17,12 +17,13 @@ class SellScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    final myListingsLabel = l10n?.myListings ?? 'My Listings';
     final itemsAsync = ref.watch(sellerItemsProvider(sellerId));
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.myListings), centerTitle: true),
+      appBar: AppBar(title: Text(myListingsLabel), centerTitle: true),
       body: SafeArea(
         child: itemsAsync.when(
           loading: () => Center(

@@ -7,6 +7,7 @@ import 'package:recell_bazar/features/auth/presentation/pages/user_profile_scree
 import 'package:recell_bazar/features/item/presentation/providers/price_provider.dart';
 import 'package:recell_bazar/features/item/presentation/state/item_state.dart';
 import 'package:recell_bazar/features/item/presentation/view_model/item_viewmodel.dart';
+import 'package:recell_bazar/features/item/presentation/pages/dashboard.dart';
 import 'package:recell_bazar/features/item/presentation/widgets/progress_indicator.dart';
 import 'package:recell_bazar/features/item/presentation/widgets/question_design_widget.dart';
 
@@ -362,7 +363,13 @@ class _FourthSellingScreenState extends ConsumerState<FourthSellingScreen> {
                             ),
                           );
 
-                          Navigator.popUntil(context, (route) => route.isFirst);
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const Dashboard(),
+                            ),
+                            (route) => false,
+                          );
                         },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0B7C7C),

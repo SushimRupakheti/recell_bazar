@@ -36,7 +36,8 @@ class _CartPageState extends ConsumerState<CartPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    final cartLabel = l10n?.cart ?? 'Cart';
     final cartState = ref.watch(cartViewModelProvider);
     final cart = cartState.cart;
     final items = cart?.items ?? const <CartItem>[];
@@ -47,7 +48,7 @@ class _CartPageState extends ConsumerState<CartPage> {
     final shadowColor = Theme.of(context).shadowColor;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.cart), centerTitle: true),
+      appBar: AppBar(title: Text(cartLabel), centerTitle: true),
       body: SafeArea(
         child: Builder(
           builder: (context) {

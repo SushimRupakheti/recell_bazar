@@ -25,7 +25,11 @@ class _DashboardState extends ConsumerState<Dashboard> {
   // We'll register the listener in `build` below.
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    final homeLabel = l10n?.home ?? 'Home';
+    final cartLabel = l10n?.cart ?? 'Cart';
+    final sellLabel = l10n?.sell ?? 'Sell';
+    final profileLabel = l10n?.profile ?? 'Profile';
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final unselectedIconColor =
         isDark ? (Theme.of(context).bottomNavigationBarTheme.unselectedItemColor ?? Colors.white70) : null;
@@ -104,7 +108,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               image: AssetImage('assets/icons/home_selected.png'),
               height: 35,
             ),
-            label: l10n.home,
+            label: homeLabel,
           ),
           BottomNavigationBarItem(
             icon: Image(
@@ -116,7 +120,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               image: AssetImage('assets/icons/cart_selected.png'),
               height: 35,
             ),
-            label: l10n.cart,
+            label: cartLabel,
           ),
           BottomNavigationBarItem(
             icon: Image(
@@ -128,7 +132,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               image: AssetImage('assets/icons/sell_selected.png'),
               height: 35,
             ),
-            label: l10n.sell,
+            label: sellLabel,
           ),
           BottomNavigationBarItem(
             icon: Image(
@@ -140,7 +144,7 @@ class _DashboardState extends ConsumerState<Dashboard> {
               image: AssetImage('assets/icons/profile_selected.png'),
               height: 35,
             ),
-            label: l10n.profile,
+            label: profileLabel,
           ),
         ],
       ),

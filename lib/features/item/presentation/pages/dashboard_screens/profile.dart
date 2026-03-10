@@ -84,7 +84,11 @@ class _ProfileState extends ConsumerState<Profile> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authViewModelProvider);
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
+    final profileLabel = l10n?.profile ?? 'Profile';
+    final languageLabel = l10n?.language ?? 'Language';
+    final notificationsLabel = l10n?.notifications ?? 'Notifications';
+    final logoutLabel = l10n?.logout ?? 'Logout';
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -100,7 +104,7 @@ class _ProfileState extends ConsumerState<Profile> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.profile),
+        title: Text(profileLabel),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -201,7 +205,7 @@ class _ProfileState extends ConsumerState<Profile> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.language, color: Color(0xFF0B7C7C)),
-                    title: Text(l10n.language),
+                    title: Text(languageLabel),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -219,7 +223,7 @@ class _ProfileState extends ConsumerState<Profile> {
                   ),
                   ListTile(
                     leading: const Icon(Icons.notifications, color: Color(0xFF0B7C7C)),
-                    title: Text(l10n.notifications),
+                    title: Text(notificationsLabel),
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.push(
@@ -365,7 +369,7 @@ class _ProfileState extends ConsumerState<Profile> {
                 label: Text(
                   authState.status == AuthStatus.loading
                       ? "Logging out..."
-                      : l10n.logout,
+                      : logoutLabel,
                   style: const TextStyle(color: Colors.red),
                 ),
                 onPressed: authState.status == AuthStatus.loading
